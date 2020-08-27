@@ -336,7 +336,7 @@ Public Class ExecutableClass
             IconWidth = GetLEWord(DataFile().Data, Location + &H4%)
             BytesPerRow = If(IconWidth Mod PIXELS_PER_BYTE = 0, IconWidth \ PIXELS_PER_BYTE, (IconWidth + &H1%) \ PIXELS_PER_BYTE)
             IconSize = BytesPerRow * IconHeight
-            Draw4BitImage(GetBytes(DataFile().Data, Location + &H6%, IconSize), IconWidth, IconHeight, Palettes()(PalettesE.TitleScreenEGA), BytesPerRow).Save(String.Format("{0}.png", Path.Combine(ExportPath, DirectCast(Location, IconLocationsE).ToString())), ImageFormat.Png)
+            Draw4BitImage(GetBytes(DataFile().Data, Location + &H6%, IconSize), IconWidth, IconHeight, Palettes()(PalettesE.TitleScreenEGA), BytesPerRow).Save($"{Path.Combine(ExportPath, DirectCast(Location, IconLocationsE).ToString())}.png", ImageFormat.Png)
          Next Location
 
          Process.Start(New ProcessStartInfo With {.FileName = ExportPath, .WindowStyle = ProcessWindowStyle.Normal})
