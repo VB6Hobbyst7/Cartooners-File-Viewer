@@ -6,7 +6,6 @@ Option Strict On
 
 Imports Microsoft.VisualBasic
 Imports System
-Imports System.Collections.Generic
 Imports System.Convert
 Imports System.Environment
 Imports System.IO
@@ -38,12 +37,11 @@ Public Module GameLibraryModule
          Dim LibraryPath As String = Path.GetFullPath(SourcePath)
 
          If LibraryPath.EndsWith("\") Then LibraryPath = LibraryPath.Substring(0, LibraryPath.Length - 1)
-         LibraryPath &= ".lib"
 
          Console.WriteLine($"Creating {FILE_TYPES(Signature)} library file...")
 
          FileOffset = HeaderSize + 1
-         Using LibraryFile As New BinaryWriter(File.OpenWrite(LibraryPath))
+         Using LibraryFile As New BinaryWriter(File.OpenWrite($"{LibraryPath}.lib"))
             With LibraryFile
                .Write(TEXT_TO_BYTES(SIGNATURES(Signature)))
                .Write(CUShort(Files.Length))
@@ -181,7 +179,7 @@ Public Module GameLibraryModule
                   Console.WriteLine("Invalid library type selection.")
                End If
             Else
-               If Not LibraryPath.ToLower().EndsWith(".") Then LibraryPath &= "."
+               If Not LibraryPath.EndsWith(".") Then LibraryPath &= "."
                LibraryPath = Path.GetFullPath(LibraryPath)
                ExtractLibrary(LibraryPath)
             End If
