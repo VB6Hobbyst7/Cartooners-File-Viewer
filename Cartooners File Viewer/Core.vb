@@ -100,82 +100,18 @@ Public Module CoreModule
    Public Const PIXELS_PER_BYTE As Integer = &H2%                 'Contains the number pixels per byte in an uncompressed image.
    Public Const SCRIPT_TEMPLATE As String = "Script"              'Contains the identifier for actor templates.
 
-   Public ReadOnly ARGB_TO_GBR As Func(Of Color, Byte()) = Function(ARGB As Color) {ToByte(ToInt32(ARGB.G \ &H10%) << &H4% Or ToInt32(ARGB.B \ &H10%)), ToByte(ARGB.R \ &H10%)}                                                                      'This procedure converts the specified 24 bit ARGB color to a 12 bit GBR color.
+   Public ReadOnly ARGB_TO_GBR As Func(Of Color, Byte()) = Function(ARGB As Color) {ToByte(ToInt32(ARGB.G >> &H4%) << &H4% Or ToInt32(ARGB.B >> &H4%)), ToByte(ARGB.R >> &H4%)}                                                                      'This procedure converts the specified 24 bit ARGB color to a 12 bit GBR color.
    Public ReadOnly BYTES_TO_TEXT As Func(Of List(Of Byte), String) = Function(Bytes As List(Of Byte)) New String((From ByteO In Bytes Select ToChar(ByteO)).ToArray())                                                                               'This procedure converts the specified bytes to text.
    Public ReadOnly COLOR_DIFFERENCE As Func(Of Color, Color, Integer) = Function(Color1 As Color, Color2 As Color) CInt((Abs(CInt(Color2.R) - CInt(Color1.R)) + Abs(CInt(Color2.G) - CInt(Color1.G)) + Abs(CInt(Color2.B) - CInt(Color1.B))) / 3)    'This procedure returns the difference between the two specified colors.
    Public ReadOnly GET_BIT As Func(Of Byte, Integer, Integer) = Function(ByteO As Byte, BitIndex As Integer) Abs(ToInt32((New BitArray({ByteO}))(BitIndex)))                                                                                         'This procedure returns the specified bit inside the specified byte.
+   Public ReadOnly GET_DWORD As Func(Of List(Of Byte), Integer, Integer) = Function(Data As List(Of Byte), Position As Integer) (BitConverter.ToInt32(Data.ToArray(), Position))                                                                     'This procedure extracts a little endian DWORD value from the specified bytes at the specified position and returns it.
+   Public ReadOnly GET_WORD As Func(Of List(Of Byte), Integer, Integer) = Function(Data As List(Of Byte), Position As Integer) (BitConverter.ToInt16(Data.ToArray(), Position))                                                                      'This procedure extracts a little endian WORD value from the specified bytes at the specified position and returns it.
    Public ReadOnly LZW_MAXIMUM_ENTRIES As Integer = (&H1% << LZW_MAXIMUM_BITS)                                                                                                                                                                       'Contains the maximum number of LZW symbols possible with the maximum LZW bit count.
    Public ReadOnly SET_BIT As Func(Of Integer, Integer, Integer, Byte) = Function(ByteO As Integer, BitIndex As Integer, Bit As Integer) CByte(ByteO Or (Bit << BitIndex))                                                                           'This procedure sets the specified bit inside the specified byte.
    Public ReadOnly TERMINATE_AT_NULL As Func(Of String, String) = Function(Text As String) If(Text.Contains(ControlChars.NullChar), Text.Substring(0, Text.IndexOf(ControlChars.NullChar)), Text)                                                    'This procedure terminates the specified text at the left most null character and returns the result.
    Public ReadOnly TEXT_TO_BYTES As Func(Of String, List(Of Byte)) = Function(Text As String) (From Character In Text.ToCharArray() Select ToByte(Character)).ToList()                                                                               'This procedure converts the specified text to bytes.
-   Public ReadOnly TOGGLE_DWORD As Func(Of List(Of Byte), Integer) = Function(Bytes As List(Of Byte)) ToInt32(String.Format("{0:X2}{1:X2}{2:X2}{3:X2}", Bytes(&H3%), Bytes(&H2%), Bytes(&H1%), Bytes(&H0%)), fromBase:=16)                           'This procedure reverses the specified dword's byte order.
    Public ReadOnly TOGGLE_WORD As Func(Of List(Of Byte), Integer) = Function(Bytes As List(Of Byte)) ToInt32(String.Format("{0:X2}{1:X2}", Bytes(&H1%), Bytes(&H0%)), fromBase:=16)                                                                  'This procedure reverses the specified word's byte order.
    Public ReadOnly UNSIGN_BYTE As Func(Of Integer, Integer) = Function(Value As Integer) Abs(If(Value >= &H80%, Value - &H100%, Value))                                                                                                              'This procedure converts a signed byte to an unsigned byte.
-
-   'This procedure adds the specified incompressible data to the specified compressed data.
-   Private Function AddIncompressible(ByRef Incompressible As List(Of Byte), Compressed As List(Of Byte)) As List(Of Byte)
-
-      Try
-         If Incompressible.Any Then
-            Compressed.Add(ToByte(Incompressible.Count - &H1%))
-            Compressed.AddRange(Incompressible)
-            Incompressible.Clear()
-         End If
-
-         Return Compressed
-      Catch ExceptionO As Exception
-         HandleError(ExceptionO)
-      End Try
-
-      Return Nothing
-   End Function
-
-   'This procedure compresses the specified indexes.
-   Public Function Compress(Indexes As List(Of Byte)) As List(Of Byte)
-      Try
-         Dim Compressed As New List(Of Byte)
-         Dim Count(0 To 2) As Integer
-         Dim Incompressible As New List(Of Byte)
-         Dim Position As Integer = &H0%
-
-         Do While Position < Indexes.Count
-            Count(0) = (DetermineRunLength(Indexes, Position, Maximum:=&H100%, ItemSize:=&H1%) \ &H4%) * &H4%
-            Count(1) = DetermineRunLength(Indexes, Position, Maximum:=&H40%, ItemSize:=&H4%)
-            Count(2) = DetermineRunLength(Indexes, Position, Maximum:=&H40%, ItemSize:=&H1%)
-
-            If Count(0) > &H3% AndAlso Count(0) > Count(1) AndAlso Count(0) > Count(2) Then
-               Compressed = AddIncompressible(Incompressible, Compressed)
-               Compressed.Add(ToByte(&HC0% Or (CInt(Count(0) >> &H2%) - &H1%)))
-               Compressed.Add(Indexes(Position))
-               Position += Count(0)
-            Else
-               If Count(1) > &H1% AndAlso Count(1) > Count(0) AndAlso Count(1) > Count(2) Then
-                  Compressed = AddIncompressible(Incompressible, Compressed)
-                  Compressed.Add(ToByte(&H80% Or (Count(1) - &H1%)))
-                  Compressed.AddRange(GetBytes(Indexes, Position, Count:=&H4%))
-                  Position += (Count(1) * &H4%)
-               Else
-                  If Count(2) > &H2% AndAlso Count(2) > Count(0) AndAlso Count(2) > Count(1) Then
-                     Compressed = AddIncompressible(Incompressible, Compressed)
-                     Compressed.Add(ToByte(&H40% Or (Count(2) - &H1%)))
-                     Compressed.Add(Indexes(Position))
-                     Position += Count(2)
-                  Else
-                     Incompressible.Add(Indexes(Position))
-                     If Incompressible.Count = &H40% OrElse Position = Indexes.Count - &H1% Then Compressed = AddIncompressible(Incompressible, Compressed)
-                     Position += &H1%
-                  End If
-               End If
-            End If
-         Loop
-
-         Return Compressed
-      Catch ExceptionO As Exception
-         HandleError(ExceptionO)
-      End Try
-
-      Return Nothing
-   End Function
 
    'This function converts MS-DOS line breaks to Microsoft Windows line breaks in the specified text and returns the result.
    Public Function ConvertMSDOSLineBreak(Text As String) As String
@@ -196,89 +132,6 @@ Public Module CoreModule
          Loop
 
          Return Conversion.ToString()
-      Catch ExceptionO As Exception
-         HandleError(ExceptionO)
-      End Try
-
-      Return Nothing
-   End Function
-
-   'This procedure decompresses the specified Cartooners-compressed image data.
-   Public Function Decompress(Compressed As List(Of Byte), Offset As Integer, Size As Integer) As List(Of Byte)
-      Try
-         Dim Count As New Integer
-         Dim Decompressed As New List(Of Byte)
-         Dim Instruction As New Integer
-         Dim Position As Integer = Offset
-
-         Decompressed.Clear()
-         Do While Position < Offset + Size
-            Instruction = Compressed(Position)
-            Position += &H1%
-
-            Select Case Instruction
-               Case &H0% To &H3F%
-                  Count = Instruction
-                  For SubPosition As Integer = Position To Position + Count
-                     Decompressed.Add(Compressed(SubPosition))
-                     Position += &H1%
-                  Next SubPosition
-               Case &H40% To &H7F%
-                  Count = Instruction - &H40%
-                  For Repeat As Integer = &H0% To Count
-                     Decompressed.Add(Compressed(Position))
-                  Next Repeat
-                  Position += &H1%
-               Case &H81% To &HBF%
-                  Count = Instruction - &H80%
-                  For Repeat As Integer = &H0% To Count
-                     For SubPosition As Integer = Position To Position + &H3%
-                        Decompressed.Add(Compressed(SubPosition))
-                     Next SubPosition
-                  Next Repeat
-                  Position += &H4%
-               Case &HC0% To &HFF%
-                  Count = (Instruction - &HBF%) * &H4%
-                  For Repeat As Integer = &H1% To Count
-                     Decompressed.Add(Compressed(Position))
-                  Next Repeat
-                  Position += &H1%
-               Case Else
-                  MessageBox.Show($"Invalid instruction found at byte #{Position:X} while decompressing data.{NewLine}", My.Application.Info.Title, MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
-            End Select
-         Loop
-
-         Return Decompressed
-      Catch ExceptionO As Exception
-         HandleError(ExceptionO)
-      End Try
-
-      Return Nothing
-   End Function
-
-   'This procedure determines the run-length for the indexes at the specified position.
-   Private Function DetermineRunLength(Indexes As List(Of Byte), Offset As Integer, Maximum As Integer, ItemSize As Integer) As Integer
-      Try
-         Dim Count As Integer = 0
-         Dim Match As New Boolean
-         Dim Position As Integer = Offset
-
-         Do Until Position >= Indexes.Count OrElse Count >= Maximum
-            Match = True
-            For SubPosition As Integer = Position To Position + (ItemSize - 1)
-               If SubPosition >= Indexes.Count OrElse Not Indexes(SubPosition) = Indexes(Offset + (SubPosition - Position)) Then
-                  Match = False
-                  Exit For
-               End If
-            Next SubPosition
-
-            If Not Match Then Exit Do
-
-            Count += 1
-            Position += ItemSize
-         Loop
-
-         Return Count
       Catch ExceptionO As Exception
          HandleError(ExceptionO)
       End Try
@@ -469,32 +322,6 @@ Public Module CoreModule
       Return Nothing
    End Function
 
-   'This procedure returns a 32 bit little endian value at the specified position.
-   Public Function GetLEDWord(Data As List(Of Byte), Position As Integer) As Integer
-      Try
-         Dim Bytes As New List(Of Byte)(GetBytes(Data, Position, Count:=&H4%))
-
-         Return If(Bytes.Count = &H4%, TOGGLE_DWORD(Bytes), Nothing)
-      Catch ExceptionO As Exception
-         HandleError(ExceptionO)
-      End Try
-
-      Return Nothing
-   End Function
-
-   'This procedure returns a 16 bit little endian value at the specified position.
-   Public Function GetLEWord(Data As List(Of Byte), Position As Integer) As Integer
-      Try
-         Dim Bytes As New List(Of Byte)(GetBytes(Data, Position, Count:=&H2%))
-
-         Return If(Bytes.Count = &H2%, TOGGLE_WORD(Bytes), Nothing)
-      Catch ExceptionO As Exception
-         HandleError(ExceptionO)
-      End Try
-
-      Return Nothing
-   End Function
-
    'This procedure returns the specified nibble at the specified position.
    Public Function GetNibble(ByteO As Byte, Nibble As NibblesE) As Integer
       Try
@@ -564,14 +391,12 @@ Public Module CoreModule
    'This procedure converts the specified number to a series of bytes of the specified length.
    Public Function NumberToBytes(Number As Integer, Length As Integer) As List(Of Byte)
       Try
-         Dim Bytes As New List(Of Byte)
-         Dim Hexadecimals As String = $"{Number:X}".PadLeft(Length * &H2%, "0"c)
-
-         For ByteO As Integer = &H0% To Hexadecimals.Length - &H2% Step &H2%
-            Bytes.Add(ToByte(Hexadecimals.Substring(ByteO, &H2%), fromBase:=16))
-         Next ByteO
-
-         Return Bytes
+         Select Case Length
+            Case &H2%
+               Return BitConverter.GetBytes(ToUInt16(Number)).Reverse.ToList()
+            Case &H4%
+               Return BitConverter.GetBytes(ToUInt32(Number)).Reverse.ToList()
+         End Select
       Catch ExceptionO As Exception
          HandleError(ExceptionO)
       End Try
