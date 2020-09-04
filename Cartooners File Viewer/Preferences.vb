@@ -78,10 +78,10 @@ Public Class PreferencesClass
 
             Using PreferencesFile As New BinaryReader(File.OpenRead(PreferencesPath))
                With CurrentPreferences
-                  .ButtonsStayDown = CBool(TOGGLE_WORD(New List(Of Byte)(PreferencesFile.ReadBytes(&H2%))))
-                  .AddAddsToMovie = CBool(TOGGLE_WORD(New List(Of Byte)(PreferencesFile.ReadBytes(&H2%))))
-                  .PlayFromFirstFrame = CBool(TOGGLE_WORD(New List(Of Byte)(PreferencesFile.ReadBytes(&H2%))))
-                  .MusicOff = CBool(TOGGLE_WORD(New List(Of Byte)(PreferencesFile.ReadBytes(&H2%))))
+                  .ButtonsStayDown = BitConverter.ToBoolean(PreferencesFile.ReadBytes(&H2%), &H0%)
+                  .AddAddsToMovie = BitConverter.ToBoolean(PreferencesFile.ReadBytes(&H2%), &H0%)
+                  .PlayFromFirstFrame = BitConverter.ToBoolean(PreferencesFile.ReadBytes(&H2%), &H0%)
+                  .MusicOff = BitConverter.ToBoolean(PreferencesFile.ReadBytes(&H2%), &H0%)
                   .MoviePaths.Clear()
                   For Movie As Integer = 0 To MAXIMUM_MOVIES - 1
                      MoviePath = BYTES_TO_TEXT(New List(Of Byte)(PreferencesFile.ReadBytes(MOVIE_PATH_LENGTH)))

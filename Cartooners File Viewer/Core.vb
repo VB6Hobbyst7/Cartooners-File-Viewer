@@ -84,13 +84,6 @@ Public Module CoreModule
    'The core constants used by this program.
    Public Const ACTOR_TEMPLATE As String = "Actor"                'Contains the identifier for actor templates.
    Public Const DELIMITER As Char = ControlChars.NullChar         'Contains the delimiter used in various types of data.
-   Public Const GBR_12_COLOR_DEPTH As Integer = &H10%             'Contains the number of colors in a 12bit GBR palette.
-   Public Const GBR_12_COLOR_LENGTH As Integer = &H2%             'Contains the number of bytes per color in a 12bit GBR palette.
-   Public Const LZW_END As Integer = &H101%                       'Contains the end of a LZW value sequence.
-   Public Const LZW_MAXIMUM_BITS As Integer = &HC%                'Contains the maximum number of bits per value in a LZW sequence.
-   Public Const LZW_START As Integer = &H100%                     'Contains the start of a LZW value sequence.
-   Public Const LZW_SYMBOL_BASE As Integer = &H102%               'Contains the lowest value used for an LZW symbol.
-   Public Const LZW_SYMBOL_TOP As Integer = &HFFF%                'Contains the highest value used for an LZW symbol.
    Public Const MSDOS_EXECUTABLE_SIGNATURE As Integer = &H5A4D%   'Contains the MS-DOS executable signature "MZ".
    Public Const MSDOS_HEADER_SIZE As Integer = &H1C%              'Contains the MS-DOS exectuable header's size.
    Public Const NOT_FOUND As Integer = -1                         'Indicates that a value could not be found in a given data set.
@@ -100,17 +93,14 @@ Public Module CoreModule
    Public Const PIXELS_PER_BYTE As Integer = &H2%                 'Contains the number pixels per byte in an uncompressed image.
    Public Const SCRIPT_TEMPLATE As String = "Script"              'Contains the identifier for actor templates.
 
-   Public ReadOnly ARGB_TO_GBR As Func(Of Color, Byte()) = Function(ARGB As Color) {ToByte(ToInt32(ARGB.G >> &H4%) << &H4% Or ToInt32(ARGB.B >> &H4%)), ToByte(ARGB.R >> &H4%)}                                                                      'This procedure converts the specified 24 bit ARGB color to a 12 bit GBR color.
    Public ReadOnly BYTES_TO_TEXT As Func(Of List(Of Byte), String) = Function(Bytes As List(Of Byte)) New String((From ByteO In Bytes Select ToChar(ByteO)).ToArray())                                                                               'This procedure converts the specified bytes to text.
    Public ReadOnly COLOR_DIFFERENCE As Func(Of Color, Color, Integer) = Function(Color1 As Color, Color2 As Color) CInt((Abs(CInt(Color2.R) - CInt(Color1.R)) + Abs(CInt(Color2.G) - CInt(Color1.G)) + Abs(CInt(Color2.B) - CInt(Color1.B))) / 3)    'This procedure returns the difference between the two specified colors.
    Public ReadOnly GET_BIT As Func(Of Byte, Integer, Integer) = Function(ByteO As Byte, BitIndex As Integer) Abs(ToInt32((New BitArray({ByteO}))(BitIndex)))                                                                                         'This procedure returns the specified bit inside the specified byte.
    Public ReadOnly GET_DWORD As Func(Of List(Of Byte), Integer, Integer) = Function(Data As List(Of Byte), Position As Integer) (BitConverter.ToInt32(Data.ToArray(), Position))                                                                     'This procedure extracts a little endian DWORD value from the specified bytes at the specified position and returns it.
    Public ReadOnly GET_WORD As Func(Of List(Of Byte), Integer, Integer) = Function(Data As List(Of Byte), Position As Integer) (BitConverter.ToInt16(Data.ToArray(), Position))                                                                      'This procedure extracts a little endian WORD value from the specified bytes at the specified position and returns it.
-   Public ReadOnly LZW_MAXIMUM_ENTRIES As Integer = (&H1% << LZW_MAXIMUM_BITS)                                                                                                                                                                       'Contains the maximum number of LZW symbols possible with the maximum LZW bit count.
    Public ReadOnly SET_BIT As Func(Of Integer, Integer, Integer, Byte) = Function(ByteO As Integer, BitIndex As Integer, Bit As Integer) CByte(ByteO Or (Bit << BitIndex))                                                                           'This procedure sets the specified bit inside the specified byte.
    Public ReadOnly TERMINATE_AT_NULL As Func(Of String, String) = Function(Text As String) If(Text.Contains(ControlChars.NullChar), Text.Substring(0, Text.IndexOf(ControlChars.NullChar)), Text)                                                    'This procedure terminates the specified text at the left most null character and returns the result.
    Public ReadOnly TEXT_TO_BYTES As Func(Of String, List(Of Byte)) = Function(Text As String) (From Character In Text.ToCharArray() Select ToByte(Character)).ToList()                                                                               'This procedure converts the specified text to bytes.
-   Public ReadOnly TOGGLE_WORD As Func(Of List(Of Byte), Integer) = Function(Bytes As List(Of Byte)) ToInt32(String.Format("{0:X2}{1:X2}", Bytes(&H1%), Bytes(&H0%)), fromBase:=16)                                                                  'This procedure reverses the specified word's byte order.
    Public ReadOnly UNSIGN_BYTE As Func(Of Integer, Integer) = Function(Value As Integer) Abs(If(Value >= &H80%, Value - &H100%, Value))                                                                                                              'This procedure converts a signed byte to an unsigned byte.
 
    'This function converts MS-DOS line breaks to Microsoft Windows line breaks in the specified text and returns the result.
@@ -220,63 +210,14 @@ Public Module CoreModule
       Return Nothing
    End Function
 
-   'This procedure reads the GBR palette from the specified data at the specified location.
-   Public Function GBRPalette(Data As List(Of Byte), PaletteLocation As Integer) As List(Of Color)
+   'This procedure converts the specified bytes to a number assuming big endianess.
+   Public Function GetBENumberFromBytes(Bytes As List(Of Byte)) As Integer
       Try
-         Dim Palette As New List(Of Color)
+         Dim Hexadecimals As New StringBuilder
 
-         For Position As Integer = PaletteLocation To PaletteLocation + ((GBR_12_COLOR_DEPTH - &H1%) * GBR_12_COLOR_LENGTH) Step GBR_12_COLOR_LENGTH
-            Palette.Add(GBRToARGB(New List(Of Byte)({Data(Position), Data(Position + &H1%)})))
-         Next Position
+         Bytes.ForEach(Sub(ByteO As Byte) Hexadecimals.Append($"{ByteO:X2}"))
 
-         Return Palette
-      Catch ExceptionO As Exception
-         HandleError(ExceptionO)
-      End Try
-
-      Return Nothing
-   End Function
-
-   'This procedure converts the specified 12 bit GBR color to a 24 bit ARGB color.
-   Public Function GBRToARGB(GBR As List(Of Byte)) As Color
-      Try
-         Dim Blue As Integer = GetNibble(GBR(&H0%), NibblesE.LowNibble)
-         Dim Green As Integer = GetNibble(GBR(&H0%), NibblesE.HighNibble)
-         Dim Red As Integer = GetNibble(GBR(&H1%), NibblesE.LowNibble)
-
-         If Not GetNibble(GBR(&H1%), NibblesE.HighNibble) = &H0% Then
-            MessageBox.Show("Invalid GBR color value.", My.Application.Info.Title, MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
-         End If
-
-         Return Color.FromArgb((Red << &H4%) Or Red, (Green << &H4%) Or Green, (Blue << &H4%) Or Blue)
-      Catch ExceptionO As Exception
-         HandleError(ExceptionO)
-      End Try
-
-      Return Nothing
-   End Function
-
-   'This procedure converts the specified palettes' data to hexadecimal output with descriptions.
-   Public Function GBRToText(Header As String, Palettes As List(Of List(Of Color)), Optional Descriptions As List(Of String) = Nothing) As String
-      Try
-         Dim GBRText As New StringBuilder
-
-         GBRText.Append($"{Header}{NewLine}{NewLine}")
-         For Palette As Integer = 0 To Palettes.Count - 1
-            If Descriptions IsNot Nothing Then GBRText.Append($"Palette - {Descriptions(Palette)}:{NewLine}")
-            GBRText.Append($"I: R: G: B:{NewLine}")
-            For Index As Integer = 0 To Palettes(Palette).Count - 1
-               With Palettes(Palette)(Index)
-                  GBRText.Append($"{Index,2}")
-                  GBRText.Append($"{$"{ .R:X2}",3}")
-                  GBRText.Append($"{$"{ .G:X2}",3}")
-                  GBRText.Append($"{$"{ .B:X2}",3}{NewLine}")
-               End With
-            Next Index
-            GBRText.Append(NewLine)
-         Next Palette
-
-         Return GBRText.ToString()
+         Return ToInt32(Hexadecimals.ToString(), fromBase:=16)
       Catch ExceptionO As Exception
          HandleError(ExceptionO)
       End Try
@@ -373,23 +314,8 @@ Public Module CoreModule
       Return Nothing
    End Function
 
-   'This procedure converts the specified bytes to a number.
-   Public Function NumberFromBytes(Bytes As List(Of Byte)) As Integer
-      Try
-         Dim Hexadecimals As New StringBuilder
-
-         Bytes.ForEach(Sub(ByteO As Byte) Hexadecimals.Append($"{ByteO:X2}"))
-
-         Return ToInt32(Hexadecimals.ToString(), fromBase:=16)
-      Catch ExceptionO As Exception
-         HandleError(ExceptionO)
-      End Try
-
-      Return Nothing
-   End Function
-
-   'This procedure converts the specified number to a series of bytes of the specified length.
-   Public Function NumberToBytes(Number As Integer, Length As Integer) As List(Of Byte)
+   'This procedure converts the specified number to bytes containing either a 16 or 32 bit big endian value.
+   Public Function NumberToBENumberBytes(Number As Integer, Length As Integer) As List(Of Byte)
       Try
          Select Case Length
             Case &H2%

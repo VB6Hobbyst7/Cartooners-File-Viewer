@@ -99,10 +99,10 @@ Public Class InterfaceWindow
                         PathO = .SelectedPath
                         DirectCast(DataFile(), ExecutableClass).Export(PathO)
                      End If
-                  ElseIf TypeOf DataFile() Is LBMClass Then
+                  ElseIf TypeOf DataFile() Is LBMImageClass Then
                      If .ShowDialog = DialogResult.OK Then
                         PathO = .SelectedPath
-                        DirectCast(DataFile(), LBMClass).Export(PathO)
+                        DirectCast(DataFile(), LBMImageClass).Export(PathO)
                      End If
                   ElseIf TypeOf DataFile() Is PrinterDriverClass Then
                      If .ShowDialog = DialogResult.OK Then
@@ -224,7 +224,7 @@ Public Class InterfaceWindow
                Case ".inf"
                   CurrentDataFile = New PreferencesClass(NewPath, DataFileMenu)
                Case ".bbm", ".lbm"
-                  CurrentDataFile = New LBMClass(NewPath, DataFileMenu)
+                  CurrentDataFile = New LBMImageClass(NewPath, DataFileMenu)
                Case ".lpt"
                   CurrentDataFile = New PrinterDriverClass(NewPath, DataFileMenu)
                Case ".mov"
@@ -240,7 +240,7 @@ Public Class InterfaceWindow
                   If DataFileFromTemplate IsNot Nothing Then CurrentDataFile = DataFileFromTemplate
                Case Else
                   If SUPPORTED_IMAGES.IndexOf(Extension.ToLower()) >= 0 Then
-                     CurrentDataFile = New LBMClass(NewPath, DataFileMenu)
+                     CurrentDataFile = New LBMImageClass(NewPath, DataFileMenu)
                   Else
                      If Not NewPath.Trim() = Nothing Then
                         MessageBox.Show($"Unsupported file type for: ""{NewPath}""", My.Application.Info.Title, MessageBoxButtons.OK, MessageBoxIcon.Exclamation)

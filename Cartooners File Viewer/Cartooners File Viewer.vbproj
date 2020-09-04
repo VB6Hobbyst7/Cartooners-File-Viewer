@@ -68,6 +68,7 @@
     <Compile Include="Archive.vb" />
     <Compile Include="Data File.vb" />
     <Compile Include="Executable.vb" />
+    <Compile Include="GBR Palette.vb" />
     <Compile Include="Interface.vb">
       <SubType>Form</SubType>
     </Compile>
@@ -76,7 +77,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Core.vb" />
-    <Compile Include="LBM.vb" />
+    <Compile Include="LBM Image.vb" />
     <Compile Include="Compress LZW.vb" />
     <Compile Include="Decompress LZW.vb" />
     <Compile Include="RLE Compression.vb" />
