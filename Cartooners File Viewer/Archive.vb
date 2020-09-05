@@ -75,8 +75,8 @@ Public Class ArchiveClass
                      ArchivedFile.FileName = TERMINATE_AT_NULL(ArchivedFile.FileName)
                      ArchivedFile.FileDateTime = GetFileDateTime(GetBytes(.Data, Position + HeaderLocationsE.FileDateTime, Count:=&H4%))
                      ArchivedFile.CompressedFlag = CBool(.Data(Position + HeaderLocationsE.CompressedFlag))
-                     ArchivedFile.UnarchivedSize = GET_DWORD(.Data, Position + HeaderLocationsE.UnarchivedSize)
-                     ArchivedFile.ArchivedSize = GET_DWORD(.Data, Position + HeaderLocationsE.ArchivedSize)
+                     ArchivedFile.UnarchivedSize = BitConverter.ToInt32(.Data.ToArray(), Position + HeaderLocationsE.UnarchivedSize)
+                     ArchivedFile.ArchivedSize = BitConverter.ToInt32(.Data.ToArray(), Position + HeaderLocationsE.ArchivedSize)
                      Position += HEADER_SIZE
                      ArchivedFile.Data = GetBytes(.Data, Position, ArchivedFile.ArchivedSize, AdvanceOffset:=True)
                      CurrentArchivedFiles.Add(ArchivedFile)

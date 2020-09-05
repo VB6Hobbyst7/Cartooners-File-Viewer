@@ -33,28 +33,10 @@ Public Module CoreModule
       Script                  'Script files.
    End Enum
 
-   'This enumeration contains the location of known data inside an MS-DOS executable's header.
-   Public Enum MSDOSHeaderE As Integer
-      Checksum = &H12%                  'The executable's negative pgm checksum.
-      CodeSegment = &H16%               'The code segment (CS) register's initial value.
-      HeaderSize = &H8%                 'The executable's header size in paragraphs of 0x10 bytes.
-      ImageSize = &H4%                  'The executable's image size in pages of 0x200 bytes.
-      ImageSizeModulo = &H2%            'The executable's image size modulo (of 0x200).
-      InstructionPointer = &H14%        'The instruction pointer (IP) register's initial value.
-      MaximumParagraphs = &HC%          'The executable's maximum memory requirement in paragraphs of 0x10 bytes.
-      MinimumParagraphs = &HA%          'The executable's minimum memory requirement in paragraphs of 0x10 bytes.
-      OverlayNumber = &H20%             'The overlay number.
-      RelocationCount = &H6%            'The executable's number or relocation items.
-      RelocationTableOffset = &H18%     'The relocation table's offset.
-      Signature = &H0%                  'The MS-DOS executable's signature.
-      StackPointer = &H10%              'The stack pointer (SP) register's initial value.
-      StackSegment = &HE%               'The stack segment (SS) register's initial value.
-   End Enum
-
    'This enumaration lists the nibbles in a byte.
    Public Enum NibblesE As Integer
-      HighNibble             'The high nibble.
-      LowNibble              'The low nibble.
+      HighNibble   'The high nibble.
+      LowNibble    'The low nibble.
    End Enum
 
    'This structure defines an LZW dictionary entry.
@@ -63,29 +45,9 @@ Public Module CoreModule
       Public Suffix As Integer   'Contains an LZW entry's suffix.
    End Structure
 
-   'This structure defines an MS-DOS executable's header.
-   Public Structure MSDOSHeaderStr
-      Public Signature As Integer              'The MS-DOS executable's signature.
-      Public ImageSizeModulo As Integer        'The executable's image size modulo (of 0x200).
-      Public ImageSize As Integer              'The executable's image size in pages of 0x200 bytes.
-      Public RelocationCount As Integer        'The executable's number or relocation items.
-      Public HeaderSize As Integer             'The executable's header size in paragraphs of 0x10 bytes.
-      Public MinimumParagraphs As Integer      'The executable's maximum memory requirement in paragraphs of 0x10 bytes.
-      Public MaximumParagraphs As Integer      'The executable's minimum memory requirement in paragraphs of 0x10 bytes.
-      Public StackSegment As Integer           'The stack segment (SS) register's initial value.
-      Public StackPointer As Integer           'The stack pointer (SP) register's initial value.
-      Public Checksum As Integer               'The executable's negative pgm checksum.
-      Public InstructionPointer As Integer     'The instruction pointer (IP) register's initial value.
-      Public CodeSegment As Integer            'The code segment (CS) register's initial value.
-      Public RelocationTableOffset As Integer  'The relocation table's offset.
-      Public OverlayNumber As Integer          'The overlay number.
-   End Structure
-
    'The core constants used by this program.
    Public Const ACTOR_TEMPLATE As String = "Actor"                'Contains the identifier for actor templates.
    Public Const DELIMITER As Char = ControlChars.NullChar         'Contains the delimiter used in various types of data.
-   Public Const MSDOS_EXECUTABLE_SIGNATURE As Integer = &H5A4D%   'Contains the MS-DOS executable signature "MZ".
-   Public Const MSDOS_HEADER_SIZE As Integer = &H1C%              'Contains the MS-DOS exectuable header's size.
    Public Const NOT_FOUND As Integer = -1                         'Indicates that a value could not be found in a given data set.
    Public Const PADDING As Char = ControlChars.NullChar           'Contains the character used to pad a path.
    Public Const PAGE_SIZE As Integer = &H200%                     'Contains the size of a page in memory.
@@ -96,8 +58,6 @@ Public Module CoreModule
    Public ReadOnly BYTES_TO_TEXT As Func(Of List(Of Byte), String) = Function(Bytes As List(Of Byte)) New String((From ByteO In Bytes Select ToChar(ByteO)).ToArray())                                                                               'This procedure converts the specified bytes to text.
    Public ReadOnly COLOR_DIFFERENCE As Func(Of Color, Color, Integer) = Function(Color1 As Color, Color2 As Color) CInt((Abs(CInt(Color2.R) - CInt(Color1.R)) + Abs(CInt(Color2.G) - CInt(Color1.G)) + Abs(CInt(Color2.B) - CInt(Color1.B))) / 3)    'This procedure returns the difference between the two specified colors.
    Public ReadOnly GET_BIT As Func(Of Byte, Integer, Integer) = Function(ByteO As Byte, BitIndex As Integer) Abs(ToInt32((New BitArray({ByteO}))(BitIndex)))                                                                                         'This procedure returns the specified bit inside the specified byte.
-   Public ReadOnly GET_DWORD As Func(Of List(Of Byte), Integer, Integer) = Function(Data As List(Of Byte), Position As Integer) (BitConverter.ToInt32(Data.ToArray(), Position))                                                                     'This procedure extracts a little endian DWORD value from the specified bytes at the specified position and returns it.
-   Public ReadOnly GET_WORD As Func(Of List(Of Byte), Integer, Integer) = Function(Data As List(Of Byte), Position As Integer) (BitConverter.ToInt16(Data.ToArray(), Position))                                                                      'This procedure extracts a little endian WORD value from the specified bytes at the specified position and returns it.
    Public ReadOnly SET_BIT As Func(Of Integer, Integer, Integer, Byte) = Function(ByteO As Integer, BitIndex As Integer, Bit As Integer) CByte(ByteO Or (Bit << BitIndex))                                                                           'This procedure sets the specified bit inside the specified byte.
    Public ReadOnly TERMINATE_AT_NULL As Func(Of String, String) = Function(Text As String) If(Text.Contains(ControlChars.NullChar), Text.Substring(0, Text.IndexOf(ControlChars.NullChar)), Text)                                                    'This procedure terminates the specified text at the left most null character and returns the result.
    Public ReadOnly TEXT_TO_BYTES As Func(Of String, List(Of Byte)) = Function(Text As String) (From Character In Text.ToCharArray() Select ToByte(Character)).ToList()                                                                               'This procedure converts the specified text to bytes.

@@ -135,7 +135,7 @@ Public Class MovieClass
                   UnknownDWords(Refresh:=True, Position:=Position)
                   Files(Refresh:=True, Position:=Position)
                   SpeechBalloons(Refresh:=True, Position:=Position)
-                  Palettes(, Refresh:=True)
+                  Palettes(Refresh:=True)
 
                   DisplayInformationMenu.PerformClick()
                Else
@@ -199,12 +199,12 @@ Public Class MovieClass
          With New StringBuilder
             .Append($"General information:{NewLine}")
             .Append($"-Path: {DataFile().Path}{NewLine}")
-            .Append($"-Frames: {GET_WORD(DataFile().Data, LocationsE.FrameCount)}{NewLine}")
+            .Append($"-Frames: {BitConverter.ToInt16(DataFile().Data.ToArray(), LocationsE.FrameCount)}{NewLine}")
             .Append($"-Frames per second: {FrameRate()}{NewLine}")
-            .Append($"-Play repeatedly: {CBool(GET_WORD(DataFile().Data, LocationsE.PlayRepeatedly))}{NewLine}")
-            .Append($"-Contains scenes: {CBool(GET_WORD(DataFile().Data, LocationsE.HasScenes))}{NewLine}")
-            .Append($"-Contains speech balloons: {CBool(GET_WORD(DataFile().Data, LocationsE.HasSpeechBalloons))}{NewLine}")
-            .Append($"-Default speech balloon text color: {GET_WORD(DataFile().Data, LocationsE.DefaultSpeechBalloonColor)}")
+            .Append($"-Play repeatedly: {CBool(BitConverter.ToInt16(DataFile().Data.ToArray(), LocationsE.PlayRepeatedly))}{NewLine}")
+            .Append($"-Contains scenes: {CBool(BitConverter.ToInt16(DataFile().Data.ToArray(), LocationsE.HasScenes))}{NewLine}")
+            .Append($"-Contains speech balloons: {CBool(BitConverter.ToInt16(DataFile().Data.ToArray(), LocationsE.HasSpeechBalloons))}{NewLine}")
+            .Append($"-Default speech balloon text color: {BitConverter.ToInt16(DataFile().Data.ToArray(), LocationsE.DefaultSpeechBalloonColor)}")
 
             UpdateDataBox(.ToString())
          End With
@@ -231,19 +231,19 @@ Public Class MovieClass
 
          For Each SpeechBalloon As SpeechBalloonStr In SpeechBalloons()
             With SpeechBalloon
-               NewText.Append($"[Index: {GET_WORD(.Header, SpeechBalloonLocationsE.Index):X}]{NewLine}")
-               NewText.Append($"Alignment: {SPEECH_BALLOON_ALIGNMENTS(GET_WORD(.Header, SpeechBalloonLocationsE.Alignment))}{NewLine}")
-               NewText.Append($"Type: {SPEECH_BALLOON_TYPES(GET_WORD(.Header, SpeechBalloonLocationsE.Type))}{NewLine}")
-               NewText.Append($"Background color: {GET_WORD(.Header, SpeechBalloonLocationsE.BackColor):X}{NewLine}")
-               NewText.Append($"Balloon width: {GET_WORD(.Header, SpeechBalloonLocationsE.BalloonWidth):X}{NewLine}")
-               NewText.Append($"Balloon height: {GET_WORD(.Header, SpeechBalloonLocationsE.BalloonHeight):X}{NewLine}")
-               NewText.Append($"Border color: {GET_WORD(.Header, SpeechBalloonLocationsE.BorderColor):X}{NewLine}")
-               NewText.Append($"Last selected text color: {GET_WORD(.Header, SpeechBalloonLocationsE.LastSelectedTextColor):X}{NewLine}")
-               NewText.Append($"Text area width: {GET_WORD(.Header, SpeechBalloonLocationsE.TextWidth):X}{NewLine}")
-               NewText.Append($"Text area height: {GET_WORD(.Header, SpeechBalloonLocationsE.TextHeight):X}{NewLine}")
-               NewText.Append($"Text X: {GET_WORD(.Header, SpeechBalloonLocationsE.TextX):X}{NewLine}")
-               NewText.Append($"Text Y: {GET_WORD(.Header, SpeechBalloonLocationsE.TextY):X}{NewLine}")
-               NewText.Append($"Text length: {GET_WORD(.Header, SpeechBalloonLocationsE.TextLength):X}{NewLine}")
+               NewText.Append($"[Index: {BitConverter.ToInt16(.Header.ToArray(), SpeechBalloonLocationsE.Index):X}]{NewLine}")
+               NewText.Append($"Alignment: {SPEECH_BALLOON_ALIGNMENTS(BitConverter.ToInt16(.Header.ToArray(), SpeechBalloonLocationsE.Alignment))}{NewLine}")
+               NewText.Append($"Type: {SPEECH_BALLOON_TYPES(BitConverter.ToInt16(.Header.ToArray(), SpeechBalloonLocationsE.Type))}{NewLine}")
+               NewText.Append($"Background color: {BitConverter.ToInt16(.Header.ToArray(), SpeechBalloonLocationsE.BackColor):X}{NewLine}")
+               NewText.Append($"Balloon width: {BitConverter.ToInt16(.Header.ToArray(), SpeechBalloonLocationsE.BalloonWidth):X}{NewLine}")
+               NewText.Append($"Balloon height: {BitConverter.ToInt16(.Header.ToArray(), SpeechBalloonLocationsE.BalloonHeight):X}{NewLine}")
+               NewText.Append($"Border color: {BitConverter.ToInt16(.Header.ToArray(), SpeechBalloonLocationsE.BorderColor):X}{NewLine}")
+               NewText.Append($"Last selected text color: {BitConverter.ToInt16(.Header.ToArray(), SpeechBalloonLocationsE.LastSelectedTextColor):X}{NewLine}")
+               NewText.Append($"Text area width: {BitConverter.ToInt16(.Header.ToArray(), SpeechBalloonLocationsE.TextWidth):X}{NewLine}")
+               NewText.Append($"Text area height: {BitConverter.ToInt16(.Header.ToArray(), SpeechBalloonLocationsE.TextHeight):X}{NewLine}")
+               NewText.Append($"Text X: {BitConverter.ToInt16(.Header.ToArray(), SpeechBalloonLocationsE.TextX):X}{NewLine}")
+               NewText.Append($"Text Y: {BitConverter.ToInt16(.Header.ToArray(), SpeechBalloonLocationsE.TextY):X}{NewLine}")
+               NewText.Append($"Text length: {BitConverter.ToInt16(.Header.ToArray(), SpeechBalloonLocationsE.TextLength):X}{NewLine}")
                NewText.Append($"Text: ""{Escape(.Text)}""{NewLine}{NewLine}")
             End With
          Next SpeechBalloon
@@ -297,33 +297,33 @@ Public Class MovieClass
          If Refresh AndAlso Not Position = Nothing Then
             CurrentFiles.Clear()
 
-            FileCount = GET_WORD(DataFile().Data, Position)
+            FileCount = BitConverter.ToInt16(DataFile().Data.ToArray(), Position)
             Position += &H2%
 
             ActorHandles(Refresh:=True, ActorCount:=FileCount, Position:=Position)
 
             For ActorPath As Integer = &H1% To FileCount - &H1%
-               Length = GET_WORD(DataFile().Data, Position)
+               Length = BitConverter.ToInt16(DataFile().Data.ToArray(), Position)
                Position += &H2%
                Item = TERMINATE_AT_NULL(GetString(DataFile().Data, Position, Length, AdvanceOffset:=True))
                CurrentFiles.Add(Item)
             Next ActorPath
 
-            FileCount = GET_WORD(DataFile().Data, Position)
+            FileCount = BitConverter.ToInt16(DataFile().Data.ToArray(), Position)
             Position += &H2%
 
             For ScenePath As Integer = &H1% To FileCount
-               Length = GET_WORD(DataFile().Data, Position)
+               Length = BitConverter.ToInt16(DataFile().Data.ToArray(), Position)
                Position += &H2%
                Item = TERMINATE_AT_NULL(GetString(DataFile().Data, Position, Length, AdvanceOffset:=True))
                CurrentFiles.Add(Item)
             Next ScenePath
 
-            FileCount = GET_WORD(DataFile().Data, Position)
+            FileCount = BitConverter.ToInt16(DataFile().Data.ToArray(), Position)
             Position += &H2%
 
             For MusicPath As Integer = &H1% To FileCount
-               Length = GET_WORD(DataFile().Data, Position)
+               Length = BitConverter.ToInt16(DataFile().Data.ToArray(), Position)
                Position += &H2%
                Item = TERMINATE_AT_NULL(GetString(DataFile().Data, Position, Length, AdvanceOffset:=True))
                CurrentFiles.Add(Item)
@@ -341,7 +341,7 @@ Public Class MovieClass
    'This procedure returns the movie's frame rate.
    Private Function FrameRate() As Double
       Try
-         Return (1000 / GET_WORD(DataFile().Data, LocationsE.FrameRate)) / MINIMUM_INTERVAL
+         Return (1000 / BitConverter.ToInt16(DataFile().Data.ToArray(), LocationsE.FrameRate)) / MINIMUM_INTERVAL
       Catch ExceptionO As Exception
          HandleError(ExceptionO)
       End Try
@@ -352,7 +352,7 @@ Public Class MovieClass
    'This procedure manages the movie's frame records.
    Private Function FrameRecords(Optional Refresh As Boolean = False, Optional ByRef Position As Integer = Nothing) As List(Of Byte())
       Try
-         Dim FrameCount As Integer = GET_WORD(DataFile().Data, LocationsE.FrameCount)
+         Dim FrameCount As Integer = BitConverter.ToInt16(DataFile().Data.ToArray(), LocationsE.FrameCount)
          Dim Length As New Integer
          Static CurrentFrameRecords As New List(Of Byte())
 
@@ -361,7 +361,7 @@ Public Class MovieClass
             Position = LocationsE.FrameData
 
             For Record As Integer = &H0% To FrameCount - &H1%
-               Length = GET_WORD(DataFile().Data, Position)
+               Length = BitConverter.ToInt16(DataFile().Data.ToArray(), Position)
                Position += &H2%
                CurrentFrameRecords.Add(GetBytes(DataFile().Data, Position, Length).ToArray())
                Position += Length
@@ -377,7 +377,7 @@ Public Class MovieClass
    End Function
 
    'This procedure manages the movie's palettes.
-   Private Function Palettes(Optional Palette As PalettesE = PalettesE.ActorsScenesPalette, Optional Refresh As Boolean = False) As List(Of List(Of Color))
+   Private Function Palettes(Optional Refresh As Boolean = False) As List(Of List(Of Color))
       Try
          Static CurrentPalettes As New List(Of List(Of Color))
 
@@ -406,15 +406,15 @@ Public Class MovieClass
 
          If Refresh AndAlso Not Position = Nothing Then
             CurrentSpeechBalloons = New List(Of SpeechBalloonStr)
-            SpeechBalloonCount = GET_WORD(DataFile().Data, Position)
+            SpeechBalloonCount = BitConverter.ToInt16(DataFile().Data.ToArray(), Position)
             Position += &H2%
 
             For SpeechBalloon As Integer = 1 To SpeechBalloonCount
                NewSpeechBalloon = New SpeechBalloonStr
                With NewSpeechBalloon
-                  PropertiesSize = GET_WORD(DataFile().Data, Position + SpeechBalloonLocationsE.PropertiesSize)
+                  PropertiesSize = BitConverter.ToInt16(DataFile().Data.ToArray(), Position + SpeechBalloonLocationsE.PropertiesSize)
                   .Header = New List(Of Byte)(GetBytes(DataFile().Data, Position, PropertiesSize + &H4%, AdvanceOffset:=True))
-                  TextLength = GET_WORD(.Header, SpeechBalloonLocationsE.TextLength)
+                  TextLength = BitConverter.ToInt16(.Header.ToArray(), SpeechBalloonLocationsE.TextLength)
                   .Text = GetString(DataFile().Data, Position, TextLength, AdvanceOffset:=True)
                End With
                CurrentSpeechBalloons.Add(NewSpeechBalloon)
@@ -438,10 +438,10 @@ Public Class MovieClass
          If Refresh AndAlso Not Position = Nothing Then
             CurrentDWords.Clear()
 
-            Count = GET_WORD(DataFile().Data, Position)
+            Count = BitConverter.ToInt16(DataFile().Data.ToArray(), Position)
             Position += &H2%
             For Index As Integer = &H0% To Count - &H1%
-               CurrentDWords.Add(GET_DWORD(DataFile().Data, Position))
+               CurrentDWords.Add(BitConverter.ToInt32(DataFile().Data.ToArray(), Position))
                Position += &H4%
             Next Index
          End If

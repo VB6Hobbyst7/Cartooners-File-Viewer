@@ -10,8 +10,8 @@ Imports System.Convert
 Imports System.Linq
 
 'This module contains the Microsoft EXEPACK related procedures.
-Public Module EXEPackModule
-   'This enumaration list the locations of the EXEPACK variables.
+Public Module EXEUnpackerModule
+   'This enumeration list the locations of the EXEPACK variables.
    Private Enum EXEPACKE
       DestinationLength = &HC%         'The unpacker code's destination in paragraphs relative to the start of the executable in memory.
       MemorySegment = &H4%             'The first memory segment containing the executable.
@@ -33,7 +33,7 @@ Public Module EXEPackModule
       Public RealStackPointer As Integer          'Defines the executable's real initial stack pointer.
       Public RealStackSegment As Integer          'Defines the executable's real initial stack segment.
       Public DestinationLength As Integer         'Defines the unpacker code's destination in paragraphs relative to the start of the executable in memory.
-      Public SkipLenth As Integer                 'Defines the zero based number of paragraphs between the packed executable and the unpacker's variables.
+      Public SkipLength As Integer                 'Defines the zero based number of paragraphs between the packed executable and the unpacker's variables.
       Public Signature As Integer                 'Defines the unpacker's signature.
    End Structure
 
@@ -139,35 +139,35 @@ Public Module EXEPackModule
          Dim UnpackedData As New List(Of Byte)
 
          With MSDOSHeader
-            .Signature = GET_WORD(FileData, MSDOSHeaderE.Signature)
-            .ImageSizeModulo = GET_WORD(FileData, MSDOSHeaderE.ImageSizeModulo)
-            .ImageSize = GET_WORD(FileData, MSDOSHeaderE.ImageSize)
-            .RelocationCount = GET_WORD(FileData, MSDOSHeaderE.RelocationCount)
-            .HeaderSize = GET_WORD(FileData, MSDOSHeaderE.HeaderSize)
-            .MinimumParagraphs = GET_WORD(FileData, MSDOSHeaderE.MinimumParagraphs)
-            .MaximumParagraphs = GET_WORD(FileData, MSDOSHeaderE.MaximumParagraphs)
-            .StackSegment = GET_WORD(FileData, MSDOSHeaderE.StackSegment)
-            .StackPointer = GET_WORD(FileData, MSDOSHeaderE.StackPointer)
-            .Checksum = GET_WORD(FileData, MSDOSHeaderE.Checksum)
-            .InstructionPointer = GET_WORD(FileData, MSDOSHeaderE.InstructionPointer)
-            .CodeSegment = GET_WORD(FileData, MSDOSHeaderE.CodeSegment)
-            .RelocationTableOffset = GET_WORD(FileData, MSDOSHeaderE.RelocationTableOffset)
-            .OverlayNumber = GET_WORD(FileData, MSDOSHeaderE.OverlayNumber)
+            .Signature = BitConverter.ToUInt16(FileData.ToArray(), MSDOSHeaderE.Signature)
+            .ImageSizeModulo = BitConverter.ToUInt16(FileData.ToArray(), MSDOSHeaderE.ImageSizeModulo)
+            .ImageSize = BitConverter.ToUInt16(FileData.ToArray(), MSDOSHeaderE.ImageSize)
+            .RelocationCount = BitConverter.ToUInt16(FileData.ToArray(), MSDOSHeaderE.RelocationCount)
+            .HeaderSize = BitConverter.ToUInt16(FileData.ToArray(), MSDOSHeaderE.HeaderSize)
+            .MinimumParagraphs = BitConverter.ToUInt16(FileData.ToArray(), MSDOSHeaderE.MinimumParagraphs)
+            .MaximumParagraphs = BitConverter.ToUInt16(FileData.ToArray(), MSDOSHeaderE.MaximumParagraphs)
+            .StackSegment = BitConverter.ToUInt16(FileData.ToArray(), MSDOSHeaderE.StackSegment)
+            .StackPointer = BitConverter.ToUInt16(FileData.ToArray(), MSDOSHeaderE.StackPointer)
+            .Checksum = BitConverter.ToUInt16(FileData.ToArray(), MSDOSHeaderE.Checksum)
+            .InstructionPointer = BitConverter.ToUInt16(FileData.ToArray(), MSDOSHeaderE.InstructionPointer)
+            .CodeSegment = BitConverter.ToUInt16(FileData.ToArray(), MSDOSHeaderE.CodeSegment)
+            .RelocationTableOffset = BitConverter.ToUInt16(FileData.ToArray(), MSDOSHeaderE.RelocationTableOffset)
+            .OverlayNumber = BitConverter.ToUInt16(FileData.ToArray(), MSDOSHeaderE.OverlayNumber)
 
             EXEPackOffset = (.HeaderSize + .CodeSegment) * PARAGRAPH_SIZE
             PackedDataStart = .HeaderSize * PARAGRAPH_SIZE
          End With
 
          With EXEPack
-            .RealInstructionPointer = GET_WORD(FileData, EXEPackOffset + EXEPACKE.RealInstructionPointer)
-            .RealCodeSegment = GET_WORD(FileData, EXEPackOffset + EXEPACKE.RealCodeSegment)
-            .MemorySegment = GET_WORD(FileData, EXEPackOffset + EXEPACKE.MemorySegment)
-            .UnpackerSize = GET_WORD(FileData, EXEPackOffset + EXEPACKE.UnpackerSize)
-            .RealStackPointer = GET_WORD(FileData, EXEPackOffset + EXEPACKE.RealStackPointer)
-            .RealStackSegment = GET_WORD(FileData, EXEPackOffset + EXEPACKE.RealStackSegment)
-            .DestinationLength = GET_WORD(FileData, EXEPackOffset + EXEPACKE.DestinationLength)
-            .SkipLenth = GET_WORD(FileData, EXEPackOffset + EXEPACKE.SkipLength)
-            .Signature = GET_WORD(FileData, EXEPackOffset + EXEPACKE.Signature)
+            .RealInstructionPointer = BitConverter.ToUInt16(FileData.ToArray(), EXEPackOffset + EXEPACKE.RealInstructionPointer)
+            .RealCodeSegment = BitConverter.ToUInt16(FileData.ToArray(), EXEPackOffset + EXEPACKE.RealCodeSegment)
+            .MemorySegment = BitConverter.ToUInt16(FileData.ToArray(), EXEPackOffset + EXEPACKE.MemorySegment)
+            .UnpackerSize = BitConverter.ToUInt16(FileData.ToArray(), EXEPackOffset + EXEPACKE.UnpackerSize)
+            .RealStackPointer = BitConverter.ToUInt16(FileData.ToArray(), EXEPackOffset + EXEPACKE.RealStackPointer)
+            .RealStackSegment = BitConverter.ToUInt16(FileData.ToArray(), EXEPackOffset + EXEPACKE.RealStackSegment)
+            .DestinationLength = BitConverter.ToUInt16(FileData.ToArray(), EXEPackOffset + EXEPACKE.DestinationLength)
+            .SkipLength = BitConverter.ToUInt16(FileData.ToArray(), EXEPackOffset + EXEPACKE.SkipLength)
+            .Signature = BitConverter.ToUInt16(FileData.ToArray(), EXEPackOffset + EXEPACKE.Signature)
          End With
 
          ReversedData.AddRange(GetBytes(FileData, &H0%, PackedDataStart))
@@ -201,10 +201,10 @@ Public Module EXEPackModule
 
          Position = PACKED_FILE_ERROR.Length
          For PackedRelocationItem As Integer = &H0% To &HF%
-            Count = GET_WORD(PackedRelocationTable, Position)
+            Count = BitConverter.ToUInt16(PackedRelocationTable.ToArray(), Position)
             Position += &H2%
             For UnpackedRelocationItem As Integer = &H0% To Count - &H1%
-               Entry = GET_WORD(PackedRelocationTable, Position)
+               Entry = BitConverter.ToUInt16(PackedRelocationTable.ToArray(), Position)
                Position += &H2%
                UnpackedRelocationTable.AddRange(ToLittleEndian(Entry, &H2%))
                UnpackedRelocationTable.AddRange(ToLittleEndian(PackedRelocationItem << &HC%, &H2%))

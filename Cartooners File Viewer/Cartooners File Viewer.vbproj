@@ -27,6 +27,7 @@
     </DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>0</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -39,6 +40,7 @@
     </DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>0</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
     <OptionExplicit>On</OptionExplicit>
@@ -67,6 +69,7 @@
     <Compile Include="Actor.vb" />
     <Compile Include="Archive.vb" />
     <Compile Include="Data File.vb" />
+    <Compile Include="Exe Unpacker.vb" />
     <Compile Include="Executable.vb" />
     <Compile Include="GBR Palette.vb" />
     <Compile Include="Interface.vb">
@@ -80,6 +83,7 @@
     <Compile Include="LBM Image.vb" />
     <Compile Include="Compress LZW.vb" />
     <Compile Include="Decompress LZW.vb" />
+    <Compile Include="MS-DOS Exe.vb" />
     <Compile Include="RLE Compression.vb" />
     <Compile Include="Movie.vb" />
     <Compile Include="Music.vb" />
@@ -101,7 +105,6 @@
     <Compile Include="Preferences.vb" />
     <Compile Include="Printer.vb" />
     <Compile Include="Script.vb" />
-    <Compile Include="Exe Unpacker.vb" />
     <Compile Include="Soundcard.vb" />
   </ItemGroup>
   <ItemGroup>

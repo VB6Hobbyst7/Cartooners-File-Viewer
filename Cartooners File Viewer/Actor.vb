@@ -94,8 +94,8 @@ Public Class ActorClass
    Private Const TRANSPARENT_INDEX As Byte = &H0%                     'The index of the transparent color.
    Private Const UP_LEFT As Byte = &HFF%                              'Indicates up or left.
    Private Const WAY_SUFFIX As String = "N2816"                       'The way item's suffix.
-   Private ReadOnly GET_OFFSET As Func(Of List(Of Byte), LocationsE, Integer) = Function(Data As List(Of Byte), Position As LocationsE) LocationsE.BaseOffset + GET_DWORD(Data, Position)   'This procedure returns the relative offset at the specified position.
-   Private ReadOnly SIGNATURE As New List(Of Byte)({&H10%, &H46%, &H0%})                                                                                                                     'The actor file signature.
+   Private ReadOnly GET_OFFSET As Func(Of List(Of Byte), LocationsE, Integer) = Function(Data As List(Of Byte), Position As LocationsE) LocationsE.BaseOffset + BitConverter.ToInt32(Data.ToArray(), Position)  'This procedure returns the relative offset at the specified position.
+   Private ReadOnly SIGNATURE As New List(Of Byte)({&H10%, &H46%, &H0%})                                                                                                                                         'The actor file signature.
 
    'The menu items used by this class.
    Private WithEvents DisplayAnimationRecordListsMenu As New ToolStripMenuItem With {.ShortcutKeys = Keys.F1, .Text = "Display Animation Record &Lists"}
@@ -133,7 +133,7 @@ Public Class ActorClass
 
          If Refresh Then
             If LocationsE.ActionCount < DataFile().Data.Count AndAlso LocationsE.WayCount < DataFile().Data.Count Then
-               ReDim CurrentAnimationRecordLists(0 To 2, GET_WORD(DataFile().Data, LocationsE.ActionCount) - 1, GET_WORD(DataFile().Data, LocationsE.WayCount) - 1)
+               ReDim CurrentAnimationRecordLists(0 To 2, BitConverter.ToInt16(DataFile().Data.ToArray(), LocationsE.ActionCount) - 1, BitConverter.ToInt16(DataFile().Data.ToArray(), LocationsE.WayCount) - 1)
 
                With CurrentAnimationRecordLists
                   Position = GET_OFFSET(DataFile().Data, LocationsE.AnimationRecordListOffset)
@@ -164,7 +164,7 @@ Public Class ActorClass
 
          If Refresh Then
             CurrentAnimationRecords.Clear()
-            For Position As Integer = LocationsE.ImageRecords + GET_DWORD(DataFile().Data, LocationsE.ImageRecordsSize) To GET_OFFSET(DataFile().Data, LocationsE.AnimationRecordListOffset) - ANIMATION_RECORD_LENGTH Step ANIMATION_RECORD_LENGTH
+            For Position As Integer = LocationsE.ImageRecords + BitConverter.ToInt32(DataFile().Data.ToArray(), LocationsE.ImageRecordsSize) To GET_OFFSET(DataFile().Data, LocationsE.AnimationRecordListOffset) - ANIMATION_RECORD_LENGTH Step ANIMATION_RECORD_LENGTH
                CurrentAnimationRecords.Add(New AnimationRecordStr With {.YSpeed = UNSIGN_BYTE(DataFile().Data(Position)), .YDirection = DataFile().Data(Position + &H1%), .ImageRecord = DataFile().Data(Position + &H2%), .XSpeed = UNSIGN_BYTE(DataFile().Data(Position + &H4%)), .XDirection = DataFile().Data(Position + &H5%)})
             Next Position
          End If
@@ -299,7 +299,7 @@ Public Class ActorClass
             .Append(String.Format("Image data:{0}", NewLine))
             For Record As Integer = 0 To ImageRecords().Count - 1
                Offset = ImageRecords()(Record).DataOffset
-               Size = GET_WORD(DataFile().Data, Offset)
+               Size = BitConverter.ToInt16(DataFile().Data.ToArray(), Offset)
                .Append($"{NewLine}Image #{Record} - Size: {Size}{NewLine}")
                .Append(Escape(GetString(DataFile().Data, Offset + &H2%, &H2% + (Size - &H2%)), " "c, EscapeAll:=True).Trim())
                .Append(NewLine)
@@ -328,7 +328,7 @@ Public Class ActorClass
             With Record
                NewText.Append($"{RecordNumber,16}")
                NewText.Append($"{ .DataOffset,16}")
-               NewText.Append($"{GET_WORD(DataFile().Data, .DataOffset),16}")
+               NewText.Append($"{BitConverter.ToInt16(DataFile().Data.ToArray(), .DataOffset),16}")
                NewText.Append($"{ .BytesPerRow,16}")
                NewText.Append($"{ .Width,16}")
                NewText.Append($"{ .Height,16}{NewLine}")
@@ -345,9 +345,9 @@ Public Class ActorClass
    'This procedure displays the general information for the current actor.
    Private Sub DisplayInformationMenu_Click(sender As Object, e As EventArgs) Handles DisplayInformationMenu.Click
       Try
-         Dim ActionCount As Integer? = If(LocationsE.ActionCount < DataFile().Data.Count, GET_WORD(DataFile().Data, LocationsE.ActionCount), Nothing)
-         Dim ImageCount As Integer? = If(LocationsE.ImageCount < DataFile().Data.Count, GET_WORD(DataFile().Data, LocationsE.ImageCount), Nothing)
-         Dim WayCount As Integer? = If(LocationsE.WayCount < DataFile().Data.Count, GET_WORD(DataFile().Data, LocationsE.WayCount), Nothing)
+         Dim ActionCount As Integer? = If(LocationsE.ActionCount < DataFile().Data.Count, BitConverter.ToInt16(DataFile().Data.ToArray(), LocationsE.ActionCount), Nothing)
+         Dim ImageCount As Integer? = If(LocationsE.ImageCount < DataFile().Data.Count, BitConverter.ToInt16(DataFile().Data.ToArray(), LocationsE.ImageCount), Nothing)
+         Dim WayCount As Integer? = If(LocationsE.WayCount < DataFile().Data.Count, BitConverter.ToInt16(DataFile().Data.ToArray(), LocationsE.WayCount), Nothing)
 
          With New StringBuilder
             .Append($"General information:{NewLine}")
@@ -470,7 +470,7 @@ Public Class ActorClass
          For Record As Integer = 0 To ImageRecords().Count - 1
             With ImageRecords()(Record)
                ImageFiles.Add($"{RootName}{Record}.png")
-               Draw4BitImage(DecompressRLE(DataFile().Data, .DataOffset + &H2%, GET_WORD(DataFile().Data, .DataOffset)), .Width, .Height, Palette(), .BytesPerRow, TRANSPARENT_INDEX, TransparentColor()).Save(Path.Combine(ExportPath, ImageFiles(ImageFiles.Count - 1)), Imaging.ImageFormat.Png)
+               Draw4BitImage(DecompressRLE(DataFile().Data, .DataOffset + &H2%, BitConverter.ToInt16(DataFile().Data.ToArray(), .DataOffset)), .Width, .Height, Palette(), .BytesPerRow, TRANSPARENT_INDEX, TransparentColor()).Save(Path.Combine(ExportPath, ImageFiles(ImageFiles.Count - 1)), Imaging.ImageFormat.Png)
             End With
          Next Record
 
@@ -539,8 +539,8 @@ Public Class ActorClass
 
          If Refresh Then
             CurrentImageRecords.Clear()
-            For Position As Integer = LocationsE.ImageRecords To LocationsE.ImageRecords + (GET_DWORD(DataFile().Data, LocationsE.ImageRecordsSize) - IMAGE_RECORD_LENGTH) Step IMAGE_RECORD_LENGTH
-               CurrentImageRecords.Add(New ImageRecordStr With {.DataOffset = GET_DWORD(DataFile().Data, Position), .Width = GET_WORD(DataFile().Data, Position + &H8%), .Height = GET_WORD(DataFile().Data, Position + &H6%), .BytesPerRow = GET_WORD(DataFile().Data, Position + &H4%)})
+            For Position As Integer = LocationsE.ImageRecords To LocationsE.ImageRecords + (BitConverter.ToInt32(DataFile().Data.ToArray(), LocationsE.ImageRecordsSize) - IMAGE_RECORD_LENGTH) Step IMAGE_RECORD_LENGTH
+               CurrentImageRecords.Add(New ImageRecordStr With {.DataOffset = BitConverter.ToInt32(DataFile().Data.ToArray(), Position), .Width = BitConverter.ToInt16(DataFile().Data.ToArray(), Position + &H8%), .Height = BitConverter.ToInt16(DataFile().Data.ToArray(), Position + &H6%), .BytesPerRow = BitConverter.ToInt16(DataFile().Data.ToArray(), Position + &H4%)})
             Next Position
          End If
 

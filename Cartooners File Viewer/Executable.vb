@@ -203,7 +203,7 @@ Public Class ExecutableClass
                   If New FileInfo(ExecutablePath).Length = EXPECTED_PACKED_SIZE Then
                      .Data = UnpackExecutable(New List(Of Byte)(File.ReadAllBytes(ExecutablePath)))
                      If .Data.Count = EXPECTED_UNPACKED_SIZE Then
-                        If GET_WORD(.Data, MSDOSHeaderE.Signature) = MSDOS_EXECUTABLE_SIGNATURE Then
+                        If BitConverter.ToInt16(.Data.ToArray(), MSDOSHeaderE.Signature) = MSDOS_EXECUTABLE_SIGNATURE Then
                            .Path = ExecutablePath
                            Palettes(Refresh:=True)
 
@@ -265,31 +265,31 @@ Public Class ExecutableClass
       Try
 
          Dim NewText As New StringBuilder
-         Dim RelocationCount As Integer = GET_WORD(DataFile().Data, MSDOSHeaderE.RelocationCount)
-         Dim RelocationTableOffset As Integer = GET_WORD(DataFile().Data, MSDOSHeaderE.RelocationTableOffset)
+         Dim RelocationCount As Integer = BitConverter.ToInt16(DataFile().Data.ToArray(), MSDOSHeaderE.RelocationCount)
+         Dim RelocationTableOffset As Integer = BitConverter.ToInt16(DataFile().Data.ToArray(), MSDOSHeaderE.RelocationTableOffset)
 
          With DataFile()
             NewText.Append($"{ .Path}:{NewLine}{NewLine}")
             NewText.Append($"File size: {New FileInfo(.Path).Length} bytes.{ NewLine}")
             NewText.Append($"Signature: ""{GetString(.Data, MSDOSHeaderE.Signature, &H2%)}""{NewLine}")
-            NewText.Append($"Image size modulo (of 0x200): 0x{ GET_WORD(.Data, MSDOSHeaderE.ImageSizeModulo):X} bytes.{NewLine}")
-            NewText.Append($"Image size in pages (of 0x200 bytes): 0x{GET_WORD(.Data, MSDOSHeaderE.ImageSize):X}.{NewLine}")
-            NewText.Append($"Number of relocation items: 0x{GET_WORD(.Data, MSDOSHeaderE.RelocationCount):X}.{NewLine}")
-            NewText.Append($"Header sizes in paragraphs (of 0x10 bytes): 0x{GET_WORD(.Data, MSDOSHeaderE.HeaderSize):X}.{NewLine}")
-            NewText.Append($"Minimum number of paragraphs required (of 0x10 bytes): 0x{GET_WORD(.Data, MSDOSHeaderE.MinimumParagraphs):X}.{ NewLine}")
-            NewText.Append($"Maximum number of paragraphs required (of 0x10 bytes): 0x{GET_WORD(.Data, MSDOSHeaderE.MaximumParagraphs):X}.{NewLine}")
-            NewText.Append($"Stack segment (SS) register: 0x{GET_WORD(.Data, MSDOSHeaderE.StackSegment):X}.{NewLine}")
-            NewText.Append($"Stack pointer (SP) register: 0x{GET_WORD(.Data, MSDOSHeaderE.StackPointer):X}.{NewLine}")
-            NewText.Append($"Negative checksum of PGM: 0x{ GET_WORD(.Data, MSDOSHeaderE.Checksum):X}.{NewLine}")
-            NewText.Append($"Instruction pointer (IP) register: 0x{GET_WORD(.Data, MSDOSHeaderE.InstructionPointer):X}.{NewLine}")
-            NewText.Append($"Code segment (CS) register: 0x{GET_WORD(.Data, MSDOSHeaderE.CodeSegment):X}.{ NewLine}")
+            NewText.Append($"Image size modulo (of 0x200): 0x{ BitConverter.ToInt16(.Data.ToArray(), MSDOSHeaderE.ImageSizeModulo):X} bytes.{NewLine}")
+            NewText.Append($"Image size in pages (of 0x200 bytes): 0x{BitConverter.ToInt16(.Data.ToArray(), MSDOSHeaderE.ImageSize):X}.{NewLine}")
+            NewText.Append($"Number of relocation items: 0x{BitConverter.ToInt16(.Data.ToArray(), MSDOSHeaderE.RelocationCount):X}.{NewLine}")
+            NewText.Append($"Header sizes in paragraphs (of 0x10 bytes): 0x{BitConverter.ToInt16(.Data.ToArray(), MSDOSHeaderE.HeaderSize):X}.{NewLine}")
+            NewText.Append($"Minimum number of paragraphs required (of 0x10 bytes): 0x{BitConverter.ToInt16(.Data.ToArray(), MSDOSHeaderE.MinimumParagraphs):X}.{ NewLine}")
+            NewText.Append($"Maximum number of paragraphs required (of 0x10 bytes): 0x{BitConverter.ToInt16(.Data.ToArray(), MSDOSHeaderE.MaximumParagraphs):X}.{NewLine}")
+            NewText.Append($"Stack segment (SS) register: 0x{BitConverter.ToInt16(.Data.ToArray(), MSDOSHeaderE.StackSegment):X}.{NewLine}")
+            NewText.Append($"Stack pointer (SP) register: 0x{BitConverter.ToInt16(.Data.ToArray(), MSDOSHeaderE.StackPointer):X}.{NewLine}")
+            NewText.Append($"Negative checksum of PGM: 0x{ BitConverter.ToInt16(.Data.ToArray(), MSDOSHeaderE.Checksum):X}.{NewLine}")
+            NewText.Append($"Instruction pointer (IP) register: 0x{BitConverter.ToInt16(.Data.ToArray(), MSDOSHeaderE.InstructionPointer):X}.{NewLine}")
+            NewText.Append($"Code segment (CS) register: 0x{BitConverter.ToInt16(.Data.ToArray(), MSDOSHeaderE.CodeSegment):X}.{ NewLine}")
             NewText.Append($"Relocation table offset: 0x{RelocationTableOffset:X}.{NewLine}")
-            NewText.Append($"Overlay number: 0x{GET_WORD(.Data, MSDOSHeaderE.OverlayNumber):X}.{NewLine}")
+            NewText.Append($"Overlay number: 0x{BitConverter.ToInt16(.Data.ToArray(), MSDOSHeaderE.OverlayNumber):X}.{NewLine}")
             NewText.Append(NewLine)
             NewText.Append($"Relocation items:{NewLine}")
 
             For Position As Integer = RelocationTableOffset To RelocationTableOffset + (RelocationCount * &H4%) Step &H4%
-               NewText.Append($"{GET_DWORD(.Data, Position):X8}{NewLine}")
+               NewText.Append($"{BitConverter.ToInt32(.Data.ToArray, Position):X8}{NewLine}")
             Next Position
 
             UpdateDataBox(NewText.ToString())
@@ -332,8 +332,8 @@ Public Class ExecutableClass
          Draw4BitImage(DecompressRLE(DataFile().Data, ImageLocationsE.TitleScreen, IMAGE_SIZES(ImageLocationsE.TitleScreen)), SCREEN_WIDTH, SCREEN_HEIGHT, Palettes()(PalettesE.TitleScreenEGA), BYTES_PER_ROW).Save(Path.Combine(ExportPath, "Title screen.png"), ImageFormat.Png)
 
          For Each Location As Integer In CType([Enum].GetValues(GetType(IconLocationsE)), Integer())
-            IconHeight = GET_WORD(DataFile().Data, Location + &H2%)
-            IconWidth = GET_WORD(DataFile().Data, Location + &H4%)
+            IconHeight = BitConverter.ToInt16(DataFile().Data.ToArray(), Location + &H2%)
+            IconWidth = BitConverter.ToInt16(DataFile().Data.ToArray(), Location + &H4%)
             BytesPerRow = If(IconWidth Mod PIXELS_PER_BYTE = 0, IconWidth \ PIXELS_PER_BYTE, (IconWidth + &H1%) \ PIXELS_PER_BYTE)
             IconSize = BytesPerRow * IconHeight
             Draw4BitImage(GetBytes(DataFile().Data, Location + &H6%, IconSize), IconWidth, IconHeight, Palettes()(PalettesE.TitleScreenEGA), BytesPerRow).Save($"{Path.Combine(ExportPath, DirectCast(Location, IconLocationsE).ToString())}.png", ImageFormat.Png)

@@ -19,9 +19,9 @@ Extension:	Description:				Supported by (besides Cartooners):
 Note:
 The term "movie" is a bit misleading, these files are actually more like scripts describing what actors/music/scenes are used and how. Unless they only contain speech balloons/dialog boxes external files containing the items used by Cartooners movie will be required in order to play it.
 
-The purpose of Cartooners File Viewer is to give users the opportunity to view and/or manipulate the files mentioned earlier outside Cartooners. The features that likely will be the most useful are those that allow the user to export an actor so that it can modified using external software and then import the result to an *.act file so that it can be used by Cartooners. This way new actors can also be created. Another feature allows the user to convert images (these should be no larger than 320x200 pixels) to the *.lbm format.
+The purpose of Cartooners File Viewer is to give users the opportunity to view and/or manipulate the files mentioned earlier outside Cartooners. The features that likely will be the most useful are those that allow the user to export an actor so that it can be modified using external software and then import the result to an *.act file so that it can be used by Cartooners. This way new actors can also be created. Another feature allows the user to convert images (these should be no larger than 320x200 pixels) to the *.lbm format.
 
 More detailed information can be found under "File Formats" in the "Program" menu.
 
 [This project in general]
-The author and updates of this program can be found at http://www.vbforums.com
+The author of and updates for this program can be found at http://www.vbforums.com and http://github.com/peterswinkels

@@ -119,6 +119,7 @@ Public Module RLECompressionModule
                   Position += &H1%
                Case Else
                   MessageBox.Show($"Invalid instruction found at byte #{Position:X} while decompressing data.{NewLine}", My.Application.Info.Title, MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+                  Exit Do
             End Select
          Loop
 
