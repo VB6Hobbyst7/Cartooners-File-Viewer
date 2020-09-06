@@ -79,8 +79,8 @@ Namespace My.Resources
         '''
         '''[File Layout]
         '''Begin Structure: Header.
-        '''	0x00	BYTE		Null??? ***
-        '''	0x01	0x03 BYTES	Is used to check if the file is valid??? [rest of string was truncated]&quot;;.
+        '''	0x00	BYTE		Null. ***
+        '''	0x01	0x03 BYTES	Is used to check if the file is valid. *** [rest of string was truncated]&quot;;.
         '''</summary>
         Friend ReadOnly Property Cartooners_File_Formats() As String
             Get
@@ -92,13 +92,37 @@ Namespace My.Resources
         '''  Looks up a localized string similar to Cartooners File Viewer - Help
         '''
         '''[About Cartooners]
-        '''Note: this is not meant to be a complete description!
+        '''Note: this is not meant to be a complete description. See the manual that comes with this program if you want to know more.
         '''
-        '''Cartooners is a basic animation software package originally developed for the Apple IIGS by ITDA and published by Electronic Arts in 1987 primarily aimed at children. It has also been ported to run under MS-DOS among others. With Cartooners the user make a simple animated movie by placing static or animated actors over optional background images. Speech balloons, dialog boxes, music and sound effect [rest of string was truncated]&quot;;.
+        '''Cartooners is a basic animation software package originally developed for the Apple IIGS by ITDA and published by Electronic Arts in 1987 primarily aimed at children. It has also been ported to run under MS-DOS among others. With Cartooners the user can make a simple animated movie by placing static or animated actors over optiona [rest of string was truncated]&quot;;.
         '''</summary>
         Friend ReadOnly Property Cartooners_File_Viewer_Help() As String
             Get
                 Return ResourceManager.GetString("Cartooners_File_Viewer_Help", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to About text.;208116;226
+        '''A new actor.;215471;12
+        '''Button edge style information.;205686;38
+        '''C_FILE_INFO.;222823;11
+        '''Clear/erase text.;205466;45
+        '''Day and month abbreviations.;225300;58
+        '''Default speech balloon information.;156277;1079
+        '''Dialog text.;211620;790
+        '''Drive letters.;205724;84
+        '''Exclamation speech balloon information.;158825;2049
+        '''80286+ executable code.;0;156224
+        '''Executable extensions.;225116;15
+        '''File system related characters.;206799;23
+        '''File extensions.;204291;29
+        '''Invalid actor message.;215322;53
+        '''Key [rest of string was truncated]&quot;;.
+        '''</summary>
+        Friend ReadOnly Property Data_Cartooners_Chunks() As String
+            Get
+                Return ResourceManager.GetString("Data_Cartooners_Chunks", resourceCulture)
             End Get
         End Property
     End Module

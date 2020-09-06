@@ -33,7 +33,7 @@ Public Module EXEUnpackerModule
       Public RealStackPointer As Integer          'Defines the executable's real initial stack pointer.
       Public RealStackSegment As Integer          'Defines the executable's real initial stack segment.
       Public DestinationLength As Integer         'Defines the unpacker code's destination in paragraphs relative to the start of the executable in memory.
-      Public SkipLength As Integer                 'Defines the zero based number of paragraphs between the packed executable and the unpacker's variables.
+      Public SkipLength As Integer                'Defines the zero based number of paragraphs between the packed executable and the unpacker's variables.
       Public Signature As Integer                 'Defines the unpacker's signature.
    End Structure
 
@@ -50,20 +50,20 @@ Public Module EXEUnpackerModule
          Dim ExecutableSize As Integer = EndOfRelocationTable + PaddingSize + UnpackedData.Count
 
          With Executable
-            .AddRange(ToLittleEndian(MSDOS_EXECUTABLE_SIGNATURE, &H2%))
-            .AddRange(ToLittleEndian(ExecutableSize Mod PAGE_SIZE, &H2%))
-            .AddRange(ToLittleEndian(CInt(ExecutableSize / PAGE_SIZE), &H2%))
-            .AddRange(ToLittleEndian(CInt(RelocationTable.Count / &H4%), &H2%))
-            .AddRange(ToLittleEndian(HeaderSize, &H2%))
-            .AddRange(ToLittleEndian(MSDOSHeader.MinimumParagraphs, &H2%))
-            .AddRange(ToLittleEndian(MSDOSHeader.MaximumParagraphs, &H2%))
-            .AddRange(ToLittleEndian(EXEPackHeader.RealStackSegment, &H2%))
-            .AddRange(ToLittleEndian(EXEPackHeader.RealStackPointer, &H2%))
-            .AddRange(ToLittleEndian(MSDOSHeader.Checksum, &H2%))
-            .AddRange(ToLittleEndian(EXEPackHeader.RealInstructionPointer, &H2%))
-            .AddRange(ToLittleEndian(EXEPackHeader.RealCodeSegment, &H2%))
-            .AddRange(ToLittleEndian(MSDOS_HEADER_SIZE, &H2%))
-            .AddRange(ToLittleEndian(MSDOSHeader.OverlayNumber, &H2%))
+            .AddRange(BitConverter.GetBytes(ToUInt16(MSDOS_EXECUTABLE_SIGNATURE)))
+            .AddRange(BitConverter.GetBytes(ToUInt16(ExecutableSize Mod PAGE_SIZE)))
+            .AddRange(BitConverter.GetBytes(ToUInt16(CInt(ExecutableSize / PAGE_SIZE))))
+            .AddRange(BitConverter.GetBytes(ToUInt16(CInt(RelocationTable.Count / &H4%))))
+            .AddRange(BitConverter.GetBytes(ToUInt16(HeaderSize)))
+            .AddRange(BitConverter.GetBytes(ToUInt16(MSDOSHeader.MinimumParagraphs)))
+            .AddRange(BitConverter.GetBytes(ToUInt16(MSDOSHeader.MaximumParagraphs)))
+            .AddRange(BitConverter.GetBytes(ToUInt16(EXEPackHeader.RealStackSegment)))
+            .AddRange(BitConverter.GetBytes(ToUInt16(EXEPackHeader.RealStackPointer)))
+            .AddRange(BitConverter.GetBytes(ToUInt16(MSDOSHeader.Checksum)))
+            .AddRange(BitConverter.GetBytes(ToUInt16(EXEPackHeader.RealInstructionPointer)))
+            .AddRange(BitConverter.GetBytes(ToUInt16(EXEPackHeader.RealCodeSegment)))
+            .AddRange(BitConverter.GetBytes(ToUInt16(MSDOS_HEADER_SIZE)))
+            .AddRange(BitConverter.GetBytes(ToUInt16(MSDOSHeader.OverlayNumber)))
             .AddRange(RelocationTable)
             .AddRange(TEXT_TO_BYTES(New String(PADDING, PaddingSize)))
             .AddRange(UnpackedData)
@@ -206,8 +206,8 @@ Public Module EXEUnpackerModule
             For UnpackedRelocationItem As Integer = &H0% To Count - &H1%
                Entry = BitConverter.ToUInt16(PackedRelocationTable.ToArray(), Position)
                Position += &H2%
-               UnpackedRelocationTable.AddRange(ToLittleEndian(Entry, &H2%))
-               UnpackedRelocationTable.AddRange(ToLittleEndian(PackedRelocationItem << &HC%, &H2%))
+               UnpackedRelocationTable.AddRange(BitConverter.GetBytes(ToUInt16((Entry))))
+               UnpackedRelocationTable.AddRange(BitConverter.GetBytes(ToUInt16((PackedRelocationItem << &HC%))))
             Next UnpackedRelocationItem
          Next PackedRelocationItem
 

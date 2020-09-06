@@ -1,0 +1,39 @@
+Description:;Binary:;Offset:;Size:
+About text.;FALSE;208116;226
+A new actor.;FALSE;215471;12
+Button edge style information.;TRUE;205686;38
+C_FILE_INFO.;FALSE;222823;11
+Clear/erase text.;FALSE;205466;45
+Day and month abbreviations.;FALSE;225300;58
+Default speech balloon information.;TRUE;156277;1079
+Dialog text.;FALSE;211620;790
+Drive letters.;FALSE;205724;84
+Exclamation speech balloon information.;TRUE;158825;2049
+80286+ executable code.;TRUE;0;156224
+Executable extensions.;FALSE;225116;15
+File system related characters.;FALSE;206799;23
+File extensions.;FALSE;204291;29
+Invalid actor message.;FALSE;215322;53
+Keyboard layout.;FALSE;215204;117
+Load/save text.;FALSE;204198;62
+First messages.;FALSE;204403;283
+Second messages.;FALSE;208972;704
+Third messages. ;FALSE;206984;607
+Menus.;FALSE;204686;706
+Microsoft Run-time Library text.;FALSE;200728;363
+First printing text.;FALSE;213464;10
+Second printing text.;FALSE;213481;34
+Run-time error messages.;FALSE;225398;210
+Speech balloon layouts.;FALSE;203868;54
+Speech balloon slots/way menu items.;FALSE;168198;2316
+Speech balloon types.;FALSE;203668;198
+First general text fragment.;FALSE;203922;122
+Second general text fragment.;FALSE;205524;30
+Third general text fragment.;FALSE;206930;54
+Fourth general text fragment.;FALSE;207804;56
+Fifth general text fragment.;FALSE;207664;222
+Sixth general text fragment.;FALSE;215418;66
+The time zones.;FALSE;225274;11
+Thought balloon speech information.;TRUE;157356;11
+Unknown speech balloon data.;TRUE;156272;5
+The way menu items.;FALSE;216057;259

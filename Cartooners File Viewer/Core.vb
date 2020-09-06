@@ -330,24 +330,6 @@ Public Module CoreModule
       Return Nothing
    End Function
 
-   'This procedure converts the specified number to a byte array containing a big endian number to a little endian number.
-   Public Function ToLittleEndian(Number As Integer, Length As Integer) As List(Of Byte)
-      Try
-         Dim Hexadecimals As String = $"{Number:X}".PadLeft(Length * &H2%, "0"c)
-         Dim LittleEndian As New List(Of Byte)
-
-         For ByteO As Integer = Hexadecimals.Length - &H2% To &H0% Step -&H2%
-            LittleEndian.Add(ToByte(Hexadecimals.Substring(ByteO, &H2%), fromBase:=16))
-         Next ByteO
-
-         Return LittleEndian
-      Catch ExceptionO As Exception
-         HandleError(ExceptionO)
-      End Try
-
-      Return Nothing
-   End Function
-
    'This procedure updates the interface window's databox. 
    Public Sub UpdateDataBox(Optional NewText As String = Nothing, Optional NewDataBox As TextBox = Nothing)
       Try

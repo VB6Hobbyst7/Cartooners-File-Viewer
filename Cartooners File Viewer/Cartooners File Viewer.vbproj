@@ -70,7 +70,7 @@
     <Compile Include="Archive.vb" />
     <Compile Include="Data File.vb" />
     <Compile Include="Exe Unpacker.vb" />
-    <Compile Include="Executable.vb" />
+    <Compile Include="Cartooners.vb" />
     <Compile Include="GBR Palette.vb" />
     <Compile Include="Interface.vb">
       <SubType>Form</SubType>
@@ -133,6 +133,7 @@
   <ItemGroup>
     <None Include="Documents\Cartooners File Formats.txt" />
     <None Include="Documents\Cartooners File Viewer Help.txt" />
+    <None Include="Documents\Data Cartooners Chunks.txt" />
     <Content Include="Icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />

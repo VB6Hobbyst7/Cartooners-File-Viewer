@@ -650,7 +650,7 @@ Public Class ActorClass
 
                         With ImportedImage
                            .Data = New List(Of Byte)
-                           .Data.AddRange(ToLittleEndian(Compressed.Count, Length:=&H2%))
+                           .Data.AddRange(BitConverter.GetBytes(ToUInt16(Compressed.Count)))
                            .Data.AddRange(Compressed)
                            .Height = ImageO.Height
                            .Width = ImageO.Width
@@ -708,26 +708,26 @@ Public Class ActorClass
             .Add(&H0%)
             .AddRange(SIGNATURE)
             .AddRange(GBRPalette)
-            .AddRange(ToLittleEndian(ImportedImages.Count, Length:=&H4%))
+            .AddRange(BitConverter.GetBytes(ImportedImages.Count))
             .AddRange({&H0%, &H0%})
-            .AddRange(ToLittleEndian(ImageRecordsSize, Length:=&H4%))
-            .AddRange(ToLittleEndian(AnimationRecordListOffset, Length:=&H4%))
-            .AddRange(ToLittleEndian(AnimationCount1Offset, Length:=&H4%))
-            .AddRange(ToLittleEndian(AnimationCount2Offset, Length:=&H4%))
-            .AddRange(ToLittleEndian(ActorNameOffset, Length:=&H4%))
-            .AddRange(ToLittleEndian(Actions.Count, Length:=&H2%))
-            .AddRange(ToLittleEndian(ActionMenuOffset, Length:=&H4%))
-            .AddRange(ToLittleEndian(Ways.Count, Length:=&H2%))
-            .AddRange(ToLittleEndian(WayMenuOffset, Length:=&H4%))
-            .AddRange(ToLittleEndian(EndOfMenuOffset, Length:=&H4%))
+            .AddRange(BitConverter.GetBytes(ImageRecordsSize))
+            .AddRange(BitConverter.GetBytes(AnimationRecordListOffset))
+            .AddRange(BitConverter.GetBytes(AnimationCount1Offset))
+            .AddRange(BitConverter.GetBytes(AnimationCount2Offset))
+            .AddRange(BitConverter.GetBytes(ActorNameOffset))
+            .AddRange(BitConverter.GetBytes(ToUInt16(Actions.Count)))
+            .AddRange(BitConverter.GetBytes(ActionMenuOffset))
+            .AddRange(BitConverter.GetBytes(ToUInt16(Ways.Count)))
+            .AddRange(BitConverter.GetBytes(WayMenuOffset))
+            .AddRange(BitConverter.GetBytes(EndOfMenuOffset))
             .AddRange({&H0%, &H0%})
 
             ImageOffset = LocationsE.BaseOffset + EndOfMenuOffset + &H1%
             For Each ImportedImage In ImportedImages
-               .AddRange(ToLittleEndian(ImageOffset, Length:=&H4%))
-               .AddRange(ToLittleEndian(ImportedImage.BytesPerRow, Length:=&H2%))
-               .AddRange(ToLittleEndian(ImportedImage.Height, Length:=&H2%))
-               .AddRange(ToLittleEndian(ImportedImage.Width, Length:=&H2%))
+               .AddRange(BitConverter.GetBytes(ImageOffset))
+               .AddRange(BitConverter.GetBytes(ToUInt16(ImportedImage.BytesPerRow)))
+               .AddRange(BitConverter.GetBytes(ToUInt16(ImportedImage.Height)))
+               .AddRange(BitConverter.GetBytes(ToUInt16(ImportedImage.Width)))
                .AddRange({&H0%, &H0%, &H0%, &H0%})
                ImageOffset += ImportedImage.Data.Count
             Next ImportedImage

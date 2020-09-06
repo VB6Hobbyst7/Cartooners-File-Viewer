@@ -6,7 +6,8 @@ Option Strict On
 
 Imports System
 Imports System.Collections.Generic
-Imports System.Windows.Forms
+Imports System.Environment
+Imports System.Text
 
 'This module contains this program's core procedures.
 Public Module MSDOSEXEModule
@@ -49,14 +50,16 @@ Public Module MSDOSEXEModule
    Public Const MSDOS_EXECUTABLE_SIGNATURE As Integer = &H5A4D%   'Contains the MS-DOS executable signature "MZ".
    Public Const MSDOS_HEADER_SIZE As Integer = &H1C%              'Contains the MS-DOS exectuable header's size.
 
-   'This procedure calculates the specified MS-DOS executable's header size including relocation items.
-   ''--->>> THIS PROCEDURE HAS NOT YET BEEN IMPLEMENTED!
-   Private Function GetEXEHeaderSize(Data As List(Of Byte)) As Integer
+   'This procedure manages a MS-DOS executable's header size with the size of the relocation table added.
+   Public Function EXEHeaderSize(Optional NewData As List(Of Byte) = Nothing) As Integer
       Try
-         Dim RelocationCount As Integer = BitConverter.ToInt16(Data.ToArray(), MSDOSHeaderE.RelocationCount)
-         Dim RelocationTable As Integer = BitConverter.ToInt16(Data.ToArray(), MSDOSHeaderE.RelocationTableOffset)
+         Static CurrentExeHeaderSize As New Integer
 
-         Return RelocationTable + (RelocationCount * &H4%)
+         If NewData IsNot Nothing Then
+            CurrentExeHeaderSize = BitConverter.ToInt16(NewData.ToArray(), MSDOSHeaderE.RelocationTableOffset) + (BitConverter.ToInt16(NewData.ToArray(), MSDOSHeaderE.RelocationCount) * &H4%)
+         End If
+
+         Return CurrentExeHeaderSize
       Catch ExceptionO As Exception
          HandleError(ExceptionO)
       End Try
@@ -64,4 +67,42 @@ Public Module MSDOSEXEModule
       Return Nothing
    End Function
 
+
+   'This procedure returns the specified executable's header and relocation table information as text.
+   Public Function GetEXEHeaderInformation(Data As List(Of Byte)) As String
+      Dim NewText As New StringBuilder
+      Dim RelocationCount As Integer = BitConverter.ToInt16(Data.ToArray(), MSDOSHeaderE.RelocationCount)
+      Dim RelocationTableOffset As Integer = BitConverter.ToInt16(Data.ToArray(), MSDOSHeaderE.RelocationTableOffset)
+
+      With Data
+         Try
+            NewText.Append($"Signature: ""{GetString(Data, MSDOSHeaderE.Signature, &H2%)}""{NewLine}")
+            NewText.Append($"Image size modulo (of 0x200): 0x{ BitConverter.ToInt16(Data.ToArray(), MSDOSHeaderE.ImageSizeModulo):X} bytes.{NewLine}")
+            NewText.Append($"Image size in pages (of 0x200 bytes): 0x{BitConverter.ToInt16(Data.ToArray(), MSDOSHeaderE.ImageSize):X}.{NewLine}")
+            NewText.Append($"Number of relocation items: 0x{BitConverter.ToInt16(Data.ToArray(), MSDOSHeaderE.RelocationCount):X}.{NewLine}")
+            NewText.Append($"Header sizes in paragraphs (of 0x10 bytes): 0x{BitConverter.ToInt16(Data.ToArray(), MSDOSHeaderE.HeaderSize):X}.{NewLine}")
+            NewText.Append($"Minimum number of paragraphs required (of 0x10 bytes): 0x{BitConverter.ToInt16(Data.ToArray(), MSDOSHeaderE.MinimumParagraphs):X}.{ NewLine}")
+            NewText.Append($"Maximum number of paragraphs required (of 0x10 bytes): 0x{BitConverter.ToInt16(Data.ToArray(), MSDOSHeaderE.MaximumParagraphs):X}.{NewLine}")
+            NewText.Append($"Stack segment (SS) register: 0x{BitConverter.ToInt16(Data.ToArray(), MSDOSHeaderE.StackSegment):X}.{NewLine}")
+            NewText.Append($"Stack pointer (SP) register: 0x{BitConverter.ToInt16(Data.ToArray(), MSDOSHeaderE.StackPointer):X}.{NewLine}")
+            NewText.Append($"Negative checksum of PGM: 0x{ BitConverter.ToInt16(Data.ToArray(), MSDOSHeaderE.Checksum):X}.{NewLine}")
+            NewText.Append($"Instruction pointer (IP) register: 0x{BitConverter.ToInt16(Data.ToArray(), MSDOSHeaderE.InstructionPointer):X}.{NewLine}")
+            NewText.Append($"Code segment (CS) register: 0x{BitConverter.ToInt16(Data.ToArray(), MSDOSHeaderE.CodeSegment):X}.{ NewLine}")
+            NewText.Append($"Relocation table offset: 0x{RelocationTableOffset:X}.{NewLine}")
+            NewText.Append($"Overlay number: 0x{BitConverter.ToInt16(Data.ToArray(), MSDOSHeaderE.OverlayNumber):X}.{NewLine}")
+            NewText.Append(NewLine)
+            NewText.Append($"Relocation items:{NewLine}")
+
+            For Position As Integer = RelocationTableOffset To RelocationTableOffset + (RelocationCount * &H4%) Step &H4%
+               NewText.Append($"{BitConverter.ToInt32(Data.ToArray, Position):X8}{NewLine}")
+            Next Position
+
+            Return NewText.ToString()
+         Catch ExceptionO As Exception
+            HandleError(ExceptionO)
+         End Try
+
+         Return Nothing
+      End With
+   End Function
 End Module

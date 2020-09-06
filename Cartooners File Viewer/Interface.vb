@@ -94,10 +94,10 @@ Public Class InterfaceWindow
                         PathO = .SelectedPath
                         DirectCast(DataFile(), ArchiveClass).Export(PathO)
                      End If
-                  ElseIf TypeOf DataFile() Is ExecutableClass Then
+                  ElseIf TypeOf DataFile() Is CartoonersClass Then
                      If .ShowDialog = DialogResult.OK Then
                         PathO = .SelectedPath
-                        DirectCast(DataFile(), ExecutableClass).Export(PathO)
+                        DirectCast(DataFile(), CartoonersClass).Export(PathO)
                      End If
                   ElseIf TypeOf DataFile() Is LBMImageClass Then
                      If .ShowDialog = DialogResult.OK Then
@@ -218,7 +218,7 @@ Public Class InterfaceWindow
                Case ".act"
                   CurrentDataFile = New ActorClass(NewPath, DataFileMenu)
                Case ".exe"
-                  CurrentDataFile = New ExecutableClass(NewPath, DataFileMenu)
+                  CurrentDataFile = New CartoonersClass(NewPath, DataFileMenu)
                Case ".iea"
                   CurrentDataFile = New ScriptClass(NewPath, DataFileMenu)
                Case ".inf"
