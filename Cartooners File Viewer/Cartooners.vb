@@ -36,14 +36,14 @@ Public Class CartoonersClass
 
    'This enumeration contains the locations of all icons used by Cartooners.
    Private Enum IconLocationsE As Integer
-      CheckedCircle = &H312EC    'The checked circle icon.
+      CheckedCircle = &H312EC%   'The checked circle icon.
       Circle = &H312A4%          'The circle icon.
       CrossArrows = &H31750%     'The cross arrows icon.
       Eraser = &H315A0%          'The eraser icon.
       FilledCircle = &H31334%    'The filled circle icon.
       LeftArrow = &H31438%       'The left arrow icon.
       LoopArrow = &H316C0%       'The loop arrow icon.
-      RightArrow = &H314EC       'The right arrow icon.
+      RightArrow = &H314EC%      'The right arrow icon.
       SpeechBalloon = &H31630%   'The speech balloon icon.
    End Enum
 
@@ -211,6 +211,11 @@ Public Class CartoonersClass
             End If
          Next Index
 
+         If Offset + Length > DataFile().Data.Count Then
+            MessageBox.Show($"Attempting to read {(Offset + Length) - DataFile().Data.Count} byte(s) beyond of the end of the available data at position {Offset}.", My.Application.Info.Title, MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Length = DataFile().Data.Count - Offset
+         End If
+
          NewText.Append($"[{Description}]{NewLine}")
          If IsBinary Then
             NewText.Append($"{Escape(GetBytes(DataFile().Data, Offset, Length), " "c, EscapeAll:=True).Trim()}")
@@ -247,7 +252,7 @@ Public Class CartoonersClass
          Dim Descriptions As New List(Of String)
 
          For Each Location As Integer In CType([Enum].GetValues(GetType(PaletteLocationsE)), Integer())
-            Descriptions.Add(DirectCast(Location + EXEHeaderSize(), PaletteLocationsE).ToString())
+            Descriptions.Add(DirectCast(Location, PaletteLocationsE).ToString())
          Next Location
 
          UpdateDataBox(GBRToText("Cartooners' palettes:", Palettes(), Descriptions))

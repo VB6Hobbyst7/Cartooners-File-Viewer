@@ -23,7 +23,7 @@ Menus.;FALSE;204686;706
 Microsoft Run-time Library text.;FALSE;200728;363
 First printing text.;FALSE;213464;10
 Second printing text.;FALSE;213481;34
-Run-time error messages.;FALSE;225398;210
+Run-time error messages.;FALSE;225392;224
 Speech balloon layouts.;FALSE;203868;54
 Speech balloon slots/way menu items.;FALSE;168198;2316
 Speech balloon types.;FALSE;203668;198
