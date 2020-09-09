@@ -61,6 +61,29 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Looks up a localized string similar to Description:	Type:	Offset:	Size:
+        '''80286+ executable code.	binary	0	156224
+        '''A new actor.	text	215471	12
+        '''About text.	text	208116	226
+        '''Button edge style information.	binary	205686	38
+        '''C_FILE_INFO.	text	222823	11
+        '''Checked circle icon.	icon	201452	69
+        '''Circle icon.	icon	201380	69
+        '''Clear/erase text.	text	205466	45
+        '''Cross arrows icon.	icon	202576	51
+        '''Day and month abbreviations.	text	225300	58
+        '''Default speech balloon information.	binary	156277	1079
+        '''Dialog text.	text	211620	790
+        '''Drive letters.	text	205724	84
+        '''Eras [rest of string was truncated]&quot;;.
+        '''</summary>
+        Friend ReadOnly Property Cartooners_Executable() As String
+            Get
+                Return ResourceManager.GetString("Cartooners_Executable", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Looks up a localized string similar to Cartooners&apos; File Formats, by: Peter Swinkels ***2015***
         '''
         '''[General Program Information]
@@ -99,30 +122,6 @@ Namespace My.Resources
         Friend ReadOnly Property Cartooners_File_Viewer_Help() As String
             Get
                 Return ResourceManager.GetString("Cartooners_File_Viewer_Help", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Looks up a localized string similar to About text.;208116;226
-        '''A new actor.;215471;12
-        '''Button edge style information.;205686;38
-        '''C_FILE_INFO.;222823;11
-        '''Clear/erase text.;205466;45
-        '''Day and month abbreviations.;225300;58
-        '''Default speech balloon information.;156277;1079
-        '''Dialog text.;211620;790
-        '''Drive letters.;205724;84
-        '''Exclamation speech balloon information.;158825;2049
-        '''80286+ executable code.;0;156224
-        '''Executable extensions.;225116;15
-        '''File system related characters.;206799;23
-        '''File extensions.;204291;29
-        '''Invalid actor message.;215322;53
-        '''Key [rest of string was truncated]&quot;;.
-        '''</summary>
-        Friend ReadOnly Property Data_Cartooners_Chunks() As String
-            Get
-                Return ResourceManager.GetString("Data_Cartooners_Chunks", resourceCulture)
             End Get
         End Property
     End Module

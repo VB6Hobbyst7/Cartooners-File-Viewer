@@ -133,7 +133,7 @@
   <ItemGroup>
     <None Include="Documents\Cartooners File Formats.txt" />
     <None Include="Documents\Cartooners File Viewer Help.txt" />
-    <None Include="Documents\Data Cartooners Chunks.txt" />
+    <None Include="Documents\Cartooners Executable.txt" />
     <Content Include="Icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />

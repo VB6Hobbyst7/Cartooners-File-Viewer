@@ -1,0 +1,58 @@
+Description:	Type:	Offset:	Related:	Size:
+80286+ executable code.	binary	0	0	156224
+A new actor.	text	215471	0	12
+About text.	text	208116	0	226
+Button edge style information.	binary	205686	0	38
+C_FILE_INFO.	text	222823	0	11
+Checked circle icon.	icon	201452	204368	69
+Circle icon.	icon	201380	204368	69
+Clear/erase text.	text	205466	0	45
+Cross arrows icon.	icon	202576	204368	51
+Day and month abbreviations.	text	225300	0	58
+Default speech balloon information.	binary	156277	0	1079
+Dialog text.	text	211620	0	790
+Drive letters.	text	205724	0	84
+Eraser icon.	icon	202144	204368	141
+Exclamation speech balloon information.	binary	158825	0	2049
+Executable extensions.	text	225116	0	15
+Fifth general text fragment.	text	207664	0	222
+File extensions.	text	204291	0	29
+File system related characters.	text	206799	0	23
+Filled circle icon.	icon	201524	204368	69
+First general text fragment.	text	203922	0	122
+First messages.	text	204403	0	283
+First printing text.	text	213464	0	10
+Fourth general text fragment.	text	207804	0	56
+GUI CGA/EGA palette.	palette	204368	0	32
+Invalid actor message.	text	215322	0	53
+Keyboard layout.	text	215204	0	117
+Left arrow icon.	icon	201784	204368	178
+Load/save text.	text	204198	0	62
+Loop arrow icon.	icon	202432	204368	141
+Menu screen CGA palette.	palette	170528	0	32
+Menu screen EGA palette.	palette	170560	0	32
+Menu screen.	image	170592	170560	9772
+Menus.	text	204686	0	706
+Microsoft Run-time Library text.	text	200728	0	363
+Right arrow icon.	icon	201964	204368	177
+Run-time error messages.	text	225392	0	224
+Second general text fragment.	text	205524	0	30
+Second messages.	text	208972	0	704
+Second printing text.	text	213481	0	34
+Sixth general text fragment.	text	215418	0	66
+Speech balloon icon.	icon	202288	204368	141
+Speech balloon layouts.	text	203868	0	54
+Speech balloon slots/way menu items.	text	168198	0	2316
+Speech balloon types.	text	203668	0	198
+Third general text fragment.	text	206930	0	54
+Third messages. 	text	206984	0	607
+Thought balloon speech information.	binary	157356	0	11
+Ticket screen CGA palette.	palette	193856	0	32
+Ticket screen EGA palette.	palette	193824	0	32
+Ticket screen.	image	193888	193824	6812
+Time zones.	text	225274	0	11
+Title screen CGA palette.	palette	183104	0	32
+Title screen EGA palette.	palette	183136	0	32
+Title Screen.	image	183170	183136	10645
+Unknown speech balloon data.	binary	156272	0	5
+Way menu items.	text	216057	0	259

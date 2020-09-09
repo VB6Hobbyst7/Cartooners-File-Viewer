@@ -56,11 +56,11 @@ Public Module GBRPaletteModule
    End Function
 
    'This procedure converts the specified palettes' data to hexadecimal output with descriptions.
-   Public Function GBRToText(Header As String, Palettes As List(Of List(Of Color)), Optional Descriptions As List(Of String) = Nothing) As String
+   Public Function GBRToText(Optional Header As String = Nothing, Optional Palettes As List(Of List(Of Color)) = Nothing, Optional Descriptions As List(Of String) = Nothing) As String
       Try
          Dim GBRText As New StringBuilder
 
-         GBRText.Append($"{Header}{NewLine}{NewLine}")
+         If Header IsNot Nothing Then GBRText.Append($"{Header}{NewLine}{NewLine}")
          For Palette As Integer = 0 To Palettes.Count - 1
             If Descriptions IsNot Nothing Then GBRText.Append($"Palette - {Descriptions(Palette)}:{NewLine}")
             GBRText.Append($"I: R: G: B:{NewLine}")

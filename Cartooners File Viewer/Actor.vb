@@ -133,7 +133,7 @@ Public Class ActorClass
 
          If Refresh Then
             If LocationsE.ActionCount < DataFile().Data.Count AndAlso LocationsE.WayCount < DataFile().Data.Count Then
-               ReDim CurrentAnimationRecordLists(0 To 2, BitConverter.ToInt16(DataFile().Data.ToArray(), LocationsE.ActionCount) - 1, BitConverter.ToInt16(DataFile().Data.ToArray(), LocationsE.WayCount) - 1)
+               ReDim CurrentAnimationRecordLists(0 To 2, BitConverter.ToUint16(DataFile().Data.ToArray(), LocationsE.ActionCount) - 1, BitConverter.ToUint16(DataFile().Data.ToArray(), LocationsE.WayCount) - 1)
 
                With CurrentAnimationRecordLists
                   Position = GET_OFFSET(DataFile().Data, LocationsE.AnimationRecordListOffset)
@@ -299,7 +299,7 @@ Public Class ActorClass
             .Append(String.Format("Image data:{0}", NewLine))
             For Record As Integer = 0 To ImageRecords().Count - 1
                Offset = ImageRecords()(Record).DataOffset
-               Size = BitConverter.ToInt16(DataFile().Data.ToArray(), Offset)
+               Size = BitConverter.ToUint16(DataFile().Data.ToArray(), Offset)
                .Append($"{NewLine}Image #{Record} - Size: {Size}{NewLine}")
                .Append(Escape(GetString(DataFile().Data, Offset + &H2%, &H2% + (Size - &H2%)), " "c, EscapeAll:=True).Trim())
                .Append(NewLine)
@@ -328,7 +328,7 @@ Public Class ActorClass
             With Record
                NewText.Append($"{RecordNumber,16}")
                NewText.Append($"{ .DataOffset,16}")
-               NewText.Append($"{BitConverter.ToInt16(DataFile().Data.ToArray(), .DataOffset),16}")
+               NewText.Append($"{BitConverter.ToUint16(DataFile().Data.ToArray(), .DataOffset),16}")
                NewText.Append($"{ .BytesPerRow,16}")
                NewText.Append($"{ .Width,16}")
                NewText.Append($"{ .Height,16}{NewLine}")
@@ -345,9 +345,9 @@ Public Class ActorClass
    'This procedure displays the general information for the current actor.
    Private Sub DisplayInformationMenu_Click(sender As Object, e As EventArgs) Handles DisplayInformationMenu.Click
       Try
-         Dim ActionCount As Integer? = If(LocationsE.ActionCount < DataFile().Data.Count, BitConverter.ToInt16(DataFile().Data.ToArray(), LocationsE.ActionCount), Nothing)
-         Dim ImageCount As Integer? = If(LocationsE.ImageCount < DataFile().Data.Count, BitConverter.ToInt16(DataFile().Data.ToArray(), LocationsE.ImageCount), Nothing)
-         Dim WayCount As Integer? = If(LocationsE.WayCount < DataFile().Data.Count, BitConverter.ToInt16(DataFile().Data.ToArray(), LocationsE.WayCount), Nothing)
+         Dim ActionCount As Integer? = If(LocationsE.ActionCount < DataFile().Data.Count, BitConverter.ToUint16(DataFile().Data.ToArray(), LocationsE.ActionCount), Nothing)
+         Dim ImageCount As Integer? = If(LocationsE.ImageCount < DataFile().Data.Count, BitConverter.ToUint16(DataFile().Data.ToArray(), LocationsE.ImageCount), Nothing)
+         Dim WayCount As Integer? = If(LocationsE.WayCount < DataFile().Data.Count, BitConverter.ToUint16(DataFile().Data.ToArray(), LocationsE.WayCount), Nothing)
 
          With New StringBuilder
             .Append($"General information:{NewLine}")
@@ -470,7 +470,7 @@ Public Class ActorClass
          For Record As Integer = 0 To ImageRecords().Count - 1
             With ImageRecords()(Record)
                ImageFiles.Add($"{RootName}{Record}.png")
-               Draw4BitImage(DecompressRLE(DataFile().Data, .DataOffset + &H2%, BitConverter.ToInt16(DataFile().Data.ToArray(), .DataOffset)), .Width, .Height, Palette(), .BytesPerRow, TRANSPARENT_INDEX, TransparentColor()).Save(Path.Combine(ExportPath, ImageFiles(ImageFiles.Count - 1)), Imaging.ImageFormat.Png)
+               Draw4BitImage(DecompressRLE(DataFile().Data, .DataOffset + &H2%, BitConverter.ToUint16(DataFile().Data.ToArray(), .DataOffset)), .Width, .Height, Palette(), .BytesPerRow, TRANSPARENT_INDEX, TransparentColor()).Save(Path.Combine(ExportPath, ImageFiles(ImageFiles.Count - 1)), Imaging.ImageFormat.Png)
             End With
          Next Record
 
@@ -540,7 +540,7 @@ Public Class ActorClass
          If Refresh Then
             CurrentImageRecords.Clear()
             For Position As Integer = LocationsE.ImageRecords To LocationsE.ImageRecords + (BitConverter.ToInt32(DataFile().Data.ToArray(), LocationsE.ImageRecordsSize) - IMAGE_RECORD_LENGTH) Step IMAGE_RECORD_LENGTH
-               CurrentImageRecords.Add(New ImageRecordStr With {.DataOffset = BitConverter.ToInt32(DataFile().Data.ToArray(), Position), .Width = BitConverter.ToInt16(DataFile().Data.ToArray(), Position + &H8%), .Height = BitConverter.ToInt16(DataFile().Data.ToArray(), Position + &H6%), .BytesPerRow = BitConverter.ToInt16(DataFile().Data.ToArray(), Position + &H4%)})
+               CurrentImageRecords.Add(New ImageRecordStr With {.DataOffset = BitConverter.ToInt32(DataFile().Data.ToArray(), Position), .Width = BitConverter.ToUint16(DataFile().Data.ToArray(), Position + &H8%), .Height = BitConverter.ToUint16(DataFile().Data.ToArray(), Position + &H6%), .BytesPerRow = BitConverter.ToUint16(DataFile().Data.ToArray(), Position + &H4%)})
             Next Position
          End If
 

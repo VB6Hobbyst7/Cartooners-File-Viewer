@@ -91,7 +91,7 @@ Public Class MusicClass
    'This procedure displays the current music's data.
    Private Sub DisplayDataMenu_Click(sender As Object, e As EventArgs) Handles DisplayDataMenu.Click
       Try
-         Dim MIDITrackOffset As Integer = BitConverter.ToInt16(DataFile().Data.ToArray(), LocationsE.MIDITrackOffset)
+         Dim MIDITrackOffset As Integer = BitConverter.ToUint16(DataFile().Data.ToArray(), LocationsE.MIDITrackOffset)
 
          With New StringBuilder
             .Append($"Music data:{NewLine}")
@@ -103,7 +103,7 @@ Public Class MusicClass
             .Append($"-CMS MIDI channel finetune offset table: {Escape(GetString(DataFile().Data, LocationsE.CMSMIDIChannelFinetuneOffsetTable, CMS_MIDI_CHANNEL_FINETUNE_OFFSETS_SIZE), " "c, EscapeAll:=True).Trim()}{NewLine}")
             .Append($"{NewLine}-Unknown header data 1:{NewLine}")
             .Append(Escape(GetString(DataFile().Data, LocationsE.UnknownData1, UNKNOWN_1_SIZE), " "c, EscapeAll:=True).Trim())
-            .Append($"{NewLine}{NewLine}-PC-Speaker pitch and speed: {BitConverter.ToInt16(DataFile().Data.ToArray(), LocationsE.PCSpeakerPitchAndSpeed):X}")
+            .Append($"{NewLine}{NewLine}-PC-Speaker pitch and speed: {BitConverter.ToUint16(DataFile().Data.ToArray(), LocationsE.PCSpeakerPitchAndSpeed):X}")
             .Append($"{NewLine}{NewLine}-Unknown header data 2:{NewLine}")
             .Append(Escape(GetString(DataFile().Data, LocationsE.UnknownData2, MIDITrackOffset - LocationsE.UnknownData2), " "c, EscapeAll:=True).Trim())
             .Append($"{NewLine}{NewLine}MIDI track data:{NewLine}")
@@ -123,7 +123,7 @@ Public Class MusicClass
          With New StringBuilder
             .Append($"General information:{NewLine}")
             .Append($"-Path: {DataFile().Path}{NewLine}")
-            .Append($"-Midi track offset: {BitConverter.ToInt16(DataFile().Data.ToArray(), LocationsE.MIDITrackOffset)} byte(s).{NewLine}")
+            .Append($"-Midi track offset: {BitConverter.ToUint16(DataFile().Data.ToArray(), LocationsE.MIDITrackOffset)} byte(s).{NewLine}")
             .Append($"-Play repeatedly: {IsRepeatingMusic()}")
             UpdateDataBox(.ToString())
          End With
