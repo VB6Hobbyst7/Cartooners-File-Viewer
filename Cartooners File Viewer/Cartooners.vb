@@ -242,7 +242,56 @@ Public Class CartoonersClass
             End With
          Next Chunk
 
+         ExportMap(ExportPath)
+
          Process.Start(New ProcessStartInfo With {.FileName = ExportPath, .WindowStyle = ProcessWindowStyle.Normal})
+      Catch ExceptionO As Exception
+         HandleError(ExceptionO)
+      End Try
+   End Sub
+
+   'This procedure exports a map of the Cartooner's executable.
+   Private Sub ExportMap(ExportPath As String)
+      Try
+         Dim CurrentChunk As DataChunkStr? = Nothing
+         Dim Data As New List(Of Byte)(DataFile().Data)
+         Dim Map As New StringBuilder()
+         Dim Position As Integer = &H0%
+         Dim RelocationItemPositions As New List(Of Integer)
+
+         Data.RemoveRange(&H0%, EXEHeaderSize())
+
+         For Each Item As SegmentOffsetStr In RelocationItems()
+            RelocationItemPositions.Add(Item.Segment << &H4% Or Item.Offset)
+         Next Item
+
+         Do Until Position >= Data.Count - &H1%
+            CurrentChunk = Nothing
+            For Each Chunk As DataChunkStr In DataChunks()
+               If Position = Chunk.Offset Then
+                  CurrentChunk = Chunk
+                  Exit For
+               End If
+            Next Chunk
+
+            If CurrentChunk Is Nothing Then
+               If RelocationItemPositions.Contains(Position) Then Map.Append("*"c)
+               Map.Append($"{Data(Position):X2} ")
+               Position += &H1%
+            Else
+               With CurrentChunk.Value
+                  Map.Append($"{NewLine}{NewLine}[BEGIN { .Description}]{NewLine}")
+                  For SubPosition As Integer = .Offset To (.Offset + .Length) - &H1%
+                     If RelocationItemPositions.Contains(SubPosition) Then Map.Append("*"c)
+                     Map.Append($"{Data(SubPosition):X2} ")
+                     Position += &H1%
+                  Next SubPosition
+                  Map.Append($"{NewLine}[END { .Description}]{NewLine}{NewLine}")
+               End With
+            End If
+         Loop
+
+         File.WriteAllText(Path.Combine(ExportPath, "Cartooners Executable Map.txt"), Map.ToString())
       Catch ExceptionO As Exception
          HandleError(ExceptionO)
       End Try

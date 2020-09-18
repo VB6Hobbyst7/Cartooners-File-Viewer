@@ -31,20 +31,26 @@ Public Module MSDOSEXEModule
 
    'This structure defines an MS-DOS executable's header.
    Public Structure MSDOSHeaderStr
-      Public Signature As Integer              'The MS-DOS executable's signature.
-      Public ImageSizeModulo As Integer        'The executable's image size modulo (of 0x200).
-      Public ImageSize As Integer              'The executable's image size in pages of 0x200 bytes.
-      Public RelocationCount As Integer        'The executable's number or relocation items.
-      Public HeaderSize As Integer             'The executable's header size in paragraphs of 0x10 bytes.
-      Public MinimumParagraphs As Integer      'The executable's maximum memory requirement in paragraphs of 0x10 bytes.
-      Public MaximumParagraphs As Integer      'The executable's minimum memory requirement in paragraphs of 0x10 bytes.
-      Public StackSegment As Integer           'The stack segment (SS) register's initial value.
-      Public StackPointer As Integer           'The stack pointer (SP) register's initial value.
-      Public Checksum As Integer               'The executable's negative pgm checksum.
-      Public InstructionPointer As Integer     'The instruction pointer (IP) register's initial value.
-      Public CodeSegment As Integer            'The code segment (CS) register's initial value.
-      Public RelocationTableOffset As Integer  'The relocation table's offset.
-      Public OverlayNumber As Integer          'The overlay number.
+      Public Signature As Integer              'Defines the MS-DOS executable's signature.
+      Public ImageSizeModulo As Integer        'Defines the executable's image size modulo (of 0x200).
+      Public ImageSize As Integer              'Defines the executable's image size in pages of 0x200 bytes.
+      Public RelocationCount As Integer        'Defines the executable's number or relocation items.
+      Public HeaderSize As Integer             'Defines the executable's header size in paragraphs of 0x10 bytes.
+      Public MinimumParagraphs As Integer      'Defines the executable's maximum memory requirement in paragraphs of 0x10 bytes.
+      Public MaximumParagraphs As Integer      'Defines the executable's minimum memory requirement in paragraphs of 0x10 bytes.
+      Public StackSegment As Integer           'Defines the stack segment (SS) register's initial value.
+      Public StackPointer As Integer           'Defines the stack pointer (SP) register's initial value.
+      Public Checksum As Integer               'Defines the executable's negative pgm checksum.
+      Public InstructionPointer As Integer     'Defines the instruction pointer (IP) register's initial value.
+      Public CodeSegment As Integer            'Defines the code segment (CS) register's initial value.
+      Public RelocationTableOffset As Integer  'Defines the relocation table's offset.
+      Public OverlayNumber As Integer          'Defines the overlay number.
+   End Structure
+
+   'This structure defines a segment and offset.
+   Public Structure SegmentOffsetStr
+      Public Segment As Integer  'Defines a segment.
+      Public Offset As Integer   'Defines an offset.
    End Structure
 
    Public Const MSDOS_EXECUTABLE_SIGNATURE As Integer = &H5A4D%   'Contains the MS-DOS executable signature "MZ".
@@ -92,7 +98,7 @@ Public Module MSDOSEXEModule
             NewText.Append(NewLine)
             NewText.Append($"Relocation items:{NewLine}")
 
-            RelocationItems().ForEach(Sub(RelocationItem As Integer) NewText.Append($"{RelocationItem:X8}{NewLine}"))
+            RelocationItems().ForEach(Sub(RelocationItem As SegmentOffsetStr) NewText.Append($"{RelocationItem.Segment:X4}:{RelocationItem.Offset:X4}{NewLine}"))
 
             Return NewText.ToString()
          Catch ExceptionO As Exception
@@ -104,11 +110,11 @@ Public Module MSDOSEXEModule
    End Function
 
    'This procedure manages the current executable's relocation items.
-   Public Function RelocationItems(Optional NewData As List(Of Byte) = Nothing) As List(Of Integer)
+   Public Function RelocationItems(Optional NewData As List(Of Byte) = Nothing) As List(Of SegmentOffsetStr)
       Try
          Dim RelocationCount As New Integer
          Dim RelocationTableOffset As New Integer
-         Static CurrentRelocationItems As New List(Of Integer)
+         Static CurrentRelocationItems As New List(Of SegmentOffsetStr)
 
          If NewData IsNot Nothing Then
             CurrentRelocationItems.Clear()
@@ -116,7 +122,7 @@ Public Module MSDOSEXEModule
             RelocationTableOffset = BitConverter.ToUInt16(NewData.ToArray(), MSDOSHeaderE.RelocationTableOffset)
 
             For Position As Integer = RelocationTableOffset To RelocationTableOffset + ((RelocationCount - &H1%) * &H4%) Step &H4%
-               CurrentRelocationItems.Add(BitConverter.ToInt32(NewData.ToArray, Position))
+               CurrentRelocationItems.Add(New SegmentOffsetStr With {.Offset = BitConverter.ToUInt16(NewData.ToArray, Position), .Segment = BitConverter.ToUInt16(NewData.ToArray, Position + &H2%)})
             Next Position
          End If
 
