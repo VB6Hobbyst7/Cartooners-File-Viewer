@@ -1,0 +1,20 @@
+Binary Data Modifier Help
+
+Binary Data Modifier allows the user to make specified changes to the binary data contained in a file mainly for the purpose of allowing the user to observe the results caused by these modifications when the modified file is executed or processed by a program. The idea behind this is that it can assist in determining the purpose of a segment of data inside a binary file. It is recommended to make backups of any files before modifying these and use an emulator or virtual machine when executing modified executables in order to contain unwanted behavior such as crashes caused by modifications.
+
+The modifications to be made to a file and what should be done after modifying the file should be specified in a text file. The file should contain the following lines:
+
+1. The path of the file to be modified.
+2. The path to which the output file containing the modified data is written.
+3. The offset of the data to be modified.
+4. The length of the data to be modified.
+5. The type of modification to be made specified by a letter:
+   I = Invert the bits of the bytes in the specified segment.
+   R = Replace the bytes in the specified segment with the bytes specified on line 6.
+   Z = Zero the bytes in the specified segment.
+6. The replacement bytes delimited by commas (",") used when "R" is specified on the previous line. This line should not be present when other options are used.
+7. The program to launched or file to be opened using its program association.
+8. Any command line arguments used in combination with line 7.
+
+The path of the file defining the modifications to be made should be passed as a command line argument to the program.
+
