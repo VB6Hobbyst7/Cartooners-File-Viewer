@@ -154,13 +154,14 @@ Public Class CartoonersClass
    Private Sub DisplayDataSubmenu_SelectedIndexChanged(sender As Object, e As EventArgs) Handles DisplayDataSubmenu.SelectedIndexChanged
       Try
          Dim Description As String = DisplayDataSubmenu.Text
-         Dim Height As New Integer
+         Dim IconHeight As New Integer
+         Dim IconType As New Integer
+         Dim IconWidth As New Integer
          Dim Length As New Integer
          Dim NewText As New StringBuilder
          Dim Palettes As List(Of List(Of Color)) = Nothing
          Dim Offset As New Integer
          Dim Type As String = Nothing
-         Dim Width As New Integer
 
          For Index As Integer = 0 To DataChunks().Count - 1
             If DataChunks(Index).Description = DisplayDataSubmenu.Text Then
@@ -179,17 +180,18 @@ Public Class CartoonersClass
          If Type = "binary" OrElse Type = "image" Then
             NewText.Append($"{Escape(GetBytes(DataFile().Data, Offset, Length), " "c, EscapeAll:=True).Trim()}")
          ElseIf Type = "icon" Then
-            Height = BitConverter.ToUInt16(DataFile().Data.ToArray(), Offset + &H2%)
-            Width = BitConverter.ToUInt16(DataFile().Data.ToArray(), Offset + &H4%)
+            IconHeight = BitConverter.ToUInt16(DataFile().Data.ToArray(), Offset + &H2%)
+            IconType = BitConverter.ToUInt16(DataFile().Data.ToArray(), Offset)
+            IconWidth = BitConverter.ToUInt16(DataFile().Data.ToArray(), Offset + &H4%)
 
-            NewText.Append($"Size: {Width * 2} x {Height}{NewLine}{NewLine}")
+            NewText.Append($"Size: {IconWidth * 2} x {IconHeight} - Type: {IconType} {NewLine}{NewLine}")
             NewText.Append($"{Escape(GetBytes(DataFile().Data, Offset, Length), " "c, EscapeAll:=True).Trim()}")
          ElseIf Type = "palette" Then
             Palettes = New List(Of List(Of Color))
             Palettes.Add(New List(Of Color)(GBRPalette(DataFile().Data, Offset)))
             NewText.Append(GBRToText(, Palettes))
          ElseIf Type = "text" Then
-            NewText.Append(Escape(ConvertMSDOSLineBreak(GetString(DataFile.Data, Offset, Length).Replace(DELIMITER, NewLine))))
+            NewText.Append(Escape(ConvertMSDOSLineBreak(GetString(DataFile.Data, Offset, Length)).Replace(DELIMITER, NewLine)))
          End If
 
          UpdateDataBox(NewText.ToString())

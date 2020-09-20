@@ -92,30 +92,22 @@ Public Module RLECompressionModule
 
             Select Case Instruction
                Case &H0% To &H3F%
-                  Count = Instruction
-                  For SubPosition As Integer = Position To Position + Count
-                     Decompressed.Add(Compressed(SubPosition))
-                     Position += &H1%
-                  Next SubPosition
+                  Count = Instruction + &H1%
+                  Decompressed.AddRange(Compressed.GetRange(Position, Count))
+                  Position += Count
                Case &H40% To &H7F%
-                  Count = Instruction - &H40%
-                  For Repeat As Integer = &H0% To Count
-                     Decompressed.Add(Compressed(Position))
-                  Next Repeat
+                  Count = Instruction - &H3F%
+                  Decompressed.AddRange(Enumerable.Repeat(Compressed(Position), Count))
                   Position += &H1%
                Case &H81% To &HBF%
                   Count = Instruction - &H80%
                   For Repeat As Integer = &H0% To Count
-                     For SubPosition As Integer = Position To Position + &H3%
-                        Decompressed.Add(Compressed(SubPosition))
-                     Next SubPosition
+                     Decompressed.AddRange(Compressed.GetRange(Position, &H4%))
                   Next Repeat
                   Position += &H4%
                Case &HC0% To &HFF%
                   Count = (Instruction - &HBF%) * &H4%
-                  For Repeat As Integer = &H1% To Count
-                     Decompressed.Add(Compressed(Position))
-                  Next Repeat
+                  Decompressed.AddRange(Enumerable.Repeat(Compressed(Position), Count))
                   Position += &H1%
                Case Else
                   MessageBox.Show($"Invalid instruction found at byte #{Position:X} while decompressing data.{NewLine}", My.Application.Info.Title, MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
