@@ -115,6 +115,8 @@ Public Module RLECompressionModule
             End Select
          Loop
 
+         If Position > Offset + Size Then MessageBox.Show($"The RLE decompressor read {Position - (Offset + Size):X} byte(s) more than specified.", My.Application.Info.Title, MessageBoxButtons.OK, MessageBoxIcon.Warning)
+
          Return Decompressed
       Catch ExceptionO As Exception
          HandleError(ExceptionO)

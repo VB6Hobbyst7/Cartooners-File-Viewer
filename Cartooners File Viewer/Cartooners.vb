@@ -12,6 +12,7 @@ Imports System.Drawing
 Imports System.Drawing.Imaging
 Imports System.Environment
 Imports System.IO
+Imports System.Linq
 Imports System.Text
 Imports System.Windows.Forms
 
@@ -261,12 +262,9 @@ Public Class CartoonersClass
          Dim Position As Integer = &H0%
          Dim RelocationItemPositions As New List(Of Integer)
 
+         RelocationItems().ForEach(Sub(Item As SegmentOffsetStr) RelocationItemPositions.Add(Item.Segment << &H4% Or Item.Offset))
+
          Data.RemoveRange(&H0%, EXEHeaderSize())
-
-         For Each Item As SegmentOffsetStr In RelocationItems()
-            RelocationItemPositions.Add(Item.Segment << &H4% Or Item.Offset)
-         Next Item
-
          Do Until Position >= Data.Count - &H1%
             CurrentChunk = Nothing
             For Each Chunk As DataChunkStr In DataChunks()

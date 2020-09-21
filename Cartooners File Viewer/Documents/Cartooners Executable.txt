@@ -8,7 +8,7 @@ Circle icon.	icon	201380	204368	69
 Clear/erase text.	text	205466	0	45
 Cross arrows icon.	icon	202576	204368	51
 Day and month abbreviations.	text	225300	0	58
-Default speech balloon information.	binary	156265	0	1081
+Default speech balloon information.	binary	156272	0	1074
 Dialog text.	text	211620	0	790
 Drive letters.	text	205724	0	84
 Eraser icon.	icon	202144	204368	141
@@ -50,9 +50,11 @@ Third messages. 	text	206984	0	607
 Thought balloon speech information.	binary	157356	0	1468
 Ticket screen CGA palette.	palette	193856	0	32
 Ticket screen EGA palette.	palette	193824	0	32
-Ticket screen.	image	193888	193824	6812
+Ticket screen.	image	193888	193824	6814
 Time zones.	text	225274	0	11
 Title screen CGA palette.	palette	183104	0	32
 Title screen EGA palette.	palette	183136	0	32
-Title Screen.	image	183170	183136	10645
+Title Screen.	image	183170	183136	10646
+Unknown #1	binary	160899	0	7299
+Unknown #2	binary	215988	0	32
 Way menu items.	text	216057	0	259
