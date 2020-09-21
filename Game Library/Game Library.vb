@@ -6,6 +6,7 @@ Option Strict On
 
 Imports Microsoft.VisualBasic
 Imports System
+Imports System.Collections.Generic
 Imports System.Convert
 Imports System.Environment
 Imports System.IO
@@ -31,8 +32,8 @@ Public Module GameLibraryModule
    Private Sub CreateLibrary(SourcePath As String, Signature As SignaturesE)
       Try
          Dim FileOffset As New Integer
-         Dim Files() As FileInfo = My.Computer.FileSystem.GetDirectoryInfo(SourcePath).GetFiles("*.*")
-         Dim HeaderSize As Integer = SIGNATURES(Signature).Length + (2 + ((Files.Length + 1) * ((FILE_NAME_LENGTH + If(Signature = SignaturesE.EASignature, 1, 0)) + 4)))
+         Dim Files As New List(Of FileInfo)(My.Computer.FileSystem.GetDirectoryInfo(SourcePath).GetFiles("*.*"))
+         Dim HeaderSize As Integer = SIGNATURES(Signature).Length + (2 + ((Files.Count + 1) * ((FILE_NAME_LENGTH + If(Signature = SignaturesE.EASignature, 1, 0)) + 4)))
          Dim IsLast As New Byte
          Dim LibraryPath As String = Path.GetFullPath(SourcePath)
 
@@ -44,11 +45,11 @@ Public Module GameLibraryModule
          Using LibraryFile As New BinaryWriter(File.OpenWrite($"{LibraryPath}.lib"))
             With LibraryFile
                .Write(TEXT_TO_BYTES(SIGNATURES(Signature)))
-               .Write(CUShort(Files.Length))
+               .Write(CUShort(Files.Count))
 
-               For FileIndex As Integer = 0 To Files.Length
-                  IsLast = ToByte(Abs(ToInt32(FileIndex = Files.Length)))
-                  If FileIndex = Files.Length Then
+               For FileIndex As Integer = 0 To Files.Count
+                  IsLast = ToByte(Abs(ToInt32(FileIndex = Files.Count)))
+                  If FileIndex = Files.Count Then
                      .Write(New String(TERMINATOR, FILE_NAME_LENGTH))
                      If Signature = SignaturesE.EASignature Then .Write(ToChar(IsLast))
                      .Write(CUInt(FileOffset))
@@ -61,14 +62,14 @@ Public Module GameLibraryModule
                   End If
                Next FileIndex
 
-               For FileIndex As Integer = Files.GetLowerBound(0) To Files.GetUpperBound(0)
-                  .Write(File.ReadAllBytes(Files(FileIndex).FullName))
-                  Console.WriteLine(Files(FileIndex).Name.ToUpper())
-               Next FileIndex
+               For Each FileO As FileInfo In Files
+                  .Write(File.ReadAllBytes(FileO.FullName))
+                  Console.WriteLine(FileO.Name.ToUpper())
+               Next FileO
             End With
          End Using
 
-         Console.WriteLine($"{Files.Length} file(s) added.")
+         Console.WriteLine($"{Files.Count} file(s) added.")
       Catch ExceptionO As Exception
          HandleError(ExceptionO)
       End Try
@@ -98,26 +99,25 @@ Public Module GameLibraryModule
    Private Sub ExtractLibraryFiles(LibraryFile As BinaryReader, LibraryPath As String, Signature As SignaturesE)
       Try
          Dim FileCount As New Integer
-         Dim FileNames() As String = {}
-         Dim FileOffsets() As Integer = {}
+         Dim FileName As String = Nothing
+         Dim FileNames As New List(Of String)
+         Dim FileOffsets As New List(Of Integer)
          Dim OutputPath As String = LibraryPath.Substring(0, LibraryPath.IndexOf("."))
 
          Console.WriteLine($"{FILE_TYPES(Signature)} library file detected...")
 
          LibraryFile.BaseStream.Seek(SIGNATURES(Signature).Length, SeekOrigin.Begin)
          FileCount = LibraryFile.ReadUInt16()
-         ReDim FileNames(0 To FileCount)
-         ReDim FileOffsets(0 To FileCount)
-         For FileIndex As Integer = FileNames.GetLowerBound(0) To FileNames.GetUpperBound(0)
-            FileNames(FileIndex) = BYTES_TO_TEXT(LibraryFile.ReadBytes(FILE_NAME_LENGTH))
-            FileNames(FileIndex) = FileNames(FileIndex).Substring(0, FileNames(FileIndex).IndexOf(TERMINATOR))
+         For FileIndex As Integer = 0 To FileCount
+            FileName = BYTES_TO_TEXT(LibraryFile.ReadBytes(FILE_NAME_LENGTH))
+            FileNames.Add(FileName.Substring(0, FileName.IndexOf(TERMINATOR)))
             If Signature = SignaturesE.EASignature Then LibraryFile.ReadByte()
-            FileOffsets(FileIndex) = LibraryFile.ReadInt32()
+            FileOffsets.Add(LibraryFile.ReadInt32())
          Next FileIndex
 
          If Not Directory.Exists(OutputPath) Then Directory.CreateDirectory(OutputPath)
 
-         For FileIndex As Integer = FileNames.GetLowerBound(0) To FileNames.GetUpperBound(0) - 1
+         For FileIndex As Integer = 0 To FileNames.Count - 2
             LibraryFile.BaseStream.Seek(FileOffsets(FileIndex) + If(Signature = SignaturesE.EASignature, 0, 1), SeekOrigin.Begin)
             File.WriteAllBytes(Path.Combine(OutputPath, FileNames(FileIndex)), LibraryFile.ReadBytes(FileOffsets(FileIndex + 1) - FileOffsets(FileIndex)))
             Console.WriteLine(FileNames(FileIndex))
