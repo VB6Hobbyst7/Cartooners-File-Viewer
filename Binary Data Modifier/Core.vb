@@ -78,7 +78,7 @@ Public Module CoreModule
       End Try
    End Sub
 
-   'This procedure the bits of the specified number of bytes at the specified offset inside the specified data and returns the result.
+   'This procedure inverts the bits of the specified number of bytes at the specified offset inside the specified data and returns the result.
    Private Function InvertByteBits(Data As List(Of Byte), Offset As Integer, Length As Integer) As List(Of Byte)
       Try
          Dim Position As Integer = Offset
