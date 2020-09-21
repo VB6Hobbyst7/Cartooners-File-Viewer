@@ -12,7 +12,7 @@ The modifications to be made to a file and what should be done after modifying t
    I = Invert the bits of the bytes in the specified segment.
    R = Replace the bytes in the specified segment with the bytes specified on line 6.
    Z = Zero the bytes in the specified segment.
-6. The replacement bytes delimited by commas (",") used when "R" is specified on the previous line. This line should not be present when other options are used.
+6. The replacement bytes specified using hexadecimal notation delimited by spaces (",") used when "R" is specified on the previous line. This line should not be present when other options are used.
 7. The program to launched or file to be opened using its program association.
 8. Any command line arguments used in combination with line 7.
 

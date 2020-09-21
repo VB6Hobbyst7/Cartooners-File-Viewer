@@ -27,39 +27,54 @@ Public Module CoreModule
          Dim Offset As Integer = Nothing
          Dim OpenWith As String = Nothing
          Dim OutputPath As String = Nothing
-         Dim ScriptPath As String = GetCommandLineArgs.Last()
+         Dim ScriptPath As String = If(GetCommandLineArgs.Count > 1, GetCommandLineArgs.Last(), Nothing)
 
-         Using ScriptFile As New StreamReader(ScriptPath)
-            With ScriptFile
-               InputPath = .ReadLine()
-               OutputPath = .ReadLine()
-               Offset = Integer.Parse(.ReadLine())
-               Length = Integer.Parse(.ReadLine())
-               ModificationType = .ReadLine().Trim().ToUpper().ToCharArray().First()
-               If ModificationType = "R"c Then NewData = New List(Of Byte)(From [Byte] In .ReadLine().Split(","c) Select Byte.Parse([Byte]))
-               If Not .EndOfStream() Then OpenWith = .ReadLine()
-               If Not .EndOfStream() Then Arguments = .ReadLine()
-            End With
-         End Using
+         If ScriptPath = Nothing Then
+            Console.WriteLine($"Specify a script file as a command line argument.")
+            Console.ReadLine()
+         Else
+            Using ScriptFile As New StreamReader(ScriptPath)
+               With ScriptFile
+                  InputPath = .ReadLine()
+                  OutputPath = .ReadLine()
+                  Offset = Integer.Parse(.ReadLine())
+                  Length = Integer.Parse(.ReadLine())
+                  ModificationType = .ReadLine().Trim().ToUpper().ToCharArray().First()
+                  If ModificationType = "R"c Then NewData = New List(Of Byte)(From [Byte] In .ReadLine().Trim().Split(" "c) Select ToByte([Byte], fromBase:=16))
+                  If Not .EndOfStream() Then OpenWith = .ReadLine()
+                  If Not .EndOfStream() Then Arguments = .ReadLine()
+               End With
+            End Using
 
-         Data = New List(Of Byte)(File.ReadAllBytes(InputPath))
+            Data = New List(Of Byte)(File.ReadAllBytes(InputPath))
 
-         Select Case ModificationType
-            Case "I"c
-               Data = InvertByteBits(Data, Offset, Length)
-            Case "R"c
-               Data = ReplaceBytes(Data, NewData, Offset, Length)
-            Case "Z"c
-               Data = ZeroBytes(Data, Offset, Length)
-            Case Else
-               Console.WriteLine($"Unknown modification type: ""{ModificationType}"".")
-         End Select
+            Select Case ModificationType
+               Case "I"c
+                  Data = InvertByteBits(Data, Offset, Length)
+               Case "R"c
+                  Data = ReplaceBytes(Data, NewData, Offset, Length)
+               Case "Z"c
+                  Data = ZeroBytes(Data, Offset, Length)
+               Case Else
+                  Console.WriteLine($"Unknown modification type: ""{ModificationType}"".")
+            End Select
 
-         File.WriteAllBytes(OutputPath, Data.ToArray())
+            File.WriteAllBytes(OutputPath, Data.ToArray())
 
-         If OpenWith IsNot Nothing Then Process.Start(New ProcessStartInfo With {.FileName = OpenWith, .Arguments = Arguments, .WindowStyle = ProcessWindowStyle.Normal})
+            If OpenWith IsNot Nothing Then Process.Start(New ProcessStartInfo With {.FileName = OpenWith, .Arguments = Arguments, .WindowStyle = ProcessWindowStyle.Normal})
+         End If
       Catch ExceptionO As Exception
+         HandleError(ExceptionO)
+      End Try
+   End Sub
+
+   'This procedure handles any errors that occur.
+   Private Sub HandleError(ExceptionO As Exception)
+      Try
          Console.WriteLine($"Error: {ExceptionO.Message}")
+         Console.ReadLine()
+      Catch
+         [Exit](0)
       End Try
    End Sub
 
@@ -75,7 +90,7 @@ Public Module CoreModule
 
          Return Data
       Catch ExceptionO As Exception
-         Console.WriteLine($"Error: {ExceptionO.Message}")
+         HandleError(ExceptionO)
       End Try
 
       Return New List(Of Byte)
@@ -103,7 +118,7 @@ Public Module CoreModule
 
          Return Data
       Catch ExceptionO As Exception
-         Console.WriteLine($"Error: {ExceptionO.Message}")
+         HandleError(ExceptionO)
       End Try
 
       Return New List(Of Byte)
@@ -119,7 +134,7 @@ Public Module CoreModule
 
          Return Data
       Catch ExceptionO As Exception
-         Console.WriteLine($"Error: {ExceptionO.Message}")
+         HandleError(ExceptionO)
       End Try
 
       Return New List(Of Byte)
