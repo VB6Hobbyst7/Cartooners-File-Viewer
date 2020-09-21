@@ -28,6 +28,7 @@ Public Module CoreModule
          Dim OpenWith As String = Nothing
          Dim OutputPath As String = Nothing
          Dim ScriptPath As String = If(GetCommandLineArgs.Count > 1, GetCommandLineArgs.Last(), Nothing)
+         Dim Substitutions As Dictionary(Of Byte, Byte) = Nothing
 
          If ScriptPath = Nothing Then
             Console.WriteLine($"Specify a script file as a command line argument.")
@@ -40,7 +41,19 @@ Public Module CoreModule
                   Offset = Integer.Parse(.ReadLine())
                   Length = Integer.Parse(.ReadLine())
                   ModificationType = .ReadLine().Trim().ToUpper().ToCharArray().First()
-                  If ModificationType = "R"c Then NewData = New List(Of Byte)(From [Byte] In .ReadLine().Trim().Split(" "c) Select ToByte([Byte], fromBase:=16))
+
+                  Select Case ModificationType
+                     Case "R"c
+                        NewData = New List(Of Byte)(From [Byte] In .ReadLine().Trim().Split(" "c) Select ToByte([Byte], fromBase:=16))
+                     Case "S"c
+                        Substitutions = New Dictionary(Of Byte, Byte)
+                        For Each Pair As String In From BytePair As String In .ReadLine().Trim().Split(" "c)
+                           With Pair.Split("="c)
+                              Substitutions.Add(ToByte(.First, fromBase:=16), ToByte(.Last, fromBase:=16))
+                           End With
+                        Next Pair
+                  End Select
+
                   If Not .EndOfStream() Then OpenWith = .ReadLine()
                   If Not .EndOfStream() Then Arguments = .ReadLine()
                End With
@@ -52,7 +65,9 @@ Public Module CoreModule
                Case "I"c
                   Data = InvertByteBits(Data, Offset, Length)
                Case "R"c
-                  Data = ReplaceBytes(Data, NewData, Offset, Length)
+                  Data = ReplaceBytes(Data, Offset, Length, NewData)
+               Case "S"c
+                  Data = SubstituteBytes(Data, Offset, Length, Substitutions)
                Case "Z"c
                   Data = ZeroBytes(Data, Offset, Length)
                Case Else
@@ -97,7 +112,7 @@ Public Module CoreModule
    End Function
 
    'This procedure replaces the data of the specified length at the specified offset inside the data specified with the new data specified and returns the result.
-   Private Function ReplaceBytes(Data As List(Of Byte), NewData As List(Of Byte), Offset As Integer, Length As Integer) As List(Of Byte)
+   Private Function ReplaceBytes(Data As List(Of Byte), Offset As Integer, Length As Integer, NewData As List(Of Byte)) As List(Of Byte)
       Try
          Dim Position As Integer = Offset
 
@@ -115,6 +130,24 @@ Public Module CoreModule
                Data(SubPosition) = NewData(SubPosition - Position)
             Next SubPosition
          End If
+
+         Return Data
+      Catch ExceptionO As Exception
+         HandleError(ExceptionO)
+      End Try
+
+      Return New List(Of Byte)
+   End Function
+
+   'This procedure substitutes the specified number of bytes at the specified offset inside the specified data using the specified dictionary and returns the result.
+   Private Function SubstituteBytes(Data As List(Of Byte), Offset As Integer, Length As Integer, Substitutions As Dictionary(Of Byte, Byte)) As List(Of Byte)
+      Try
+         Dim Position As Integer = Offset
+
+         Do Until Position >= Offset + Length OrElse Position >= Data.Count
+            If Substitutions.ContainsKey(Data(Position)) Then Data(Position) = Substitutions(Data(Position))
+            Position += &H1%
+         Loop
 
          Return Data
       Catch ExceptionO As Exception

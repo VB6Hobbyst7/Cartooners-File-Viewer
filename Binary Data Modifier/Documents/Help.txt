@@ -1,4 +1,4 @@
-Binary Data Modifier Help
+Binary Data Modifier v1.0.0.2 Help - by: Peter Swinkels - 2020
 
 Binary Data Modifier allows the user to make specified changes to the binary data contained in a file mainly for the purpose of allowing the user to observe the results caused by these modifications when the modified file is executed or processed by a program. The idea behind this is that it can assist in determining the purpose of a segment of data inside a binary file. It is recommended to make backups of any files before modifying these and use an emulator or virtual machine when executing modified executables in order to contain unwanted behavior such as crashes caused by modifications.
 
@@ -11,10 +11,17 @@ The modifications to be made to a file and what should be done after modifying t
 5. The type of modification to be made specified by a letter:
    I = Invert the bits of the bytes in the specified segment.
    R = Replace the bytes in the specified segment with the bytes specified on line 6.
+   S = Substitutes the bytes in the specified segment with the replacement bytes specified on line 6.
    Z = Zero the bytes in the specified segment.
-6. The replacement bytes specified using hexadecimal notation delimited by spaces (" ") used when "R" is specified on the previous line. This line should not be present when other options are used.
+6. Option R: The replacement bytes delimited by spaces (" ") used when "R" is specified on the previous line.
+   Option S: The bytes substituted and their replacement bytes specified as "byte=replacement byte" delimited by spaces (" ") used when "R" is specified on the previous line.
 7. The program to launched or file to be opened using its program association.
 8. Any command line arguments used in combination with line 7.
 
 The path of the file defining the modifications to be made should be passed as a command line argument to the program.
+
+Notes:
+-Bytes are specified using hexadecimal notation.
+-Line 6 should be omitted when either option R or S isn't used.
+
 
