@@ -1,60 +1,90 @@
-Description:	Type:	Offset:	Related:	Size:
-80286+ executable code.	binary	0	0	156265
-About text.	text	208116	0	226
-Button edge style information.	binary	205686	0	38
-C_FILE_INFO.	text	222823	0	11
-Checked circle icon.	icon	201452	204368	69
-Circle icon.	icon	201380	204368	69
-Clear/erase text.	text	205466	0	45
-Cross arrows icon.	icon	202576	204368	51
-Day and month abbreviations.	text	225300	0	58
-Default speech balloon information.	binary	156272	0	1074
-Dialog text.	text	211620	0	790
-Drive letters.	text	205724	0	84
-Eraser icon.	icon	202144	204368	141
-Exclamation icon.	icon	202640	204368	248
-Exclamation speech balloon information.	binary	158850	0	2049
-Executable extensions.	text	225116	0	15
-Fifth general text fragment.	text	215418	0	66
-File extensions.	text	204292	0	30
-File system related characters.	text	206799	0	23
-Filled circle icon.	icon	201524	204368	69
-First general text fragment.	text	203922	0	122
-First messages.	text	204403	0	283
-First printing text.	text	213464	0	10
-Fourth general text fragment.	text	207804	0	56
-GUI CGA/EGA palette.	palette	204368	0	32
-Hand icon.	icon	203136	204368	248
-Invalid actor message.	text	215322	0	53
-Keyboard layout.	text	215204	0	117
-Left arrow icon.	icon	201784	204368	178
-Load/save text.	text	204198	0	62
-Loop arrow icon.	icon	202432	204368	141
-Menu screen CGA palette.	palette	170528	0	32
-Menu screen EGA palette.	palette	170560	0	32
-Menu screen.	image	170592	170560	9772
-Menus.	text	204686	0	706
-Microsoft Run-time Library text.	text	200728	0	363
-Right arrow icon.	icon	201964	204368	177
-Run-time error messages.	text	225392	0	224
-Second general text fragment.	text	205524	0	30
-Second messages.	text	208972	0	704
-Second printing text.	text	213481	0	34
-Speaking icon.	icon	202888	204368	248
-Speech balloon icon.	icon	202288	204368	141
-Speech balloon layouts.	text	203868	0	54
-Speech balloon slots/way menu items.	text	168198	0	2316
-Speech balloon types.	text	203668	0	198
-Third general text fragment.	text	206930	0	54
-Third messages. 	text	206984	0	607
-Thought balloon speech information.	binary	157356	0	1468
-Ticket screen CGA palette.	palette	193856	0	32
-Ticket screen EGA palette.	palette	193824	0	32
-Ticket screen.	image	193888	193824	6814
-Time zones.	text	225274	0	11
-Title screen CGA palette.	palette	183104	0	32
-Title screen EGA palette.	palette	183136	0	32
-Title Screen.	image	183170	183136	10646
-Unknown #1	binary	160899	0	7299
-Unknown #2	binary	215988	0	32
-Way menu items.	text	216057	0	259
+Description:	Type:	Offset:	Related:	Size:	Comment:
+80286+ executable code.	binary	0	0	156265	
+About Cartooners	text	208116	0	226	
+Actors dialog text.	text	215448	0	36	
+Blank... (act option)	text	203914	0	11	
+Button edge style information.	binary	205686	0	38	
+C_FILE_INFO.	text	222823	0	11	
+Cancel printing text.	text	213481	0	34	
+Checked circle icon.	icon	201452	204368	69	
+Circle icon.	icon	201380	204368	69	
+Cross arrows icon.	icon	202576	204368	51	
+Day and month abbreviations.	text	225300	0	58	
+Default speech balloon information.	binary	156272	0	1074	
+Dialog text. #1	text	204403	0	134	
+Dialog text. #2	text	205466	0	45	
+Dialog text. #3	text	205758	0	50	
+Dialog text. #4	text	207890	0	220	
+Dialog text. #5	text	208972	0	704	
+Dialog text. #6	text	210172	0	14	
+Dialog text. #7	text	210917	0	10	
+Dialog text. #8	text	211620	0	790	
+Drive letters.	text	205724	0	34	
+Driver file extensions	text	205558	0	12	
+Eraser icon.	icon	202144	204368	141	
+Error messages. #1	text	200785	0	307	
+Error messages. #2	text	204537	0	28	
+Error messages. #3	text	204571	0	39	
+Error messages. #4	text	206984	0	611	
+Exclamation icon.	icon	202640	204368	248	
+Exclamation speech balloon information.	binary	158850	0	2049	
+Executable extensions.	text	225116	0	15	
+File system related characters.	text	206799	0	23	
+Filled circle icon.	icon	201524	204368	69	
+GUI CGA/EGA palette.	palette	204368	0	32	
+Hand icon.	icon	203136	204368	248	
+Invalid actor error.	text	215322	0	31	
+Keyboard layout.	text	215204	0	117	
+Left arrow icon.	icon	201784	204368	178	
+Locate text.	text	214638	0	8	
+Loop arrow icon.	icon	202432	204368	141	
+Menu screen CGA palette.	palette	170528	0	32	
+Menu screen EGA palette.	palette	170560	0	32	
+Menu screen.	image	170592	170560	9772	
+Mouse arrow bitmask.	mousemask	214690	214658	32	
+Mouse arrow transparency bitmask.	binary	214658	0	32	
+Mouse wait bitmask.	mousemask	214754	214722	32	
+Mouse wait transparency bitmask.	binary	214722	0	32	
+Movie dialog text. #1	text	204198	0	62	
+Movie dialog text. #2	text	206930	0	23	
+Movie editor buttons.	text	201754	0	9	
+Movie editor menus.	text	204686	0	706	
+MS Run-time Library copyright.	text	200728	0	56	
+Music dialog text.	text	205524	0	30	
+Palette dialog text.	text	215353	0	22	
+PRINTING...	text	213464	0	10	
+Right arrow icon.	icon	201964	204368	177	
+Run-time error messages.	text	225392	0	224	
+Scenes dialog text.	text	215418	0	30	
+Speaking icon.	icon	202888	204368	248	
+Speech balloon icon.	icon	202288	204368	141	
+Speech balloon layouts.	text	203868	0	46	
+Speech balloon menu slots.	text	168198	0	2125	
+Speech balloon types.	text	203668	0	198	
+Supported file extensions.	text	204292	0	30	
+Text. #1	text	203626	0	20	
+Text. #2	text	203922	0	122	
+Thought balloon speech information.	binary	157356	0	1468	
+Ticket screen CGA palette.	palette	193856	0	32	
+Ticket screen EGA palette.	palette	193824	0	32	
+Ticket screen text.	text	206953	0	16	
+Ticket screen.	image	193888	193824	6814	
+Time zones.	text	225274	0	11	
+Title screen CGA palette.	palette	183104	0	32	
+Title screen EGA palette.	palette	183136	0	32	
+Title Screen.	image	183170	183136	10646	Appears for 5 seconds at startup.
+Undo menu options.	text	204610	0	75	
+Unknown #1	binary	160899	0	7299	Appears to be safe to modify.
+Unknown #2	binary	180369	0	282	Appears to be safe to modify.
+Unknown #3	binary	180991	0	2113	Appears to be safe to modify.
+Unknown #4	binary	201092	0	60	Appears to be safe to modify.
+Unknown #5	binary	201155	0	225	
+Unknown #6	binary	203384	0	48	Appears to be safe to modify.
+Unknown #7	binary	214786	0	418	Appears to be safe to modify.
+Unknown #8	binary	215988	0	32	Appears to be safe to modify.
+Unknown #9	binary	216316	0	6507	Appears to be safe to modify.
+Unknown #10	binary	222834	0	2246	
+Version.	text	206977	0	6	
+Video mode error message.	text	207804	0	56	
+Way menu items. #1	text	170323	0	190	
+Way menu items. #2	text	216057	0	259	

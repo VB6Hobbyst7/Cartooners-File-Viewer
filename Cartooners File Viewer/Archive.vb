@@ -105,7 +105,7 @@ Public Class ArchiveClass
             With CurrentFile
                .Data = New List(Of Byte)(File.ReadAllBytes(ArchivePath))
                .Path = ArchivePath
-               If .Data.Count = 0 Then .Data.Clear()
+               If Not .Data.Any Then .Data.Clear()
                ArchivedFiles(Refresh:=True)
 
                Display()

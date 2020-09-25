@@ -66,8 +66,8 @@ Public Class MusicClass
 
          If Not MusicPath = Nothing Then
             With CurrentFile
-               .Data = New list(Of Byte)(File.ReadAllBytes(MusicPath))
-               If .Data.Count = 0 Then .Data.Clear()
+               .Data = New List(Of Byte)(File.ReadAllBytes(MusicPath))
+               If Not .Data.Any Then .Data.Clear()
 
                Select Case .Data.Last
                   Case PLAY_ONCE, PLAY_REPEATEDLY

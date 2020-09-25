@@ -110,7 +110,7 @@ Public Module RLECompressionModule
                   Decompressed.AddRange(Enumerable.Repeat(Compressed(Position), Count))
                   Position += &H1%
                Case Else
-                  MessageBox.Show($"Invalid instruction found at byte #{Position:X} while decompressing data.{NewLine}", My.Application.Info.Title, MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+                  MessageBox.Show($"Invalid instruction found at byte #{Position:X} while decompressing data.", My.Application.Info.Title, MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
                   Exit Do
             End Select
          Loop

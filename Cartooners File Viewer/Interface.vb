@@ -38,15 +38,6 @@ Public Class InterfaceWindow
       End Try
    End Sub
 
-   'This procedure gives the command to display the help.
-   Private Sub InterfaceWindow_Load(sender As Object, e As EventArgs) Handles Me.Load
-      Try
-         HelpMenu.PerformClick()
-      Catch ExceptionO As Exception
-         HandleError(ExceptionO)
-      End Try
-   End Sub
-
    'This procedure closes this window.
    Private Sub CloseMenu_Click(sender As Object, e As EventArgs) Handles CloseMenu.Click
       Try
@@ -161,9 +152,10 @@ Public Class InterfaceWindow
       End Try
    End Sub
 
-   'This procedure further initializes this window.
-   Private Sub InterfaceWindow_Load() Handles Me.Load
+   'This procedure gives the command to display the help.
+   Private Sub InterfaceWindow_Load(sender As Object, e As EventArgs) Handles Me.Load
       Try
+         HelpMenu.PerformClick()
          If GetCommandLineArgs.Count > 1 Then DataFile(GetCommandLineArgs(1))
       Catch ExceptionO As Exception
          HandleError(ExceptionO)

@@ -8,6 +8,7 @@ Imports System
 Imports System.Collections.Generic
 Imports System.Environment
 Imports System.IO
+Imports System.Linq
 Imports System.Text
 Imports System.Windows.Forms
 
@@ -53,7 +54,7 @@ Public Class PrinterDriverClass
             If Not PrinterDriverPath = Nothing Then
                .Data = New List(Of Byte)(File.ReadAllBytes(PrinterDriverPath))
                .Path = PrinterDriverPath
-               If .Data.Count = 0 Then .Data.Clear()
+               If Not .Data.Any Then .Data.Clear()
 
                DisplayInformationMenu.PerformClick()
             End If

@@ -137,7 +137,7 @@ Public Module CoreModule
                   .Append(New String(EscapeCharacter, 2))
                ElseIf (Character = ControlChars.Tab OrElse Character >= " "c) AndAlso Not EscapeAll Then
                   .Append(Character)
-               ElseIf (Index < Text.Length - 1 AndAlso Character & Text.Chars(Index + 1) = NewLine) AndAlso Not EscapeAll Then
+               ElseIf (Index < Text.Length - 1 AndAlso $"{Character}{Text.Chars(Index + 1)}" = NewLine) AndAlso Not EscapeAll Then
                   .Append(NewLine)
                   Index += 1
                Else

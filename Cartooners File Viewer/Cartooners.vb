@@ -4,6 +4,7 @@ Option Explicit On
 Option Infer Off
 Option Strict On
 
+Imports Microsoft.VisualBasic
 Imports System
 Imports System.Collections.Generic
 Imports System.Convert
@@ -20,6 +21,15 @@ Imports System.Windows.Forms
 Public Class CartoonersClass
    Inherits DataFileClass
 
+   'This class defines the description, offset and size of data chunks used by Cartooners.
+   Private Class DataChunkStr
+      Public Description As String   'Defines a data chunk's description.
+      Public Type As String          'Defines a data chunk's type.
+      Public Offset As Integer       'Defines a data chunk's offset.
+      Public Related As Integer      'Defines a related data chunk's offset.
+      Public Length As Integer       'Defines a data chunk's length.
+   End Class
+
    'This enumeration contains the data chunk properties.
    Private Enum DataChunkPropertiesE As Integer
       Description   'A data chunk's description.
@@ -29,23 +39,15 @@ Public Class CartoonersClass
       Length        'A data chunk's length.
    End Enum
 
-   'This structure defines the description, offset and size of data chunks used by Cartooners.
-   Private Structure DataChunkStr
-      Public Description As String   'Defines a data chunk's description.
-      Public Type As String          'Defines a data chunk's type.
-      Public Offset As Integer       'Defines a data chunk's offset.
-      Public Related As Integer      'Defines a related data chunk's offset.
-      Public Length As Integer       'Defines a data chunk's length.
-   End Structure
-
    Private Const BYTES_PER_ROW As Integer = &HA0%                  'Contains the number of bytes per pixel row.
    Private Const EXPECTED_NAME As String = "Cartoons.exe"          'Contains the Cartooners executable's expected file name.
    Private Const EXPECTED_PACKED_SIZE As Integer = &H36A5F%        'Contains the Cartooners executable's expected packed file size.
    Private Const EXPECTED_UNPACKED_SIZE As Integer = &H39F20%      'Contains the Cartooners executable's expected unpacked file size.
+   Private Const MOUSE_CURSOR_SIZE As Integer = &H10%              'Contains the width and height of Cartooners' mouse pointers.
    Private Const SCREEN_HEIGHT As Integer = &HC8%                  'Contains the screen height used by Cartooners in pixels.
    Private Const SCREEN_WIDTH As Integer = &H140%                  'Contains the screen width used by Cartooners in pixels.
 
-   Private ReadOnly DATA_CHUNK_PROPERTY_DELIMITER As Char = ToChar(9)   'Contains the data chunk property delimiter.
+   Private ReadOnly DATA_CHUNK_PROPERTY_DELIMITER As Char = ControlChars.Tab   'Contains the data chunk property delimiter.
 
    'The menu items used by this class.
    Private WithEvents DisplayDataMenu As New ToolStripMenuItem With {.Text = "Display &Data"}
@@ -58,12 +60,11 @@ Public Class CartoonersClass
          Dim DataChunkDescriptions As New List(Of String)
 
          If DataFile(CartoonersPath:=PathO).Data IsNot Nothing AndAlso DataFileMenu IsNot Nothing Then
-            For Each DataChunk As DataChunkStr In DataChunks()
-               DataChunkDescriptions.Add(DataChunk.Description)
-            Next DataChunk
+            DataChunks.ForEach(Sub(DataChunk As DataChunkStr) DataChunkDescriptions.Add(DataChunk.Description))
             DataChunkDescriptions.Sort()
 
             With DisplayDataSubmenu
+               .DropDownWidth = DataChunkDescriptions.Max(Function(Description As String) CInt(DataFileMenu.Owner.CreateGraphics.MeasureString(Description, DataFileMenu.Owner.Font).Width))
                .Items.Clear()
                DataChunkDescriptions.ForEach(Sub(SubMenuItem As String) .Items.Add(New ToolStripMenuItem With {.CheckOnClick = True, .Text = SubMenuItem}))
             End With
@@ -178,22 +179,23 @@ Public Class CartoonersClass
          End If
 
          NewText.Append($"[{Description}] ({Type}){NewLine}")
-         If Type = "binary" OrElse Type = "image" Then
-            NewText.Append($"{Escape(GetBytes(DataFile().Data, Offset, Length), " "c, EscapeAll:=True).Trim()}")
-         ElseIf Type = "icon" Then
-            IconHeight = BitConverter.ToUInt16(DataFile().Data.ToArray(), Offset + &H2%)
-            IconType = BitConverter.ToUInt16(DataFile().Data.ToArray(), Offset)
-            IconWidth = BitConverter.ToUInt16(DataFile().Data.ToArray(), Offset + &H4%)
+         Select Case Type
+            Case "binary", "image", "mousemask"
+               NewText.Append($"{Escape(GetBytes(DataFile().Data, Offset, Length), " "c, EscapeAll:=True).Trim()}")
+            Case "icon"
+               IconHeight = BitConverter.ToUInt16(DataFile().Data.ToArray(), Offset + &H2%)
+               IconType = BitConverter.ToUInt16(DataFile().Data.ToArray(), Offset)
+               IconWidth = BitConverter.ToUInt16(DataFile().Data.ToArray(), Offset + &H4%)
 
-            NewText.Append($"Size: {IconWidth * 2} x {IconHeight} - Type: {IconType} {NewLine}{NewLine}")
-            NewText.Append($"{Escape(GetBytes(DataFile().Data, Offset, Length), " "c, EscapeAll:=True).Trim()}")
-         ElseIf Type = "palette" Then
-            Palettes = New List(Of List(Of Color))
-            Palettes.Add(New List(Of Color)(GBRPalette(DataFile().Data, Offset)))
-            NewText.Append(GBRToText(, Palettes))
-         ElseIf Type = "text" Then
-            NewText.Append(Escape(ConvertMSDOSLineBreak(GetString(DataFile.Data, Offset, Length)).Replace(DELIMITER, NewLine)))
-         End If
+               NewText.Append($"Size: {IconWidth * 2} x {IconHeight} - Type: {IconType} {NewLine}{NewLine}")
+               NewText.Append($"{Escape(GetBytes(DataFile().Data, Offset, Length), " "c, EscapeAll:=True).Trim()}")
+            Case "palette"
+               Palettes = New List(Of List(Of Color))
+               Palettes.Add(New List(Of Color)(GBRPalette(DataFile().Data, Offset)))
+               NewText.Append(GBRToText(, Palettes))
+            Case "text"
+               NewText.Append(Escape(ConvertMSDOSLineBreak(GetString(DataFile.Data, Offset, Length)).Replace(DELIMITER, NewLine)))
+         End Select
 
          UpdateDataBox(NewText.ToString())
       Catch ExceptionO As Exception
@@ -233,15 +235,18 @@ Public Class CartoonersClass
 
          For Each Chunk As DataChunkStr In DataChunks()
             With Chunk
-               If .Type = "icon" Then
-                  IconHeight = BitConverter.ToUInt16(DataFile().Data.ToArray(), .Offset + EXEHeaderSize() + &H2%)
-                  IconWidth = BitConverter.ToUInt16(DataFile().Data.ToArray(), .Offset + EXEHeaderSize() + &H4%)
-                  BytesPerRow = If(IconWidth Mod PIXELS_PER_BYTE = 0, IconWidth \ PIXELS_PER_BYTE, (IconWidth + &H1%) \ PIXELS_PER_BYTE)
-                  IconSize = BytesPerRow * IconHeight
-                  Draw4BitImage(GetBytes(DataFile().Data, .Offset + EXEHeaderSize() + &H6%, IconSize), IconWidth, IconHeight, GBRPalette(DataFile().Data, .Related + EXEHeaderSize()), BytesPerRow).Save($"{Path.Combine(ExportPath, .Description)}.png", ImageFormat.Png)
-               ElseIf .Type = "image" Then
-                  Draw4BitImage(DecompressRLE(DataFile().Data, .Offset + EXEHeaderSize(), .Length), SCREEN_WIDTH, SCREEN_HEIGHT, GBRPalette(DataFile().Data, .Related + EXEHeaderSize()), BYTES_PER_ROW).Save($"{Path.Combine(ExportPath, .Description)}.png", ImageFormat.Png)
-               End If
+               Select Case .Type
+                  Case "icon"
+                     IconHeight = BitConverter.ToUInt16(DataFile().Data.ToArray(), .Offset + EXEHeaderSize() + &H2%)
+                     IconWidth = BitConverter.ToUInt16(DataFile().Data.ToArray(), .Offset + EXEHeaderSize() + &H4%)
+                     BytesPerRow = If(IconWidth Mod PIXELS_PER_BYTE = 0, IconWidth \ PIXELS_PER_BYTE, (IconWidth + &H1%) \ PIXELS_PER_BYTE)
+                     IconSize = BytesPerRow * IconHeight
+                     Draw4BitImage(GetBytes(DataFile().Data, .Offset + EXEHeaderSize() + &H6%, IconSize), IconWidth, IconHeight, GBRPalette(DataFile().Data, .Related + EXEHeaderSize()), BytesPerRow).Save($"{Path.Combine(ExportPath, .Description)}.png", ImageFormat.Png)
+                  Case "image"
+                     Draw4BitImage(DecompressRLE(DataFile().Data, .Offset + EXEHeaderSize(), .Length), SCREEN_WIDTH, SCREEN_HEIGHT, GBRPalette(DataFile().Data, .Related + EXEHeaderSize()), BYTES_PER_ROW).Save($"{Path.Combine(ExportPath, .Description)}.png", ImageFormat.Png)
+                  Case "mousemask"
+                     MouseCursor(Chunk).Save($"{Path.Combine(ExportPath, .Description)}.png", ImageFormat.Png)
+               End Select
             End With
          Next Chunk
 
@@ -256,7 +261,7 @@ Public Class CartoonersClass
    'This procedure exports a map of the Cartooner's executable.
    Private Sub ExportMap(ExportPath As String)
       Try
-         Dim CurrentChunk As DataChunkStr? = Nothing
+         Dim CurrentChunk As DataChunkStr = Nothing
          Dim Data As New List(Of Byte)(DataFile().Data)
          Dim Map As New StringBuilder()
          Dim Position As Integer = &H0%
@@ -265,27 +270,27 @@ Public Class CartoonersClass
          RelocationItems().ForEach(Sub(Item As SegmentOffsetStr) RelocationItemPositions.Add(Item.Segment << &H4% Or Item.Offset))
 
          Data.RemoveRange(&H0%, EXEHeaderSize())
+
          Do Until Position >= Data.Count - &H1%
-            CurrentChunk = Nothing
-            For Each Chunk As DataChunkStr In DataChunks()
-               If Position = Chunk.Offset Then
-                  CurrentChunk = Chunk
-                  Exit For
-               End If
-            Next Chunk
+            CurrentChunk = DataChunks.FirstOrDefault(Function(Chunk As DataChunkStr) Chunk.Offset = Position)
 
             If CurrentChunk Is Nothing Then
                If RelocationItemPositions.Contains(Position) Then Map.Append("*"c)
                Map.Append($"{Data(Position):X2} ")
                Position += &H1%
             Else
-               With CurrentChunk.Value
+               With CurrentChunk
                   Map.Append($"{NewLine}{NewLine}[BEGIN { .Description}]{NewLine}")
-                  For SubPosition As Integer = .Offset To (.Offset + .Length) - &H1%
-                     If RelocationItemPositions.Contains(SubPosition) Then Map.Append("*"c)
-                     Map.Append($"{Data(SubPosition):X2} ")
-                     Position += &H1%
-                  Next SubPosition
+                  If CurrentChunk.Type = "text" Then
+                     Map.Append($"""{Escape(GetString(Data, .Offset, .Length).Replace("""", """""")).Replace(NewLine, "/0D/0A")}""")
+                     Position += (.Length - &H1%)
+                  Else
+                     For SubPosition As Integer = .Offset To (.Offset + .Length) - &H1%
+                        If RelocationItemPositions.Contains(SubPosition) Then Map.Append("*"c)
+                        Map.Append($"{Data(SubPosition):X2} ")
+                        Position += &H1%
+                     Next SubPosition
+                  End If
                   Map.Append($"{NewLine}[END { .Description}]{NewLine}{NewLine}")
                End With
             End If
@@ -296,4 +301,39 @@ Public Class CartoonersClass
          HandleError(ExceptionO)
       End Try
    End Sub
+
+   'This procedure retrieves the mouse cursor at the specified position from the specified data.
+   Private Function MouseCursor(Chunk As DataChunkStr) As Bitmap
+      Try
+         Dim Bit As New Boolean
+         Dim Cursor As New Bitmap(MOUSE_CURSOR_SIZE, MOUSE_CURSOR_SIZE)
+         Dim Mask As New List(Of Byte)(GetBytes(DataFile().Data, Chunk.Offset + EXEHeaderSize(), Chunk.Length))
+         Dim TransparencyBit As New Boolean
+         Dim TransparencyMask As New List(Of Byte)(GetBytes(DataFile().Data, Chunk.Related + EXEHeaderSize(), Chunk.Length))
+         Dim x As Integer = 0
+         Dim y As Integer = 0
+
+         For ByteIndex As Integer = &H0% To &H1F% Step &H2%
+            For BitIndex As Integer = &HF% To &H0% Step -1
+               Bit = CBool((BitConverter.ToUInt16(Mask.ToArray(), ByteIndex) >> BitIndex) And &H1%)
+               TransparencyBit = CBool((BitConverter.ToUInt16(TransparencyMask.ToArray(), ByteIndex) >> BitIndex) And &H1%)
+
+               If TransparencyBit Then
+                  Cursor.SetPixel(x, y, Color.Gray)
+               Else
+                  Cursor.SetPixel(x, y, If(Bit, Color.White, Color.Black))
+               End If
+               x += 1
+            Next BitIndex
+            x = 0
+            y += 1
+         Next ByteIndex
+
+         Return Cursor
+      Catch ExceptionO As Exception
+         HandleError(ExceptionO)
+      End Try
+
+      Return Nothing
+   End Function
 End Class
