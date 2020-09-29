@@ -124,7 +124,7 @@ Public Module CoreModule
             Position += NewData.Count
          Loop
 
-         If Position < Offset + (Length - &H1%) AndAlso Position < Data.Count Then
+         If Position < Offset + Length AndAlso Position < Data.Count Then
             For SubPosition As Integer = Position To Offset + (Length - &H1%)
                If SubPosition >= Data.Count Then Exit For
                Data(SubPosition) = NewData(SubPosition - Position)
