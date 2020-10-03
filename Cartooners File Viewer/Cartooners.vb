@@ -7,7 +7,6 @@ Option Strict On
 Imports Microsoft.VisualBasic
 Imports System
 Imports System.Collections.Generic
-Imports System.Convert
 Imports System.Diagnostics
 Imports System.Drawing
 Imports System.Drawing.Imaging
@@ -22,12 +21,13 @@ Public Class CartoonersClass
    Inherits DataFileClass
 
    'This class defines the description, offset and size of data chunks used by Cartooners.
-   Private Class DataChunkStr
+   Private Class DataChunkClass
       Public Description As String   'Defines a data chunk's description.
       Public Type As String          'Defines a data chunk's type.
       Public Offset As Integer       'Defines a data chunk's offset.
       Public Related As Integer      'Defines a related data chunk's offset.
       Public Length As Integer       'Defines a data chunk's length.
+      Public EndO As Integer         'Defines a data chunk's end.
    End Class
 
    'This enumeration contains the data chunk properties.
@@ -37,6 +37,7 @@ Public Class CartoonersClass
       Offset        'A data chunk's offset.
       Related       'A related data chunk's offset.
       Length        'A data chunk's length.
+      EndO          'A data chunk's end.
    End Enum
 
    Private Const BYTES_PER_ROW As Integer = &HA0%                  'Contains the number of bytes per pixel row.
@@ -60,7 +61,7 @@ Public Class CartoonersClass
          Dim DataChunkDescriptions As New List(Of String)
 
          If DataFile(CartoonersPath:=PathO).Data IsNot Nothing AndAlso DataFileMenu IsNot Nothing Then
-            DataChunks.ForEach(Sub(DataChunk As DataChunkStr) DataChunkDescriptions.Add(DataChunk.Description))
+            DataChunks.ForEach(Sub(DataChunk As DataChunkClass) DataChunkDescriptions.Add(DataChunk.Description))
             DataChunkDescriptions.Sort()
 
             With DisplayDataSubmenu
@@ -83,22 +84,41 @@ Public Class CartoonersClass
       End Try
    End Sub
 
+   'This procedure checks whether the data chunk ranges overlap and returns the result.
+   Private Function CheckForChunkOverlap() As String
+      Dim Overlaps As New StringBuilder
+
+      Try
+         For Each Chunk As DataChunkClass In DataChunks()
+            For Each OtherChunk As DataChunkClass In DataChunks()
+               If Chunk IsNot OtherChunk AndAlso Chunk.EndO > OtherChunk.Offset AndAlso Chunk.EndO <= OtherChunk.EndO Then Overlaps.Append($"""{Chunk.Description} "" overlaps with ""{OtherChunk.Description}"".{NewLine}")
+            Next OtherChunk
+         Next Chunk
+
+         Return Overlaps.ToString()
+      Catch ExceptionO As Exception
+         HandleError(ExceptionO)
+      End Try
+
+      Return Nothing
+   End Function
+
    'This procedure manages Cartooner's data chunk information.
-   Private Function DataChunks() As List(Of DataChunkStr)
+   Private Function DataChunks() As List(Of DataChunkClass)
       Try
          Dim Chunks As List(Of String) = Nothing
          Dim Properties() As String = {}
-         Static CurrentDataChunks As List(Of DataChunkStr) = Nothing
+         Static CurrentDataChunks As List(Of DataChunkClass) = Nothing
 
          If CurrentDataChunks Is Nothing Then
-            CurrentDataChunks = New List(Of DataChunkStr)
+            CurrentDataChunks = New List(Of DataChunkClass)
 
             Chunks = New List(Of String)(My.Resources.Cartooners_Executable.Split({NewLine}, StringSplitOptions.None))
             Chunks.RemoveAt(0)
             For Each Chunk As String In Chunks
                If Not Chunk.Trim() = Nothing Then
                   Properties = Chunk.Split(DATA_CHUNK_PROPERTY_DELIMITER)
-                  CurrentDataChunks.Add(New DataChunkStr With {.Description = Properties(DataChunkPropertiesE.Description), .Type = Properties(DataChunkPropertiesE.Type).Trim().ToLower(), .Offset = CInt(Properties(DataChunkPropertiesE.Offset)), .Related = CInt(Properties(DataChunkPropertiesE.Related)), .Length = CInt(Properties(DataChunkPropertiesE.Length))})
+                  CurrentDataChunks.Add(New DataChunkClass With {.Description = Properties(DataChunkPropertiesE.Description), .Type = Properties(DataChunkPropertiesE.Type).Trim().ToLower(), .Offset = CInt(Properties(DataChunkPropertiesE.Offset)), .Related = CInt(Properties(DataChunkPropertiesE.Related)), .Length = CInt(Properties(DataChunkPropertiesE.Length)), .EndO = .Offset + .Length})
                End If
             Next Chunk
          End If
@@ -114,6 +134,7 @@ Public Class CartoonersClass
    'This procedures manages the Cartooners executable's data file.
    Private Function DataFile(Optional CartoonersPath As String = Nothing) As DataFileStr
       Try
+         Dim Overlaps As String = Nothing
          Static CurrentFile As New DataFileStr With {.Data = Nothing, .Path = Nothing}
 
          With CurrentFile
@@ -126,7 +147,13 @@ Public Class CartoonersClass
                            .Path = CartoonersPath
                            EXEHeaderSize(NewData:= .Data)
                            RelocationItems(NewData:= .Data)
-                           DisplayInformationMenu.PerformClick()
+
+                           Overlaps = CheckForChunkOverlap()
+                           If Not Overlaps = Nothing Then
+                              UpdateDataBox(Overlaps)
+                           Else
+                              DisplayInformationMenu.PerformClick()
+                           End If
                         Else
                            MessageBox.Show("Invalid MS-DOS executable signature.", My.Application.Info.Title, MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
                            .Data = Nothing
@@ -178,7 +205,7 @@ Public Class CartoonersClass
             Length = DataFile().Data.Count - Offset
          End If
 
-         NewText.Append($"[{Description}] ({Type}){NewLine}")
+         NewText.Append($"[{Description}] ({Type}) At: {Offset - EXEHeaderSize()} {NewLine}")
          Select Case Type
             Case "binary", "image", "mousemask"
                NewText.Append($"{Escape(GetBytes(DataFile().Data, Offset, Length), " "c, EscapeAll:=True).Trim()}")
@@ -233,7 +260,7 @@ Public Class CartoonersClass
 
          File.WriteAllBytes(Path.Combine(ExportPath, "Cartoons.Unpacked.exe"), DataFile().Data.ToArray())
 
-         For Each Chunk As DataChunkStr In DataChunks()
+         For Each Chunk As DataChunkClass In DataChunks()
             With Chunk
                Select Case .Type
                   Case "icon"
@@ -251,6 +278,7 @@ Public Class CartoonersClass
          Next Chunk
 
          ExportMap(ExportPath)
+         ExportUnknownMap(ExportPath)
 
          Process.Start(New ProcessStartInfo With {.FileName = ExportPath, .WindowStyle = ProcessWindowStyle.Normal})
       Catch ExceptionO As Exception
@@ -258,12 +286,12 @@ Public Class CartoonersClass
       End Try
    End Sub
 
-   'This procedure exports a map of the Cartooner's executable.
+   'This procedure exports a map of the Cartooners executable.
    Private Sub ExportMap(ExportPath As String)
       Try
-         Dim CurrentChunk As DataChunkStr = Nothing
+         Dim CurrentChunk As DataChunkClass = Nothing
          Dim Data As New List(Of Byte)(DataFile().Data)
-         Dim Map As New StringBuilder()
+         Dim Map As New StringBuilder
          Dim Position As Integer = &H0%
          Dim RelocationItemPositions As New List(Of Integer)
 
@@ -272,7 +300,7 @@ Public Class CartoonersClass
          Data.RemoveRange(&H0%, EXEHeaderSize())
 
          Do Until Position >= Data.Count - &H1%
-            CurrentChunk = DataChunks.FirstOrDefault(Function(Chunk As DataChunkStr) Chunk.Offset = Position)
+            CurrentChunk = DataChunks.FirstOrDefault(Function(Chunk As DataChunkClass) Chunk.Offset = Position)
 
             If CurrentChunk Is Nothing Then
                If RelocationItemPositions.Contains(Position) Then Map.Append("*"c)
@@ -283,7 +311,7 @@ Public Class CartoonersClass
                   Map.Append($"{NewLine}{NewLine}[BEGIN { .Description}]{NewLine}")
                   If CurrentChunk.Type = "text" Then
                      Map.Append($"""{Escape(GetString(Data, .Offset, .Length).Replace("""", """""")).Replace(NewLine, "/0D/0A")}""")
-                     Position += (.Length - &H1%)
+                     Position += .Length
                   Else
                      For SubPosition As Integer = .Offset To (.Offset + .Length) - &H1%
                         If RelocationItemPositions.Contains(SubPosition) Then Map.Append("*"c)
@@ -302,8 +330,45 @@ Public Class CartoonersClass
       End Try
    End Sub
 
+   'This procedure exports a map of the Cartooners executable's unknown parts.
+   Private Sub ExportUnknownMap(ExportPath As String)
+      Try
+         Dim Buffer As New List(Of Byte)
+         Dim CurrentChunk As DataChunkClass = Nothing
+         Dim Data As New List(Of Byte)(DataFile().Data)
+         Dim Map As New StringBuilder
+         Dim Position As Integer = &H0%
+
+         Data.RemoveRange(&H0%, EXEHeaderSize())
+
+         Do Until Position >= Data.Count - &H1%
+            CurrentChunk = DataChunks.FirstOrDefault(Function(Chunk As DataChunkClass) Chunk.Offset = Position)
+
+            If CurrentChunk Is Nothing Then
+               Buffer.Add(Data(Position))
+               Position += &H1%
+            Else
+               If Buffer.Count > 0 Then
+                  If Not (Buffer.Distinct.Count = 1 AndAlso Buffer.Distinct.First = &H0%) Then
+                     Map.Append($"Position: {(Position - Buffer.Count) + EXEHeaderSize()}{NewLine}")
+                     Map.Append($"Length: {Buffer.Count}{NewLine}")
+                     Buffer.ForEach(Sub(ByteO As Byte) Map.Append($"{ByteO:X2} "))
+                     Buffer.Clear()
+                     Map.Append($"{NewLine}{NewLine}")
+                  End If
+               End If
+               Position += CurrentChunk.Length
+            End If
+         Loop
+
+         File.WriteAllText(Path.Combine(ExportPath, "Cartooners Executable Unknown Map.txt"), Map.ToString())
+      Catch ExceptionO As Exception
+         HandleError(ExceptionO)
+      End Try
+   End Sub
+
    'This procedure retrieves the mouse cursor at the specified position from the specified data.
-   Private Function MouseCursor(Chunk As DataChunkStr) As Bitmap
+   Private Function MouseCursor(Chunk As DataChunkClass) As Bitmap
       Try
          Dim Bit As New Boolean
          Dim Cursor As New Bitmap(MOUSE_CURSOR_SIZE, MOUSE_CURSOR_SIZE)
