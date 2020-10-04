@@ -71,12 +71,15 @@ Public Module CoreModule
                Case "Z"c
                   Data = ZeroBytes(Data, Offset, Length)
                Case Else
+                  Data = Nothing
                   Console.WriteLine($"Unknown modification type: ""{ModificationType}"".")
+                  Console.ReadLine()
             End Select
 
-            File.WriteAllBytes(OutputPath, Data.ToArray())
-
-            If OpenWith IsNot Nothing Then Process.Start(New ProcessStartInfo With {.FileName = OpenWith, .Arguments = Arguments, .WindowStyle = ProcessWindowStyle.Normal})
+            If Data IsNot Nothing Then
+               File.WriteAllBytes(OutputPath, Data.ToArray())
+               If OpenWith IsNot Nothing Then Process.Start(New ProcessStartInfo With {.FileName = OpenWith, .Arguments = Arguments, .WindowStyle = ProcessWindowStyle.Normal})
+            End If
          End If
       Catch ExceptionO As Exception
          HandleError(ExceptionO)
