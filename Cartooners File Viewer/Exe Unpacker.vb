@@ -37,8 +37,8 @@ Public Module EXEUnpackerModule
       Public Signature As Integer                 'Defines the unpacker's signature.
    End Structure
 
-   Private Const PACKED_FILE_ERROR As String = "Packed file is corrupt"    'Contains the unpacker's error message.
-   Private ReadOnly EXEPACK_PADDING As Char = ToChar(&HFF%)                'Contains the unpacker's padding byte.
+   Private Const PACKED_FILE_ERROR As String = "Packed file is corrupt"    'Defines the unpacker's error message.
+   Private ReadOnly EXEPACK_PADDING As Char = ToChar(&HFF%)                'Defines the unpacker's padding byte.
 
    'This procedure creates an unpacked executable using the specified data and returns the result.
    Private Function CreateExecutable(MSDOSHeader As MSDOSHeaderStr, EXEPackHeader As EXEPACKStr, UnpackedData As List(Of Byte), RelocationTable As List(Of Byte)) As List(Of Byte)

@@ -18,10 +18,10 @@ Public Class ScriptClass
 
    'This enumeration contains the locations of known values inside a script file.
    Private Enum LocationsE As Integer
-      Script = &HA%     'The LZW compressed installation script.
+      Script = &HA%   'The LZW compressed installation script.
    End Enum
 
-   Private Const HEADER_SIZE As Integer = &HA%   'An installation script's header size.
+   Private Const HEADER_SIZE As Integer = &HA%   'Defines an installation script's header size.
 
    'This procedure initializes this class.
    Public Sub New(ByRef PathO As String, Optional DataFileMenu As ToolStripMenuItem = Nothing)

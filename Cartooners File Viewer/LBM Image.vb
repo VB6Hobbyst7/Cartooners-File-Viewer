@@ -22,41 +22,41 @@ Public Class LBMImageClass
 
    'This structure defines an IFF record.
    Private Structure IFFRecordStr
-      Public Identifier As String   'Contains an IFF record's identifier.
-      Public Offset As Integer      'Contains an IFF record's offset within its file.
-      Public Size As Integer        'Contains an IFF record's size.
+      Public Identifier As String   'Defines an IFF record's identifier.
+      Public Offset As Integer      'Defines an IFF record's offset within its file.
+      Public Size As Integer        'Defines an IFF record's size.
       Public Recognized As Boolean  'Indicates whether or not this program recognized the record's identifier.
    End Structure
 
    'This structure defines a LBM file's information.
    Private Structure FileStr
-      Public BitsPerPixel As Integer                 'The number of bits per pixel.
-      Public Data As List(Of Byte)                  'The file's data.
-      Public ImageO As Bitmap                        'The file's image.
-      Public IFFFileSize As Integer                  'The file's size.
-      Public IFFIdentifier As String                 'The IFF identifier.
-      Public IFFRecords As List(Of IFFRecordStr)     'The list of IFF records in the file.
-      Public IFFType As String                       'The IFF type.
-      Public IsCompressed As Boolean                 'Indicates whether or not the image is compressed.
-      Public Palette As List(Of Color)               'The image's palette.
-      Public Path As String                          'The file's path.
-      Public Thumbnail As Bitmap                     'The thumbnail.
+      Public BitsPerPixel As Integer               'Defines the number of bits per pixel.
+      Public Data As List(Of Byte)                 'Defines the file's data.
+      Public ImageO As Bitmap                      'Defines the file's image.
+      Public IFFFileSize As Integer                'Defines the file's size.
+      Public IFFIdentifier As String               'Defines the IFF identifier.
+      Public IFFRecords As List(Of IFFRecordStr)   'Defines the list of IFF records in the file.
+      Public IFFType As String                     'Defines the IFF type.
+      Public IsCompressed As Boolean               'Indicates whether or not the image is compressed.
+      Public Palette As List(Of Color)             'Defines the image's palette.
+      Public Path As String                        'Defines the file's path.
+      Public Thumbnail As Bitmap                   'Defines the thumbnail.
    End Structure
 
-   Private Const BODY_IFF_RECORD As String = "BODY"                'Indicates that an IFF record contains pixel data.
-   Private Const BMHD_IFF_RECORD As String = "BMHD"                'Indicates that an IFF record contains a header.
-   Private Const BMHD_IFF_RECORD_SIZE As Integer = &H14%           'Contains a BMHD IFF record's size.
-   Private Const CMAP_IFF_RECORD As String = "CMAP"                'Indicates that an IFF record contains a palette.
-   Private Const CRNG_IFF_RECORD As String = "CRNG"                'Indicates that an IFF record contains a color range.
-   Private Const GRAB_IFF_RECORD As String = "GRAB"                'Indicates that an IFF record contains a hotspot.
-   Private Const IFF_IDENTIFIER As String = "FORM"                 'Indicates that an IFF file contains an image.
-   Private Const IFF_TYPE As String = "ILBM"                       'Indicates that an IFF file contains an interleaved bitmap image.
-   Private Const LBM_4_BIT As Byte = &H4%                          'Indicates that an LBM file uses 4 bits per pixel.
-   Private Const LBM_4_BIT_PIXELS_PER_BYTE As Integer = &H2%       'Contains the number of pixels per byte for a 4 bits per pixel image.
-   Private Const LBM_4_BIT_CMPA_IFF_RECORD_SIZE As Integer = &H30% 'Contains a CMAP IFF record's size for a 4 bits per pixel image.
-   Private Const LBM_4_BIT_COLOR_DEPTH As Byte = &H10%             'Contains the number of colors in a 4 bits per pixel image.
-   Private Const TINY_IFF_RECORD As String = "TINY"                'Indicates that an IFF record contains a thumbnail.
-   Private Const UNCOMPRESSED As Integer = &H0%                    'Indicates that an image is uncompressed.
+   Private Const BODY_IFF_RECORD As String = "BODY"                  'Indicates that an IFF record contains pixel data.
+   Private Const BMHD_IFF_RECORD As String = "BMHD"                  'Indicates that an IFF record contains a header.
+   Private Const BMHD_IFF_RECORD_SIZE As Integer = &H14%             'Defines a BMHD IFF record's size.
+   Private Const CMAP_IFF_RECORD As String = "CMAP"                  'Indicates that an IFF record contains a palette.
+   Private Const CRNG_IFF_RECORD As String = "CRNG"                  'Indicates that an IFF record contains a color range.
+   Private Const GRAB_IFF_RECORD As String = "GRAB"                  'Indicates that an IFF record contains a hotspot.
+   Private Const IFF_IDENTIFIER As String = "FORM"                   'Indicates that an IFF file contains an image.
+   Private Const IFF_TYPE As String = "ILBM"                         'Indicates that an IFF file contains an interleaved bitmap image.
+   Private Const LBM_4_BIT As Byte = &H4%                            'Indicates that an LBM file uses 4 bits per pixel.
+   Private Const LBM_4_BIT_PIXELS_PER_BYTE As Integer = &H2%         'Defines the number of pixels per byte for a 4 bits per pixel image.
+   Private Const LBM_4_BIT_CMPA_IFF_RECORD_SIZE As Integer = &H30%   'Defines a CMAP IFF record's size for a 4 bits per pixel image.
+   Private Const LBM_4_BIT_COLOR_DEPTH As Byte = &H10%               'Defines the number of colors in a 4 bits per pixel image.
+   Private Const TINY_IFF_RECORD As String = "TINY"                  'Indicates that an IFF record contains a thumbnail.
+   Private Const UNCOMPRESSED As Integer = &H0%                      'Indicates that an image is uncompressed.
 
    'The menu items used by this class.
    Private WithEvents DisplayIFFRecordsMenu As New ToolStripMenuItem With {.ShortcutKeys = Keys.F1, .Text = "Display IFF &Records"}

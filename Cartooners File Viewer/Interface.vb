@@ -15,7 +15,7 @@ Imports System.Windows.Forms
 
 'This module contains this program's interface.
 Public Class InterfaceWindow
-   Private ReadOnly SUPPORTED_IMAGES As New list(Of String)({".bmp", ".emf", ".gif", ".ico", ".jpg", ".jpeg", ".png", ".tif", ".tiff", ".wmf"}) 'The extensions of the supported image file types.
+   Private ReadOnly SUPPORTED_IMAGES As New List(Of String)({".bmp", ".emf", ".gif", ".ico", ".jpg", ".jpeg", ".png", ".tif", ".tiff", ".wmf"})   'Defines the extensions of the supported image file types.
 
    'This procedure initializes this window.
    Public Sub New()

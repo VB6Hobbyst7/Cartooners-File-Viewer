@@ -10,8 +10,8 @@ Imports System.Collections.Generic
 Partial Public Class DataFileClass
    'This structure defines a data file.
    Public Structure DataFileStr
-      Public Data As List(Of Byte)  'The file's data.
-      Public Path As String         'The file's path.
+      Public Data As List(Of Byte)  'Defines the file's data.
+      Public Path As String         'Defines the file's path.
    End Structure
 
    'This procedure defines a data file's export procedure.

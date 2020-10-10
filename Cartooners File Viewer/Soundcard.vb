@@ -18,7 +18,7 @@ Public Class SoundCardDriverClass
    Private ReadOnly DRIVER_FILES As New Dictionary(Of String, String) From
       {{"adtoon.smb", "AD LIB Board"},
       {"cstoon.smb", "CMS Board"},
-      {"mttoon.smb", "Roland MT 32 or LAPC Board"}}   'The soundcard driver files.
+      {"mttoon.smb", "Roland MT 32 or LAPC Board"}}   'Defines the soundcard driver files.
 
    'The menu items used by this class.
    Private WithEvents DisplayInformationMenu As New ToolStripMenuItem With {.ShortcutKeys = Keys.F1, .Text = "Display &Information"}

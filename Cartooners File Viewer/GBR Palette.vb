@@ -14,8 +14,8 @@ Imports System.Windows.Forms
 
 'This module contains the GBR palette related procedures.
 Public Module GBRPaletteModule
-   Public Const GBR_12_COLOR_DEPTH As Integer = &H10%   'Contains the number of colors in a 12bit GBR palette.
-   Public Const GBR_12_COLOR_LENGTH As Integer = &H2%   'Contains the number of bytes per color in a 12bit GBR palette.
+   Public Const GBR_12_COLOR_DEPTH As Integer = &H10%   'Defines the number of colors in a 12bit GBR palette.
+   Public Const GBR_12_COLOR_LENGTH As Integer = &H2%   'Defines the number of bytes per color in a 12bit GBR palette.
 
    Public ReadOnly ARGB_TO_GBR As Func(Of Color, Byte()) = Function(ARGB As Color) {ToByte(ToInt32(ARGB.G >> &H4%) << &H4% Or ToInt32(ARGB.B >> &H4%)), ToByte(ARGB.R >> &H4%)}   'This procedure converts the specified 24 bit ARGB color to a 12 bit GBR color.
 

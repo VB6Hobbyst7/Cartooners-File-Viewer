@@ -51,51 +51,51 @@ Public Class ActorClass
 
    'This structure defines an actor's animation record.
    Private Structure AnimationRecordStr
-      Public ImageRecord As Integer  'A reference to an image record.
-      Public XDirection As Integer   'The horizontal direction.
-      Public YDirection As Integer   'The vertical direction.
-      Public XSpeed As Integer       'The horizontal speed.
-      Public YSpeed As Integer       'The vertical speed.
+      Public ImageRecord As Integer  'Defines a reference to an image record.
+      Public XDirection As Integer   'Defines the horizontal direction.
+      Public YDirection As Integer   'Defines the vertical direction.
+      Public XSpeed As Integer       'Defines the horizontal speed.
+      Public YSpeed As Integer       'Defines the vertical speed.
    End Structure
 
    'This structure defines an actor's image record.
    Private Structure ImageRecordStr
-      Public BytesPerRow As Integer  'The number of bytes per pixel row.
-      Public DataOffset As Integer   'The offset of the image's data.
-      Public Height As Integer       'The actor image's height.
-      Public Width As Integer        'The actor image's width.
+      Public BytesPerRow As Integer  'Defines the number of bytes per pixel row.
+      Public DataOffset As Integer   'Defines the offset of the image's data.
+      Public Height As Integer       'Defines the actor image's height.
+      Public Width As Integer        'Defines the actor image's width.
    End Structure
 
    'This structure defines an imported image.
    Private Structure ImportedImageStr
-      Public BytesPerRow As Integer  'The number of bytes per pixel row.
-      Public Data As List(Of Byte)   'The image's data.
-      Public Height As Integer       'The image's height.
-      Public Width As Integer        'The image's width.
+      Public BytesPerRow As Integer  'Defines the number of bytes per pixel row.
+      Public Data As List(Of Byte)   'Defines the image's data.
+      Public Height As Integer       'Defines the image's height.
+      Public Width As Integer        'Defines the image's width.
    End Structure
 
    'This structure defines an actor's menu items.
    Private Structure MenuItemsStr
-      Public Actions As List(Of String)   'The list of action items.
-      Public Ways As List(Of String)      'The list of way items.
+      Public Actions As List(Of String)   'Defines the list of action items.
+      Public Ways As List(Of String)      'Defines the list of way items.
    End Structure
 
    'The actor related constants used by this program.
-   Private Const ACTION_SUFFIX As String = "N256"                     'The action item's suffix.
-   Private Const ACTION_WAY_PREFIX As String = "--"                   'The action or way menu item's prefix.
-   Private Const ANIMATION_RECORD_LENGTH As Integer = &H6%            'The length of an animation record.
-   Private Const ANIMATION_RECORD_LIST_ITEM_LENGTH As Integer = &H2%  'The length of an animation record list item.
+   Private Const ACTION_SUFFIX As String = "N256"                     'Defines the action item's suffix.
+   Private Const ACTION_WAY_PREFIX As String = "--"                   'Defines the action or way menu item's prefix.
+   Private Const ANIMATION_RECORD_LENGTH As Integer = &H6%            'Defines the length of an animation record.
+   Private Const ANIMATION_RECORD_LIST_ITEM_LENGTH As Integer = &H2%  'Defines the length of an animation record list item.
    Private Const DOWN_RIGHT As Byte = &H0%                            'Indicates down or right.
-   Private Const IMAGE_RECORD_LENGTH As Integer = &HE%                'The length of an image data item.
-   Private Const NAME_PREFIX As String = "-- "                        'The actor's name prefix.
-   Private Const NAME_SUFFIX As String = "Nxxxxx"                     'The actor's name suffix. 
+   Private Const IMAGE_RECORD_LENGTH As Integer = &HE%                'Defines the length of an image data item.
+   Private Const NAME_PREFIX As String = "-- "                        'Defines the actor's name prefix.
+   Private Const NAME_SUFFIX As String = "Nxxxxx"                     'Defines the actor's name suffix. 
    Private Const OPAQUE As Integer = &HFF000000%                      'Indicates that a color is opaque.
-   Private Const SUFFIX_DELIMITER As String = "\"                     'The delimiter for a menu item's name and suffix.
-   Private Const TRANSPARENT_INDEX As Byte = &H0%                     'The index of the transparent color.
+   Private Const SUFFIX_DELIMITER As String = "\"                     'Defines the delimiter for a menu item's name and suffix.
+   Private Const TRANSPARENT_INDEX As Byte = &H0%                     'Defines the index of the transparent color.
    Private Const UP_LEFT As Byte = &HFF%                              'Indicates up or left.
-   Private Const WAY_SUFFIX As String = "N2816"                       'The way item's suffix.
+   Private Const WAY_SUFFIX As String = "N2816"                       'Defines the way item's suffix.
    Private ReadOnly GET_OFFSET As Func(Of List(Of Byte), LocationsE, Integer) = Function(Data As List(Of Byte), Position As LocationsE) LocationsE.BaseOffset + BitConverter.ToInt32(Data.ToArray(), Position)  'This procedure returns the relative offset at the specified position.
-   Private ReadOnly SIGNATURE As New List(Of Byte)({&H10%, &H46%, &H0%})                                                                                                                                         'The actor file signature.
+   Private ReadOnly SIGNATURE As New List(Of Byte)({&H10%, &H46%, &H0%})                                                                                                                                        'Defines the actor file signature.
 
    'The menu items used by this class.
    Private WithEvents DisplayAnimationRecordListsMenu As New ToolStripMenuItem With {.ShortcutKeys = Keys.F1, .Text = "Display Animation Record &Lists"}

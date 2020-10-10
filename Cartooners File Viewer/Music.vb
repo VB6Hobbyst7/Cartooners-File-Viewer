@@ -29,15 +29,15 @@ Public Class MusicClass
       UnknownData2 = &H4D%                       'Unknown data block 2.
    End Enum
 
-   Private Const ADLIB_MIDI_CHANNEL_DEDICATIONS_SIZE As Integer = &H9%       'The Adlib MIDI channel dedication table size.
-   Private Const CMS_MIDI_CHANNEL_DEDICATIONS_SIZE As Integer = &HC%         'The CMS MIDI channel dedication table size.
-   Private Const CMS_MIDI_CHANNEL_FINETUNE_OFFSETS_SIZE As Integer = &HC%    'The CMS MIDI channel finetune offset table size.
-   Private Const FOOTER_SIZE As Integer = &H2%                               'The footer size.
-   Private Const ROLAND_MIDI_CHANNELS_SIZE As Integer = &H10%                'The Roland MIDI channel off/on table size.
-   Private Const ROLAND_MIDI_VOLUMES_SIZE As Integer = &H10%                 'The Roland global MIDI volume table size.
+   Private Const ADLIB_MIDI_CHANNEL_DEDICATIONS_SIZE As Integer = &H9%       'Defines the Adlib MIDI channel dedication table size.
+   Private Const CMS_MIDI_CHANNEL_DEDICATIONS_SIZE As Integer = &HC%         'Defines the CMS MIDI channel dedication table size.
+   Private Const CMS_MIDI_CHANNEL_FINETUNE_OFFSETS_SIZE As Integer = &HC%    'Defines the CMS MIDI channel finetune offset table size.
+   Private Const FOOTER_SIZE As Integer = &H2%                               'Defines the footer size.
+   Private Const ROLAND_MIDI_CHANNELS_SIZE As Integer = &H10%                'Defines the Roland MIDI channel off/on table size.
+   Private Const ROLAND_MIDI_VOLUMES_SIZE As Integer = &H10%                 'Defines the Roland global MIDI volume table size.
    Private Const PLAY_ONCE As Integer = &H81%                                'Indicates that the music is played once.
    Private Const PLAY_REPEATEDLY As Integer = &H80%                          'Indicates that the music is played repeatedly.
-   Private Const UNKNOWN_1_SIZE As Integer = &H8%                            'The size of unknown data block 1.
+   Private Const UNKNOWN_1_SIZE As Integer = &H8%                            'Defines the size of unknown data block 1.
 
    'The menu items used by this class.
    Private WithEvents DisplayDataMenu As New ToolStripMenuItem With {.ShortcutKeys = Keys.F1, .Text = "Display &Data"}

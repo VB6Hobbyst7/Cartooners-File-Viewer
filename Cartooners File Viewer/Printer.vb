@@ -21,7 +21,7 @@ Public Class PrinterDriverClass
       PrinterModelName = &H4%      'The printer model's name.
    End Enum
 
-   Private Const PRINTER_MODEL_NAME_SPACE As Integer = &H27%            'The space reserved for a printer model's name.
+   Private Const PRINTER_MODEL_NAME_SPACE As Integer = &H27%   'Defines the space reserved for a printer model's name.
 
    'The menu items used by this class.
    Private WithEvents DisplayInformationMenu As New ToolStripMenuItem With {.ShortcutKeys = Keys.F1, .Text = "Display &Information"}

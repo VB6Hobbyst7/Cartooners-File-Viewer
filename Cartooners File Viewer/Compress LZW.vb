@@ -10,12 +10,12 @@ Imports System.Convert
 
 'This module contains the LZW compression related procedures.
 Public Module CompressLZWModule
-   Public Const LZW_END As Integer = &H101%           'Contains the end of a LZW value sequence.
-   Public Const LZW_MAXIMUM_BITS As Integer = &HC%    'Contains the maximum number of bits per value in a LZW sequence.
-   Public Const LZW_START As Integer = &H100%         'Contains the start of a LZW value sequence.
-   Public Const LZW_SYMBOL_BASE As Integer = &H102%   'Contains the lowest value used for an LZW symbol.
-   Public Const LZW_SYMBOL_TOP As Integer = &HFFF%    'Contains the highest value used for an LZW symbol.
-   Private Const LZW_NO_VALUE As Integer = -1         'Contains a null LZW value.
+   Public Const LZW_END As Integer = &H101%           'Defines the end of a LZW value sequence.
+   Public Const LZW_MAXIMUM_BITS As Integer = &HC%    'Defines the maximum number of bits per value in a LZW sequence.
+   Public Const LZW_START As Integer = &H100%         'Defines the start of a LZW value sequence.
+   Public Const LZW_SYMBOL_BASE As Integer = &H102%   'Defines the lowest value used for an LZW symbol.
+   Public Const LZW_SYMBOL_TOP As Integer = &HFFF%    'Defines the highest value used for an LZW symbol.
+   Private Const LZW_NO_VALUE As Integer = -1         'Defines a null LZW value.
 
    Public ReadOnly LZW_MAXIMUM_ENTRIES As Integer = (&H1% << LZW_MAXIMUM_BITS)   'Contains the maximum number of LZW symbols possible with the maximum LZW bit count.
 

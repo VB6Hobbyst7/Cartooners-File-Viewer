@@ -40,41 +40,46 @@ Public Class CartoonersClass
       EndO          'A data chunk's end.
    End Enum
 
-   Private Const BYTES_PER_ROW As Integer = &HA0%                  'Contains the number of bytes per pixel row.
-   Private Const EXPECTED_NAME As String = "Cartoons.exe"          'Contains the Cartooners executable's expected file name.
-   Private Const EXPECTED_PACKED_SIZE As Integer = &H36A5F%        'Contains the Cartooners executable's expected packed file size.
-   Private Const EXPECTED_UNPACKED_SIZE As Integer = &H39F20%      'Contains the Cartooners executable's expected unpacked file size.
-   Private Const MOUSE_CURSOR_SIZE As Integer = &H10%              'Contains the width and height of Cartooners' mouse pointers.
-   Private Const SCREEN_HEIGHT As Integer = &HC8%                  'Contains the screen height used by Cartooners in pixels.
-   Private Const SCREEN_WIDTH As Integer = &H140%                  'Contains the screen width used by Cartooners in pixels.
+   Private Const BYTES_PER_ROW As Integer = &HA0%               'Defines the number of bytes per pixel row.
+   Private Const EXPECTED_NAME As String = "Cartoons.exe"       'Defines the Cartooners executable's expected file name.
+   Private Const EXPECTED_PACKED_SIZE As Integer = &H36A5F%     'Defines the Cartooners executable's expected packed file size.
+   Private Const EXPECTED_UNPACKED_SIZE As Integer = &H39F20%   'Defines the Cartooners executable's expected unpacked file size.
+   Private Const MOUSE_CURSOR_SIZE As Integer = &H10%           'Defines the width and height of Cartooners' mouse pointers.
+   Private Const RECTANGLE_SIZE As Integer = &H8%               'Defines the a rectangle's size.
+   Private Const SCREEN_HEIGHT As Integer = &HC8%               'Defines the screen height used by Cartooners in pixels.
+   Private Const SCREEN_WIDTH As Integer = &H140%               'Defines the screen width used by Cartooners in pixels.
 
    Private ReadOnly DATA_CHUNK_PROPERTY_DELIMITER As Char = ControlChars.Tab   'Contains the data chunk property delimiter.
 
    'The menu items used by this class.
    Private WithEvents DisplayDataMenu As New ToolStripMenuItem With {.Text = "Display &Data"}
    Private WithEvents DisplayDataSubmenu As New ToolStripComboBox
+   Private WithEvents DisplayDataTypeSubMenu As New ToolStripMenuItem With {.Text = "Data &Type"}
    Private WithEvents DisplayInformationMenu As New ToolStripMenuItem With {.ShortcutKeys = Keys.F1, .Text = "Display &Information"}
 
    'This procedure initializes this class.
    Public Sub New(PathO As String, Optional DataFileMenu As ToolStripMenuItem = Nothing)
       Try
-         Dim DataChunkDescriptions As New List(Of String)
+         Dim DataTypes As New List(Of String)((From DataChunk In DataChunks() Select DataChunk.Type).Distinct())
+         Dim Descriptions As List(Of String) = Nothing
+         Dim NewMenuItem As ToolStripMenuItem = Nothing
 
          If DataFile(CartoonersPath:=PathO).Data IsNot Nothing AndAlso DataFileMenu IsNot Nothing Then
-            DataChunks.ForEach(Sub(DataChunk As DataChunkClass) DataChunkDescriptions.Add(DataChunk.Description))
-            DataChunkDescriptions.Sort()
+            DataTypes.Sort()
+            DataTypes.ForEach(Sub(DataType As String) DisplayDataTypeSubMenu.DropDownItems.Add(New ToolStripMenuItem With {.Text = $"&{DataType.Substring(0, 1).ToUpper()}{DataType.Substring(1)}"}))
 
-            With DisplayDataSubmenu
-               .DropDownWidth = DataChunkDescriptions.Max(Function(Description As String) CInt(DataFileMenu.Owner.CreateGraphics.MeasureString(Description, DataFileMenu.Owner.Font).Width))
-               .Items.Clear()
-               DataChunkDescriptions.ForEach(Sub(SubMenuItem As String) .Items.Add(New ToolStripMenuItem With {.CheckOnClick = True, .Text = SubMenuItem}))
-            End With
-
-            DisplayDataMenu.DropDownItems.Add(DisplayDataSubmenu)
+            For Each SubMenu As ToolStripMenuItem In DisplayDataTypeSubMenu.DropDownItems
+               Descriptions = New List(Of String)(From DataChunk In DataChunks() Where DataChunk.Type.ToLower() = SubMenu.Text.Substring(1).ToLower() Select DataChunk.Description)
+               For Each Description As String In Descriptions
+                  NewMenuItem = New ToolStripMenuItem With {.Text = $"&{Description}"}
+                  AddHandler NewMenuItem.Click, AddressOf DataChunkSelected
+                  SubMenu.DropDownItems.Add(NewMenuItem)
+               Next Description
+            Next SubMenu
 
             With DataFileMenu
                .DropDownItems.Clear()
-               .DropDownItems.AddRange({DisplayInformationMenu, DisplayDataMenu})
+               .DropDownItems.AddRange({DisplayInformationMenu, DisplayDataTypeSubMenu})
                .Text = "&Cartooners"
                .Visible = True
             End With
@@ -131,6 +136,18 @@ Public Class CartoonersClass
       Return Nothing
    End Function
 
+   'This procedure handles the data chunk selections.
+   Private Sub DataChunkSelected(sender As Object, e As EventArgs)
+      Try
+         Dim Description As String = DirectCast(sender, ToolStripMenuItem).Text.Substring(1)
+         Dim Type As String = DirectCast(sender, ToolStripMenuItem).OwnerItem.Text.Substring(1)
+
+         DisplayDataChunk(Description, Type)
+      Catch ExceptionO As Exception
+         HandleError(ExceptionO)
+      End Try
+   End Sub
+
    'This procedures manages the Cartooners executable's data file.
    Private Function DataFile(Optional CartoonersPath As String = Nothing) As DataFileStr
       Try
@@ -179,49 +196,58 @@ Public Class CartoonersClass
       Return Nothing
    End Function
 
-   'This procedure displays the current Cartooners executable's speech balloon slots/way menu.
-   Private Sub DisplayDataSubmenu_SelectedIndexChanged(sender As Object, e As EventArgs) Handles DisplayDataSubmenu.SelectedIndexChanged
+   'This procedure displays the data chunk with the specified description and data type.
+   Private Sub DisplayDataChunk(Description As String, Type As String)
       Try
-         Dim Description As String = DisplayDataSubmenu.Text
          Dim IconHeight As New Integer
          Dim IconType As New Integer
          Dim IconWidth As New Integer
          Dim Length As New Integer
          Dim NewText As New StringBuilder
-         Dim Palettes As List(Of List(Of Color)) = Nothing
          Dim Offset As New Integer
-         Dim Type As String = Nothing
+         Dim Palettes As List(Of List(Of Color)) = Nothing
+         Dim Position As New Integer
+         Dim Segment As New Integer
 
-         For Index As Integer = 0 To DataChunks().Count - 1
-            If DataChunks(Index).Description = DisplayDataSubmenu.Text Then
-               Type = DataChunks(Index).Type
-               Length = DataChunks(Index).Length
-               Offset = DataChunks(Index).Offset + EXEHeaderSize()
+         For Each Chunk As DataChunkClass In DataChunks()
+            If Chunk.Description.ToLower() = Description.ToLower() AndAlso Chunk.Type.ToLower() = Type.ToLower() Then
+               Length = Chunk.Length
+               Position = Chunk.Offset + EXEHeaderSize()
             End If
-         Next Index
+         Next Chunk
 
-         If Offset + Length > DataFile().Data.Count Then
-            MessageBox.Show($"Attempting to read {(Offset + Length) - DataFile().Data.Count} byte(s) beyond of the end of the available data at position {Offset}.", My.Application.Info.Title, MessageBoxButtons.OK, MessageBoxIcon.Warning)
-            Length = DataFile().Data.Count - Offset
+         If Position + Length > DataFile().Data.Count Then
+            MessageBox.Show($"Attempting to read {(Position + Length) - DataFile().Data.Count} byte(s) beyond of the end of the available data at position {Position}.", My.Application.Info.Title, MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Length = DataFile().Data.Count - Position
          End If
 
-         NewText.Append($"[{Description}] ({Type}) At: {Offset - EXEHeaderSize()} {NewLine}")
-         Select Case Type
+         NewText.Append($"[{Description}] ({Type}) At: {Position - EXEHeaderSize()} {NewLine}")
+         Select Case Type.ToLower()
+            Case "address"
+               Offset = BitConverter.ToInt16(GetBytes(DataFile().Data, Position, Length).ToArray(), &H0%)
+               Segment = BitConverter.ToInt16(GetBytes(DataFile().Data, Position, Length).ToArray(), &H2%)
+               NewText.Append($"{Segment:X4}:{Offset:X4}")
             Case "binary", "image", "mousemask"
-               NewText.Append($"{Escape(GetBytes(DataFile().Data, Offset, Length), " "c, EscapeAll:=True).Trim()}")
+               NewText.Append($"{Escape(GetBytes(DataFile().Data, Position, Length), " "c, EscapeAll:=True).Trim()}")
             Case "icon"
-               IconHeight = BitConverter.ToUInt16(DataFile().Data.ToArray(), Offset + &H2%)
-               IconType = BitConverter.ToUInt16(DataFile().Data.ToArray(), Offset)
-               IconWidth = BitConverter.ToUInt16(DataFile().Data.ToArray(), Offset + &H4%)
+               IconHeight = BitConverter.ToUInt16(DataFile().Data.ToArray(), Position + &H2%)
+               IconType = BitConverter.ToUInt16(DataFile().Data.ToArray(), Position)
+               IconWidth = BitConverter.ToUInt16(DataFile().Data.ToArray(), Position + &H4%)
 
                NewText.Append($"Size: {IconWidth * 2} x {IconHeight} - Type: {IconType} {NewLine}{NewLine}")
-               NewText.Append($"{Escape(GetBytes(DataFile().Data, Offset, Length), " "c, EscapeAll:=True).Trim()}")
+               NewText.Append($"{Escape(GetBytes(DataFile().Data, Position, Length), " "c, EscapeAll:=True).Trim()}")
             Case "palette"
                Palettes = New List(Of List(Of Color))
-               Palettes.Add(New List(Of Color)(GBRPalette(DataFile().Data, Offset)))
+               Palettes.Add(New List(Of Color)(GBRPalette(DataFile().Data, Position)))
                NewText.Append(GBRToText(, Palettes))
+            Case "rectangles"
+               For Each RectangleO As Rectangle In GetRectangles(Position, Length)
+                  With RectangleO
+                     NewText.Append($"({ .X}, { .Y})-({ .Width}, { .Height}){NewLine}")
+                  End With
+               Next RectangleO
             Case "text"
-               NewText.Append(Escape(ConvertMSDOSLineBreak(GetString(DataFile.Data, Offset, Length)).Replace(DELIMITER, NewLine)))
+               NewText.Append(Escape(ConvertMSDOSLineBreak(GetString(DataFile.Data, Position, Length)).Replace(DELIMITER, NewLine)))
          End Select
 
          UpdateDataBox(NewText.ToString())
@@ -254,6 +280,7 @@ Public Class CartoonersClass
          Dim IconHeight As New Integer
          Dim IconSize As New Integer
          Dim IconWidth As New Integer
+         Dim ImageO As Bitmap = Nothing
 
          ExportPath = Path.Combine(ExportPath, Path.GetFileNameWithoutExtension("Cartooners Executable"))
          Directory.CreateDirectory(ExportPath)
@@ -273,6 +300,13 @@ Public Class CartoonersClass
                      Draw4BitImage(DecompressRLE(DataFile().Data, .Offset + EXEHeaderSize(), .Length), SCREEN_WIDTH, SCREEN_HEIGHT, GBRPalette(DataFile().Data, .Related + EXEHeaderSize()), BYTES_PER_ROW).Save($"{Path.Combine(ExportPath, .Description)}.png", ImageFormat.Png)
                   Case "mousemask"
                      MouseCursor(Chunk).Save($"{Path.Combine(ExportPath, .Description)}.png", ImageFormat.Png)
+                  Case "rectangles"
+                     ImageO = New Bitmap(SCREEN_WIDTH + 1, SCREEN_HEIGHT + 1)
+                     Graphics.FromImage(ImageO).Clear(Color.White)
+                     For Each RectangleO As Rectangle In GetRectangles(.Offset + EXEHeaderSize(), .Length)
+                        Graphics.FromImage(ImageO).DrawRectangle(Pens.Black, RectangleO)
+                     Next RectangleO
+                     ImageO.Save($"{Path.Combine(ExportPath, .Description)} rectangles.png", Imaging.ImageFormat.Png)
                End Select
             End With
          Next Chunk
@@ -308,7 +342,7 @@ Public Class CartoonersClass
                Position += &H1%
             Else
                With CurrentChunk
-                  Map.Append($"{NewLine}{NewLine}[BEGIN { .Description}]{NewLine}")
+                  Map.Append($"{NewLine}{NewLine}[BEGIN { .Description} ({ .Type})]{NewLine}")
                   If CurrentChunk.Type = "text" Then
                      Map.Append($"""{Escape(GetString(Data, .Offset, .Length).Replace("""", """""")).Replace(NewLine, "/0D/0A")}""")
                      Position += .Length
@@ -353,9 +387,9 @@ Public Class CartoonersClass
                      Map.Append($"Position: {(Position - Buffer.Count) + EXEHeaderSize()}{NewLine}")
                      Map.Append($"Length: {Buffer.Count}{NewLine}")
                      Buffer.ForEach(Sub(ByteO As Byte) Map.Append($"{ByteO:X2} "))
-                     Buffer.Clear()
                      Map.Append($"{NewLine}{NewLine}")
                   End If
+                  Buffer.Clear()
                End If
                Position += CurrentChunk.Length
             End If
@@ -366,6 +400,31 @@ Public Class CartoonersClass
          HandleError(ExceptionO)
       End Try
    End Sub
+
+   'This procedure returns the rectangles in the specified data at the specified position.
+   Private Function GetRectangles(Offset As Integer, Length As Integer) As List(Of Rectangle)
+      Try
+         Dim Rectangles As New List(Of Rectangle)
+         Dim x1 As New Integer
+         Dim y1 As New Integer
+         Dim x2 As New Integer
+         Dim y2 As New Integer
+
+         For Position As Integer = Offset To Offset + (Length - RECTANGLE_SIZE) Step RECTANGLE_SIZE
+            y1 = BitConverter.ToUInt16(DataFile().Data.ToArray(), Position)
+            x1 = BitConverter.ToUInt16(DataFile().Data.ToArray(), Position + &H2%)
+            y2 = BitConverter.ToUInt16(DataFile().Data.ToArray(), Position + &H4%)
+            x2 = BitConverter.ToUInt16(DataFile().Data.ToArray(), Position + &H6%)
+            Rectangles.Add(New Rectangle(x1, y1, x2 - x1, y2 - y1))
+         Next Position
+
+         Return Rectangles
+      Catch ExceptionO As Exception
+         HandleError(ExceptionO)
+      End Try
+
+      Return Nothing
+   End Function
 
    'This procedure retrieves the mouse cursor at the specified position from the specified data.
    Private Function MouseCursor(Chunk As DataChunkClass) As Bitmap

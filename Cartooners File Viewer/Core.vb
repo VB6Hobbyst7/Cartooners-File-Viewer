@@ -41,19 +41,19 @@ Public Module CoreModule
 
    'This structure defines an LZW dictionary entry.
    Public Structure LZWEntryStr
-      Public Prefix As Integer   'Contains an LZW entry's prefix.
-      Public Suffix As Integer   'Contains an LZW entry's suffix.
+      Public Prefix As Integer   'Defines an LZW entry's prefix.
+      Public Suffix As Integer   'Defines an LZW entry's suffix.
    End Structure
 
    'The core constants used by this program.
-   Public Const ACTOR_TEMPLATE As String = "Actor"                'Contains the identifier for actor templates.
-   Public Const DELIMITER As Char = ControlChars.NullChar         'Contains the delimiter used in various types of data.
-   Public Const NOT_FOUND As Integer = -1                         'Indicates that a value could not be found in a given data set.
-   Public Const PADDING As Char = ControlChars.NullChar           'Contains the character used to pad a path.
-   Public Const PAGE_SIZE As Integer = &H200%                     'Contains the size of a page in memory.
-   Public Const PARAGRAPH_SIZE As Integer = &H10%                 'Contains the size of a paragraph in memory.
-   Public Const PIXELS_PER_BYTE As Integer = &H2%                 'Contains the number pixels per byte in an uncompressed image.
-   Public Const SCRIPT_TEMPLATE As String = "Script"              'Contains the identifier for actor templates.
+   Public Const ACTOR_TEMPLATE As String = "Actor"          'Defines the identifier for actor templates.
+   Public Const DELIMITER As Char = ControlChars.NullChar   'Defines the delimiter used in various types of data.
+   Public Const NOT_FOUND As Integer = -1                   'Indicates that a value could not be found in a given data set.
+   Public Const PADDING As Char = ControlChars.NullChar     'Defines the character used to pad a path.
+   Public Const PAGE_SIZE As Integer = &H200%               'Defines the size of a page in memory.
+   Public Const PARAGRAPH_SIZE As Integer = &H10%           'Defines the size of a paragraph in memory.
+   Public Const PIXELS_PER_BYTE As Integer = &H2%           'Defines the number pixels per byte in an uncompressed image.
+   Public Const SCRIPT_TEMPLATE As String = "Script"        'Defines the identifier for actor templates.
 
    Public ReadOnly BYTES_TO_TEXT As Func(Of List(Of Byte), String) = Function(Bytes As List(Of Byte)) New String((From ByteO In Bytes Select ToChar(ByteO)).ToArray())                                                                               'This procedure converts the specified bytes to text.
    Public ReadOnly COLOR_DIFFERENCE As Func(Of Color, Color, Integer) = Function(Color1 As Color, Color2 As Color) CInt((Abs(CInt(Color2.R) - CInt(Color1.R)) + Abs(CInt(Color2.G) - CInt(Color1.G)) + Abs(CInt(Color2.B) - CInt(Color1.B))) / 3)    'This procedure returns the difference between the two specified colors.

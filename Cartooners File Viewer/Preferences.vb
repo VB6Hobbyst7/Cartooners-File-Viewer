@@ -26,8 +26,8 @@ Public Class PreferencesClass
    End Structure
 
    'The preferences related constants used by this program.
-   Private Const MAXIMUM_MOVIES As Integer = &HC%        'Contains the maximum number of movie paths.
-   Private Const MOVIE_PATH_LENGTH As Integer = &H93%    'Contains the maximum movie path length.
+   Private Const MAXIMUM_MOVIES As Integer = &HC%        'Defines the maximum number of movie paths.
+   Private Const MOVIE_PATH_LENGTH As Integer = &H93%    'Defines the maximum movie path length.
 
    'This procedure initializes this class.
    Public Sub New(PathO As String, Optional DataFileMenu As ToolStripMenuItem = Nothing)

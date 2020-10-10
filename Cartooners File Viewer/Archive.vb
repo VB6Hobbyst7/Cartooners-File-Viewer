@@ -17,10 +17,10 @@ Imports System.Windows.Forms
 Public Class ArchiveClass
    Inherits DataFileClass
 
-   Private Const BASE_YEAR As Integer = 1980                                  'The earliest possible year for an archived file's time and date.
-   Private Const FILE_NAME_LENGTH As Integer = &HD%                           'The maximum length for a file name including terminating null character.
-   Private Const HEADER_SIZE As Integer = &H30%                               'The archived file header's size.
-   Private ReadOnly ARCHIVED_FILE_PREFIX As New List(Of Byte)({&H1A%, &H45%, &H41%})   'An archived file header's prefix.
+   Private Const BASE_YEAR As Integer = 1980                                  'Defines the earliest possible year for an archived file's time and date.
+   Private Const FILE_NAME_LENGTH As Integer = &HD%                           'Defines the maximum length for a file name including terminating null character.
+   Private Const HEADER_SIZE As Integer = &H30%                               'Defines the archived file header's size.
+   Private ReadOnly ARCHIVED_FILE_PREFIX As New List(Of Byte)({&H1A%, &H45%, &H41%})   'Defines an archived file header's prefix.
 
    'This enumeration contains the locations of known values in archived file headers.
    Private Enum HeaderLocationsE
@@ -34,12 +34,12 @@ Public Class ArchiveClass
 
    'This structure defines a archived file.
    Private Structure ArchivedFileStr
-      Public ArchivedSize As Integer      'The file's archived size.
-      Public CompressedFlag As Boolean    'The file's compressed/uncompressed flag.
-      Public Data As List(Of Byte)        'The file's archived data.
-      Public FileDateTime As String       'The file's date/time.
-      Public FileName As String           'The file's name.
-      Public UnarchivedSize As Integer    'The file's unarchived size.
+      Public ArchivedSize As Integer      'Defines the file's archived size.
+      Public CompressedFlag As Boolean    'Defines the file's compressed/uncompressed flag.
+      Public Data As List(Of Byte)        'Defines the file's archived data.
+      Public FileDateTime As String       'Defines the file's date/time.
+      Public FileName As String           'Defines the file's name.
+      Public UnarchivedSize As Integer    'Defines the file's unarchived size.
    End Structure
 
    'This procedure initializes this class.

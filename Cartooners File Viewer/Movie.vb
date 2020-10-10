@@ -58,18 +58,18 @@ Public Class MovieClass
 
    'This structure defines a movie's speech balloon.
    Private Structure SpeechBalloonStr
-      Public Header As List(Of Byte)     'The balloon's header.
-      Public Text As String              'The balloon's text.
+      Public Header As List(Of Byte)   'Defines the balloon's header.
+      Public Text As String            'Defines the balloon's text.
    End Structure
 
    'The movie related constants used by this program.
-   Private Const MAXIMUM_FRAME_RATE As Integer = 60                      'Contains the highest number of frames per second supported.
-   Private Const MINIMUM_INTERVAL As Double = 1000 / MAXIMUM_FRAME_RATE  'Contains the lowest number of milliseconds between frames supported.
-   Private Const UNKNOWN_DWORDS_PER_ACTOR As Integer = &H5%              'Contains the number of unknown DWORDs per actor.
-   Private ReadOnly PALETTE_DESCRIPTIONS As New List(Of String)({"actors and scenes", "speech balloons"})                                                                                                     'Contains the movie palettes descriptions.
-   Private ReadOnly SIGNATURE As New List(Of Byte)({&H10%, &H10%, &HDF%, &H0%})                                                                                                                               'Contains the movie file signature.
-   Private ReadOnly SPEECH_BALLOON_ALIGNMENTS As New List(Of String)({"left", "center"})                                                                                                                      'Contains the movie speech balloon alignments.
-   Private ReadOnly SPEECH_BALLOON_TYPES As New List(Of String)({"Invisible", "Title", "Speech (Right)", "Speech (Left)", "Thought (Right)", "Thought (Left)", "Exclamation (Right)", "Exclamtion (Left)"})   'Contains the movie's speech balloon types.
+   Private Const MAXIMUM_FRAME_RATE As Integer = 60                      'Defines the highest number of frames per second supported.
+   Private Const MINIMUM_INTERVAL As Double = 1000 / MAXIMUM_FRAME_RATE  'Defines the lowest number of milliseconds between frames supported.
+   Private Const UNKNOWN_DWORDS_PER_ACTOR As Integer = &H5%              'Defines the number of unknown DWORDs per actor.
+   Private ReadOnly PALETTE_DESCRIPTIONS As New List(Of String)({"actors and scenes", "speech balloons"})                                                                                                     'Defines the movie palettes descriptions.
+   Private ReadOnly SIGNATURE As New List(Of Byte)({&H10%, &H10%, &HDF%, &H0%})                                                                                                                               'Defines the movie file signature.
+   Private ReadOnly SPEECH_BALLOON_ALIGNMENTS As New List(Of String)({"left", "center"})                                                                                                                      'Defines the movie speech balloon alignments.
+   Private ReadOnly SPEECH_BALLOON_TYPES As New List(Of String)({"Invisible", "Title", "Speech (Right)", "Speech (Left)", "Thought (Right)", "Thought (Left)", "Exclamation (Right)", "Exclamtion (Left)"})   'Defines the movie's speech balloon types.
 
    'The menu items used by this class.
    Private WithEvents DisplayFilesMenu As New ToolStripMenuItem With {.ShortcutKeys = Keys.F1, .Text = "Display &Files"}
