@@ -22,6 +22,7 @@ Public Module CoreModule
          Dim Data As List(Of Byte) = Nothing
          Dim InputPath As String = Nothing
          Dim Length As Integer = Nothing
+         Dim ModifiedData As List(Of Byte) = Nothing
          Dim ModificationType As Char = Nothing
          Dim NewData As List(Of Byte) = Nothing
          Dim Offset As Integer = Nothing
@@ -60,25 +61,31 @@ Public Module CoreModule
             End Using
 
             Data = New List(Of Byte)(File.ReadAllBytes(InputPath))
+            ModifiedData = New List(Of Byte)(Data)
 
             Select Case ModificationType
                Case "I"c
-                  Data = InvertByteBits(Data, Offset, Length)
+                  InvertByteBits(ModifiedData, Offset, Length)
                Case "R"c
-                  Data = ReplaceBytes(Data, Offset, Length, NewData)
+                  ReplaceBytes(ModifiedData, Offset, Length, NewData)
                Case "S"c
-                  Data = SubstituteBytes(Data, Offset, Length, Substitutions)
+                  SubstituteBytes(ModifiedData, Offset, Length, Substitutions)
                Case "Z"c
-                  Data = ZeroBytes(Data, Offset, Length)
+                  ZeroBytes(ModifiedData, Offset, Length)
                Case Else
-                  Data = Nothing
+                  ModifiedData = Nothing
                   Console.WriteLine($"Unknown modification type: ""{ModificationType}"".")
                   Console.ReadLine()
             End Select
 
-            If Data IsNot Nothing Then
-               File.WriteAllBytes(OutputPath, Data.ToArray())
-               If OpenWith IsNot Nothing Then Process.Start(New ProcessStartInfo With {.FileName = OpenWith, .Arguments = Arguments, .WindowStyle = ProcessWindowStyle.Normal})
+            If ModifiedData IsNot Nothing Then
+               If ModifiedData.SequenceEqual(Data) Then
+                  Console.WriteLine("No changes were made.")
+                  Console.ReadLine()
+               Else
+                  File.WriteAllBytes(OutputPath, ModifiedData.ToArray())
+                  If OpenWith IsNot Nothing Then Process.Start(New ProcessStartInfo With {.FileName = OpenWith, .Arguments = Arguments, .WindowStyle = ProcessWindowStyle.Normal})
+               End If
             End If
          End If
       Catch ExceptionO As Exception
@@ -96,8 +103,8 @@ Public Module CoreModule
       End Try
    End Sub
 
-   'This procedure inverts the bits of the specified number of bytes at the specified offset inside the specified data and returns the result.
-   Private Function InvertByteBits(Data As List(Of Byte), Offset As Integer, Length As Integer) As List(Of Byte)
+   'This procedure inverts the bits of the specified number of bytes at the specified offset inside the specified data.
+   Private Sub InvertByteBits(Data As List(Of Byte), Offset As Integer, Length As Integer)
       Try
          Dim Position As Integer = Offset
 
@@ -105,17 +112,13 @@ Public Module CoreModule
             Data(Position) = ToByte(Data(Position) Xor &HFF%)
             Position += &H1%
          Loop
-
-         Return Data
       Catch ExceptionO As Exception
          HandleError(ExceptionO)
       End Try
+   End Sub
 
-      Return New List(Of Byte)
-   End Function
-
-   'This procedure replaces the data of the specified length at the specified offset inside the data specified with the new data specified and returns the result.
-   Private Function ReplaceBytes(Data As List(Of Byte), Offset As Integer, Length As Integer, NewData As List(Of Byte)) As List(Of Byte)
+   'This procedure replaces the data of the specified length at the specified offset inside the data specified with the new data specified.
+   Private Sub ReplaceBytes(Data As List(Of Byte), Offset As Integer, Length As Integer, NewData As List(Of Byte))
       Try
          Dim Position As Integer = Offset
 
@@ -133,17 +136,13 @@ Public Module CoreModule
                Data(SubPosition) = NewData(SubPosition - Position)
             Next SubPosition
          End If
-
-         Return Data
       Catch ExceptionO As Exception
          HandleError(ExceptionO)
       End Try
+   End Sub
 
-      Return New List(Of Byte)
-   End Function
-
-   'This procedure substitutes the specified number of bytes at the specified offset inside the specified data using the specified dictionary and returns the result.
-   Private Function SubstituteBytes(Data As List(Of Byte), Offset As Integer, Length As Integer, Substitutions As Dictionary(Of Byte, Byte)) As List(Of Byte)
+   'This procedure substitutes the specified number of bytes at the specified offset inside the specified data using the specified dictionary.
+   Private Sub SubstituteBytes(Data As List(Of Byte), Offset As Integer, Length As Integer, Substitutions As Dictionary(Of Byte, Byte))
       Try
          Dim Position As Integer = Offset
 
@@ -151,28 +150,20 @@ Public Module CoreModule
             If Substitutions.ContainsKey(Data(Position)) Then Data(Position) = Substitutions(Data(Position))
             Position += &H1%
          Loop
-
-         Return Data
       Catch ExceptionO As Exception
          HandleError(ExceptionO)
       End Try
+   End Sub
 
-      Return New List(Of Byte)
-   End Function
-
-   'This procedure zeroes the specified number of bytes at the specified offset inside the specified data and returns the result.
-   Private Function ZeroBytes(Data As List(Of Byte), Offset As Integer, Length As Integer) As List(Of Byte)
+   'This procedure zeroes the specified number of bytes at the specified offset inside the specified data.
+   Private Sub ZeroBytes(Data As List(Of Byte), Offset As Integer, Length As Integer)
       Try
          If Offset + Length >= Data.Count Then Length = Data.Count - Offset
 
          Data.RemoveRange(Offset, Length)
          Data.InsertRange(Offset, Enumerable.Repeat(ToByte(&H0%), Length))
-
-         Return Data
       Catch ExceptionO As Exception
          HandleError(ExceptionO)
       End Try
-
-      Return New List(Of Byte)
-   End Function
+   End Sub
 End Module
