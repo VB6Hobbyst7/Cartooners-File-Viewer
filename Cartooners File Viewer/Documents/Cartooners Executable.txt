@@ -1,191 +1,209 @@
-Description:	Type:	Offset:	Related:	Size:	Comment:	
-80286+ executable code.	binary	0	0	156265		
-About Cartooners	text	208116	0	226		
-About dialog text alignment.	binary	208114	0	1		
-Actors dialog.	text	215448	0	36		
-Background screen buffer.	rectangles	207638	0	8		
-Blank... (act option)	text	203914	0	11		
-Buffer for speech balloon text in act menu.	text	203930	0	31		
-Button edge style information.	binary	205686	0	38		
-Bytes per row #1.	binary	207608	0	1		
-Bytes per row #2.	binary	207636	0	1		
-C_FILE_INFO.	text	222823	0	11		
-Cancel printing.	text	213481	0	35		
-Checked circle.	icon	201452	204368	69		
-Circle.	icon	201380	204368	69		
-Critical unknown #1	binary	180650	0	341	Unsafe to modify - causes freezing at title screen. 	
-Critical unknown #10	binary	205418	0	48	Causes freezing at startup when modified.	
-Critical unknown #11	binary	205511	0	3	Modification causes freezing at startup.	
-Critical unknown #12	binary	207678	0	2	Modification causes files not to be listed in load dialog.	
-Critical unknown #13	binary	209688	0	2	Modification causes freezing upon opening the levels dialog.	
-Critical unknown #14	binary	209712	0	2	Modification causes freezing upon opening the levels dialog.	
-Critical unknown #15	binary	225383	0	1	Changing to zero causes an out of memory error at start up.	
-Critical unknown #16	binary	209928	0	2	Changing causes the levels dialog to freeze.	
-Critical unknown #17	binary	209942	0	16	Changing affects the levels dialog.	
-Critical unknown #18	binary	209966	0	16	Changing affects the levels dialog.	
-Critical unknown #19	binary 	209998	0	58	Changing disables the levels dialog.	
-Critical unknown #2	binary	205666	0	20	Unsafe to modify - affects GUI's appearance.	
-Critical unknown #20	binary	211102	0	1	Modification causes the pause dialog to freeze when opened.	
-Critical unknown #21	binary	211126	0	1	Modification causes the pause dialog to freeze when opened.	
-Critical unknown #3	binary	213642	0	996	Unsafe to modify - causes freezing when opening dialogs.	
-Critical unknown #4	binary	205809	0	990	Unsafe to modify - causes freezing when opening file dialogs.	
-Critical unknown #5	binary	208343	0	629	Unsafe to modify - disables the no printer driver message box.	
-Critical unknown #6	binary	200784	0	1	Modification causes a null pointer assignment error upon exit.	
-Critical unknown #7	binary	180368	0	1	Modification causes either freezing at title screen or termination.	
-Critical unknown #8	binary	201152	0	1	Modification causes a division by zero termination.	
-Critical unknown #9	binary	208112	0	2	Modification influences the about dialog text.	
-Cross arrows.	icon	202576	204368	51		
-Day and month abbreviations.	text	225300	0	58		
-Default speech balloon information.	binary	156272	0	1074		
-Dialog line break.	binary	203454	0	4		
-Dialog. #1	text	204403	0	134		
-Dialog. #2	text	205466	0	45		
-Dialog. #3	text	205758	0	51		
-Dialog. #4	text	207890	0	220		
-Dialog. #5	text	208972	0	704		
-Dialog. #6	text	210172	0	14		
-Dialog. #7	text	210917	0	10		
-Dialog. #8	text	211620	0	790		
-Drive letters.	text	205724	0	34		
-Driver file extensions	text	205558	0	12		
-Eraser.	icon	202144	204368	141		
-Error messages. #1	text	200785	0	307		
-Error messages. #2	text	204537	0	28		
-Error messages. #3	text	204571	0	39		
-Error messages. #4	text	206984	0	611		
-Exclamation speech balloon information.	binary	158850	0	2049		
-Exclamation.	icon	202640	204368	248		
-Executable extensions.	text	225116	0	15		
-File system related characters.	text	206799	0	23		
-Filled circle.	icon	201524	204368	69		
-GUI CGA/EGA.	palette	204368	0	32		
-Hand.	icon	203136	204368	248		
-Interface icon buffer.	rectangles	207596	0	8		
-Invalid actor error.	text	215322	0	31		
-Keyboard layout.	text	215204	0	117		
-Left arrow.	icon	201784	204368	178	0	8
-Levels Cancel button id.	binary	209702	0	1
-Levels Cancel button style.	binary	209720	0	1	If the second to last bit is set the button will have no rounded edges.	
-Levels Cancel button text.	address	209714	0	4		
-Levels dialog OK button.	rectangles	211094	0	8		
-Levels dialog records.	binary	209730	0	192		
-Levels dialog.	rectangles	209990	0	8		
-Levels Level text label layout.	binary	209922	0	6	BYTES {x, y, bottom, null, right, null}	
-Levels Level text.	address	209930	0	4		
-Levels OK button	rectangles	209680	0	8		
-Levels OK button id.	binary	209678	0	1		
-Levels Ok button style.	binary	209696	0	1	If the second to last bit is set the button will have no rounded edges.	
-Levels OK button text.	address	209690	0	4		
-Locate text.	text	214638	0	8		
-Loop arrow.	icon	202432	204368	141		
-Menu and ticket screen buttons.	rectangles	206866	0	16		
-Menu bar.	rectangles	205516	0	8		
-Menu cursor blink count.	binary	205514	0	2		
-Menu screen CGA.	palette	170528	0	32		
-Menu screen EGA.	palette	170560	0	32		
-Menu screen.	image	170592	170560	9772		
-Menu screen.	rectangles	206834	0	32		
-Mouse arrow transparency bitmask.	binary	214658	0	32		
-Mouse arrow.	bitmap	214690	214658	32		
-Mouse wait transparency bitmask.	binary	214722	0	32		
-Mouse wait.	bitmap	214754	214722	32		
-Moveable item screen buffer.	rectangles	207624	0	8		
-Movie dialog. #1	text	204196	0	62		
-Movie dialog. #2	text	206930	0	23		
-Movie editor buttons.	text	201754	0	9		
-Movie editor menus.	text	204686	0	706		
-Movie editor.	rectangles	201602	0	152		
-Movie file item types.	text	203989	0	23		
-Movie item directories.	text	203961	0	28		
-MS Run-time Library copyright.	text	200728	0	56		
-Music dialog.	text	205524	0	30		
-Palette dialog.	text	215353	0	22		
-Pause dialog Cancel button id.	binary	211116	0	1		
-Pause dialog Cancel button style.	binary	211134	0	1	If the second to last bit is set the button will have no rounded edges.	
-Pause dialog Cancel button text.	address	211128	0	4		
-Pause dialog Cancel button.	rectangles	211118	0	8		
-Pause dialog OK button style.	binary	211110	0	1	If the second to last bit is set the button will have no rounded edges.	
-Pause dialog OK button text.	address	211104	0	4		
-Pause dialog speed value.	address	211248	0	4		
-Pause dialog.	rectangles	211284	0	8		
-PRINTING...	text	213464	0	10		
-Right arrow.	icon	201964	204368	177		
-Run-time error messages.	text	225392	0	224		
-Save movie dialog drive mask. 	text	204400	0	3		
-Scenes dialog.	text	215418	0	30		
-Speaking person.	icon	202888	204368	248		
-Speech balloon dialog buttons.	text	203626	0	18		
-Speech balloon dialog buttons.	rectangles	203644	0	24		
-Speech balloon layouts.	text	203868	0	46		
-Speech balloon line break	binary	203460	0	3		
-Speech balloon menu slots.	text	168198	0	2125		
-Speech balloon properties dialog.	rectangles	203474	0	152		
-Speech balloon types.	text	203668	0	198		
-Speech balloon.	icon	202288	204368	141		
-Startup files.	text	204012	0	46		
-Supported file extensions.	text	204292	0	30		
-Thought balloon speech information.	binary	157356	0	1468		
-Ticket screen CGA.	palette	193856	0	32		
-Ticket screen EGA.	palette	193824	0	32		
-Ticket screen.	image	193888	193824	6814		
-Ticket screen.	rectangles	206882	0	48		
-Ticket screen.	text	206953	0	16		
-Time zones.	text	225274	0	11		
-Title screen CGA.	palette	183104	0	32		
-Title screen EGA.	palette	183136	0	32		
-Title screen mouse pointer boolean.	binary	214652	0	2	0 = on, non-zero = off	
-Title Screen.	image	183170	183136	10646	Appears for 5 seconds at startup.	
-Undo menu options.	text	204610	0	75		
-Unknown #1	binary	157346	0	10	Appears to be safe to modify.	
-Unknown #10	binary	215484	0	504	Appears to be safe to modify.	
-Unknown #11	binary	215988	0	32	Appears to be safe to modify.	
-Unknown #12	binary	158824	0	26	Appears to be safe to modify.	
-Unknown #13	binary	216020	0	37	Appears to be safe to modify.	
-Unknown #14	binary	216316	0	6507	Appears to be safe to modify.	
-Unknown #15	binary	222834	0	2246	Appears to be safe to modify.	
-Unknown #16	binary	225080	0	36	Appears to be safe to modify.	
-Unknown #17	binary	225131	0	143	Appears to be safe to modify.	
-Unknown #18	binary	225285	0	15	Appears to be safe to modify.	
-Unknown #19	binary	225358	0	24	Appears to be safe to modify.	
-Unknown #2	binary	201155	0	225	Appears to be safe to modify.	
-Unknown #20	binary	160899	0	7299	Appears to be safe to modify.	
-Unknown #21	binary	180369	0	281	Appears to be safe to modify.	
-Unknown #22	binary	180991	0	2113	Appears to be safe to modify.	
-Unknown #23	binary	183168	0	2	Appears to be safe to modify.	
-Unknown #24	binary	201092	0	60	Appears to be safe to modify.	
-Unknown #25	binary	201153	0	2	Appears to be safe to modify.	
-Unknown #26	binary	201593	0	9	Appears to be safe to modify.	
-Unknown #27	binary	203384	0	70	Appears to be safe to modify.	
-Unknown #28	binary	203463	0	11	Appears to be safe to modify.	
-Unknown #29	binary	203458	0	2	Appears to be safe to modify.	
-Unknown #3	binary	201764	0	20	Appears to be safe to modify.	
-Unknown #30	text	203925	0	5	Appears to be safe to modify.	
-Unknown #31	binary	204258	0	34	Appears to be safe to modify.	
-Unknown #32	binary	204322	0	46	Appears to be safe to modify.	
-Unknown #33	binary	204565	0	6	Appears to be safe to modify.	
-Unknown #34	binary	205392	0	26	Appears to be safe to modify.	
-Unknown #35	binary	206822	0	12	Appears to be safe to modify.	
-Unknown #36	binary	206969	0	8	Appears to be safe to modify.	
-Unknown #37	binary	207610	0	13	Appears to be safe to modify.	
-Unknown #38	binary	207646	0	32	Appears to be safe to modify.	
-Unknown #39	binary	207680	0	16	Appears to be safe to modify.	
-Unknown #4	binary	204083	0	35	Appears to be safe to modify.	
-Unknown #40	binary	207696	0	108	Appears to be safe to modify.	
-Unknown #41	binary	207860	0	30	Appears to be safe to modify.	
-Unknown #42	binary	225382	0	1	Appears to be safe to modify.	
-Unknown #43	binary	225384	0	8	Appears to be safe to modify.	
-Unknown #44	binary	214646	0	6	Appears to be safe to modify.	
-Unknown #45	binary	210056	0	116	Appears to be safe to modify.	
-Unknown #46	binary	209721	0	9	Appears to be safe to modify.	
-Unknown #47	binary	210186	0	731	Appears to be safe to modify.	
-Unknown #48	binary	210927	0	167	Appears to be safe to modify.	
-Unknown #49	binary	211252	0	12	Appears to be safe to modify.	
-Unknown #5	binary	205570	0	95	Appears to be safe to modify.	
-Unknown #6	binary	213474	0	7	Appears to be safe to modify.	
-Unknown #7	binary	213516	0	126	Appears to be safe to modify.	
-Unknown #8	binary	214786	0	418	Appears to be safe to modify.	
-Unknown #9	binary	215376	0	42	Appears to be safe to modify.	
-Version.	text	206977	0	6		
-Video mode error message.	text	207804	0	56		
-Way menu items. #1	text	170323	0	190		
-Way menu items. #2	text	216057	0	259		
+Description:	Type:	Offset:	Related:	Size:	Comment:
+80286+ executable code.	binary	0	0	156217	
+About Cartooners	text	208068	0	226	
+About dialog text alignment.	binary	208066	0	1	
+Actors dialog.	text	215400	0	36	
+Background screen buffer.	rectangles	207590	0	8	
+Blank... (act option)	text	203866	0	11	
+Buffer for speech balloon text in act menu.	text	203882	0	31	
+Button edge style information.	binary	205638	0	38	
+Bytes per row #1.	binary	207560	0	1	
+Bytes per row #2.	binary	207588	0	1	
+C_FILE_INFO.	text	222775	0	11	
+Cancel printing.	text	213433	0	35	
+Checked circle.	icon	201404	204320	69	
+Circle.	icon	201332	204320	69	
+Critical unknown #01	binary	180602	0	341	Unsafe to modify - causes freezing at title screen. 
+Critical unknown #02	binary	205370	0	48	Causes freezing at startup when modified.
+Critical unknown #03	binary	205463	0	3	Modification causes freezing at startup.
+Critical unknown #04	binary	207630	0	2	Modification causes files not to be listed in load dialog.
+Critical unknown #05	binary	209640	0	2	Modification causes freezing upon opening the levels dialog.
+Critical unknown #06	binary	209664	0	2	Modification causes freezing upon opening the levels dialog.
+Critical unknown #07	binary	225335	0	1	Changing to zero causes an out of memory error at start up.
+Critical unknown #08	binary	209880	0	2	Changing causes the levels dialog to freeze.
+Critical unknown #09	binary	209894	0	16	Changing affects the levels dialog.
+Critical unknown #10	binary	209918	0	16	Changing affects the levels dialog.
+Critical unknown #11	binary 	209950	0	58	Changing disables the levels dialog.
+Critical unknown #12	binary	205618	0	20	Unsafe to modify - affects GUI's appearance.
+Critical unknown #13	binary	211054	0	1	Modification causes the pause dialog to freeze when opened.
+Critical unknown #14	binary	211078	0	1	Modification causes the pause dialog to freeze when opened.
+Critical unknown #15	binary	213594	0	996	Unsafe to modify - causes freezing when opening dialogs.
+Critical unknown #16	binary	205761	0	990	Unsafe to modify - causes freezing when opening file dialogs.
+Critical unknown #17	binary	208295	0	629	Unsafe to modify - disables the no printer driver message box.
+Critical unknown #18	binary	200736	0	1	Modification causes a null pointer assignment error upon exit.
+Critical unknown #19	binary	180320	0	1	Modification causes either freezing at title screen or termination.
+Critical unknown #20	binary	201104	0	1	Modification causes a division by zero termination.
+Critical unknown #21	binary	208064	0	2	Modification influences the about dialog text.
+Cross arrows.	icon	202528	204320	51	
+Day and month abbreviations.	text	225252	0	58	
+Default speech balloon information.	binary	156224	0	1074	
+Dialog line break.	binary	203406	0	4	
+Dialog. #1	text	204355	0	134	
+Dialog. #2	text	205418	0	45	
+Dialog. #3	text	205710	0	51	
+Dialog. #4	text	207842	0	220	
+Dialog. #5	text	208924	0	704	
+Dialog. #6	text	210124	0	14	
+Dialog. #7	text	210869	0	10	
+Dialog. #8	text	211572	0	790	
+Drive letters.	text	205676	0	34	
+Driver file extensions	text	205510	0	12	
+Eraser.	icon	202096	204320	141	
+Error messages. #1	text	200737	0	307	
+Error messages. #2	text	204489	0	28	
+Error messages. #3	text	204523	0	39	
+Error messages. #4	text	206936	0	611	
+Exclamation speech balloon information.	binary	158802	0	2049	
+Exclamation.	icon	202592	204320	248	
+Executable extensions.	text	225068	0	15	
+File system related characters.	text	206751	0	23	
+Filled circle.	icon	201476	204320	69	
+Frame number Cancel button.	rectangles	211364	0	8
+Frame number Cancel button id.	binary	211362	0	2
+Frame number Cancel button style.	binary	211372	0	2
+Frame number Cancel button text.	address	211374	0	4
+Frame number OK button id.	binary	211338	0	2	
+Frame number OK button style.	binary	211348	0	2	
+Frame number OK button.	rectangles	211340	0	8	
+Frame number OK button.	address	211350	0	4	
+GUI CGA/EGA.	palette	204320	0	32	
+Hand.	icon	203088	204320	248	
+Interface icon buffer.	rectangles	207548	0	8	
+Invalid actor error.	text	215274	0	31	
+Keyboard layout.	text	215156	0	117	
+Left arrow.	icon	201736	204320	178	0
+Levels dialog Cancel button id.	binary	209654	0	2	
+Levels dialog Cancel button style.	binary	209672	0	1	If the second to last bit is set the button will have no rounded edges.
+Levels dialog Cancel button text.	address	209666	0	4	
+Levels dialog Cancel button.	rectangles	209656	0	8	
+Levels dialog Level text label layout.	binary	209874	0	6	BYTES {x, y, bottom, null, right, null}
+Levels dialog Level text.	address	209882	0	4	
+Levels dialog OK button id.	binary	209630	0	2	
+Levels dialog Ok button style.	binary	209648	0	1	If the second to last bit is set the button will have no rounded edges.
+Levels dialog OK button text.	address	209642	0	4	
+Levels dialog OK button.	rectangles	209632	0	8	
+Levels dialog records.	binary	209682	0	192	
+Levels dialog.	rectangles	209942	0	8	
+Locate text.	text	214590	0	8	
+Loop arrow.	icon	202384	204320	141	
+Menu and ticket screen buttons.	rectangles	206818	0	16	
+Menu bar.	rectangles	205468	0	8	
+Menu cursor blink count.	binary	205466	0	2	
+Menu screen CGA.	palette	170480	0	32	
+Menu screen EGA.	palette	170512	0	32	
+Menu screen.	image	170544	170512	9772	
+Menu screen.	rectangles	206786	0	32	
+Mouse arrow transparency bitmask.	binary	214610	0	32	
+Mouse arrow.	bitmap	214642	214610	32	
+Mouse wait transparency bitmask.	binary	214674	0	32	
+Mouse wait.	bitmap	214706	214674	32	
+Moveable item screen buffer.	rectangles	207576	0	8	
+Movie dialog. #1	text	204148	0	62	
+Movie dialog. #2	text	206882	0	23	
+Movie editor buttons.	text	201706	0	9	
+Movie editor menus.	text	204638	0	706	
+Movie editor.	rectangles	201554	0	152	
+Movie file item types.	text	203941	0	23	
+Movie item directories.	text	203913	0	28	
+MS Run-time Library copyright.	text	200680	0	56	
+Music dialog.	text	205476	0	30	
+Palette dialog.	text	215305	0	22	
+Pause dialog Cancel button id.	binary	211068	0	2	
+Pause dialog Cancel button style.	binary	211086	0	1	If the second to last bit is set the button will have no rounded edges.
+Pause dialog Cancel button text.	address	211080	0	4	
+Pause dialog Cancel button.	rectangles	211070	0	8	
+Pause dialog Long label.	rectangles	211118	0	8	
+Pause dialog Long label.	address	211128	0	4	
+Pause dialog OK button style.	binary	211062	0	1	If the second to last bit is set the button will have no rounded edges.
+Pause dialog OK button text.	address	211056	0	4	
+Pause dialog OK button.	rectangles	211046	0	8	
+Pause dialog scrollbar.	rectangles	211142	0	8	
+Pause dialog Seconds counter.	rectangles	211190	0	8	
+Pause dialog Seconds label.	rectangles	211166	0	8	
+Pause dialog Seconds text.	address	211176	0	4	
+Pause dialog Short label.	rectangles	211094	0	8	
+Pause dialog Short text.	address	211104	0	4	
+Pause dialog speed value.	address	211200	0	4	
+Pause dialog text.	rectangles	211214	0	8	
+Pause dialog text.	address	211224	0	4	
+Pause dialog.	rectangles	211236	0	8	
+PRINTING...	text	213416	0	10	
+Right arrow.	icon	201916	204320	177	
+Run-time error messages.	text	225344	0	224	
+Save movie dialog drive mask. 	text	204352	0	3	
+Scenes dialog.	text	215370	0	30	
+Speaking person.	icon	202840	204320	248	
+Speech balloon dialog buttons.	text	203578	0	18	
+Speech balloon dialog buttons.	rectangles	203596	0	24	
+Speech balloon layouts.	text	203820	0	46	
+Speech balloon line break	binary	203412	0	3	
+Speech balloon menu slots.	text	168150	0	2125	
+Speech balloon properties dialog.	rectangles	203426	0	152	
+Speech balloon types.	text	203620	0	198	
+Speech balloon.	icon	202240	204320	141	
+Startup files.	text	203964	0	46	
+Supported file extensions.	text	204244	0	30	
+Thought balloon speech information.	binary	157308	0	1468	
+Ticket screen CGA.	palette	193808	0	32	
+Ticket screen EGA.	palette	193776	0	32	
+Ticket screen.	image	193840	193776	6814	
+Ticket screen.	text	206905	0	16	
+Ticket screen.	rectangles	206834	0	48	
+Time zones.	text	225226	0	11	
+Title screen CGA.	palette	183056	0	32	
+Title screen EGA.	palette	183088	0	32	
+Title screen mouse pointer boolean.	binary	214604	0	2	0 = on, non-zero = off
+Title Screen.	image	183122	183088	10646	Appears for 5 seconds at startup.
+Undo menu options.	text	204562	0	75	
+Unknown #01	binary	157298	0	10	Appears to be safe to modify.
+Unknown #02	binary	201716	0	20	Appears to be safe to modify.
+Unknown #03	binary	205522	0	95	Appears to be safe to modify.
+Unknown #04	binary	213426	0	7	Appears to be safe to modify.
+Unknown #05	binary	213468	0	126	Appears to be safe to modify.
+Unknown #06	binary	214738	0	418	Appears to be safe to modify.
+Unknown #07	binary	215328	0	42	Appears to be safe to modify.
+Unknown #08	binary	215436	0	504	Appears to be safe to modify.
+Unknown #09	binary	215940	0	32	Appears to be safe to modify.
+Unknown #10	binary	158776	0	26	Appears to be safe to modify.
+Unknown #11	binary	215972	0	37	Appears to be safe to modify.
+Unknown #12	binary	216268	0	6507	Appears to be safe to modify.
+Unknown #13	binary	222786	0	2246	Appears to be safe to modify.
+Unknown #14	binary	225032	0	36	Appears to be safe to modify.
+Unknown #15	binary	225083	0	143	Appears to be safe to modify.
+Unknown #16	binary	225237	0	15	Appears to be safe to modify.
+Unknown #17	binary	225310	0	24	Appears to be safe to modify.
+Unknown #18	binary	160851	0	7299	Appears to be safe to modify.
+Unknown #19	binary	180321	0	281	Appears to be safe to modify.
+Unknown #20	binary	180943	0	2113	Appears to be safe to modify.
+Unknown #21	binary	183120	0	2	Appears to be safe to modify.
+Unknown #22	binary	201044	0	60	Appears to be safe to modify.
+Unknown #23	binary	201105	0	227	Appears to be safe to modify.
+Unknown #24	binary	201545	0	9	Appears to be safe to modify.
+Unknown #25	binary	203336	0	70	Appears to be safe to modify.
+Unknown #26	binary	203415	0	11	Appears to be safe to modify.
+Unknown #27	binary	203410	0	2	Appears to be safe to modify.
+Unknown #28	text	203877	0	5	Appears to be safe to modify.
+Unknown #29	binary	204210	0	34	Appears to be safe to modify.
+Unknown #30	binary	204274	0	46	Appears to be safe to modify.
+Unknown #31	binary	204517	0	6	Appears to be safe to modify.
+Unknown #32	binary	205344	0	26	Appears to be safe to modify.
+Unknown #33	binary	206774	0	12	Appears to be safe to modify.
+Unknown #34	binary	206921	0	8	Appears to be safe to modify.
+Unknown #35	binary	207562	0	13	Appears to be safe to modify.
+Unknown #36	binary	207598	0	32	Appears to be safe to modify.
+Unknown #37	binary	207632	0	16	Appears to be safe to modify.
+Unknown #38	binary	204035	0	35	Appears to be safe to modify.
+Unknown #39	binary	207648	0	108	Appears to be safe to modify.
+Unknown #40	binary	207812	0	30	Appears to be safe to modify.
+Unknown #41	binary	225334	0	1	Appears to be safe to modify.
+Unknown #42	binary	225336	0	8	Appears to be safe to modify.
+Unknown #43	binary	214598	0	6	Appears to be safe to modify.
+Unknown #44	binary	210008	0	116	Appears to be safe to modify.
+Unknown #45	binary	209673	0	9	Appears to be safe to modify.
+Unknown #46	binary	210138	0	731	Appears to be safe to modify.
+Unknown #47	binary	210879	0	167	Appears to be safe to modify.
+Unknown #48	binary	211204	0	10	Appears to be safe to modify.
+Version.	text	206929	0	6	
+Video mode error message.	text	207756	0	56	
+Way menu items. #1	text	170275	0	190	
+Way menu items. #2	text	216009	0	259	

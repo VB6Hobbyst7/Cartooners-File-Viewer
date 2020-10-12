@@ -62,7 +62,7 @@ Public Module MSDOSEXEModule
          Static CurrentExeHeaderSize As New Integer
 
          If NewData IsNot Nothing Then
-            CurrentExeHeaderSize = BitConverter.ToUInt16(NewData.ToArray(), MSDOSHeaderE.RelocationTableOffset) + (BitConverter.ToUInt16(NewData.ToArray(), MSDOSHeaderE.RelocationCount) * &H4%)
+            CurrentExeHeaderSize = BitConverter.ToUInt16(NewData.ToArray(), MSDOSHeaderE.HeaderSize) << &H4%
          End If
 
          Return CurrentExeHeaderSize

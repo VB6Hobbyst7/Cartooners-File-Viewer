@@ -70,6 +70,7 @@ Public Class CartoonersClass
 
             For Each SubMenu As ToolStripMenuItem In DisplayDataTypeSubMenu.DropDownItems
                Descriptions = New List(Of String)(From DataChunk In DataChunks() Where DataChunk.Type.ToLower() = SubMenu.Text.Substring(1).ToLower() Select DataChunk.Description)
+               Descriptions.Sort()
                For Each Description As String In Descriptions
                   NewMenuItem = New ToolStripMenuItem With {.Text = $"&{Description}"}
                   AddHandler NewMenuItem.Click, AddressOf DataChunkSelected
@@ -243,7 +244,7 @@ Public Class CartoonersClass
             Case "rectangles"
                For Each RectangleO As Rectangle In GetRectangles(Position, Length)
                   With RectangleO
-                     NewText.Append($"({ .X}, { .Y})-({ .Width}, { .Height}){NewLine}")
+                     NewText.Append($"x: { .X}, y: { .Y} - width: { .Width}, height: { .Height}{NewLine}")
                   End With
                Next RectangleO
             Case "text"
