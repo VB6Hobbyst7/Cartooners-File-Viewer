@@ -16,7 +16,7 @@ Imports System.Windows.Forms
 Public Class ScriptClass
    Inherits DataFileClass
 
-   'This enumeration contains the locations of known values inside a script file.
+   'This enumeration lists the locations of known values inside a script file.
    Private Enum LocationsE As Integer
       Script = &HA%   'The LZW compressed installation script.
    End Enum

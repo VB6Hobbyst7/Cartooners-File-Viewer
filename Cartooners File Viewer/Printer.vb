@@ -16,7 +16,7 @@ Imports System.Windows.Forms
 Public Class PrinterDriverClass
    Inherits DataFileClass
 
-   'This enumeration contains the locations of the items inside a printer driver.
+   'This enumeration lists the locations of the items inside a printer driver.
    Private Enum LocationsE As Integer
       PrinterModelName = &H4%      'The printer model's name.
    End Enum

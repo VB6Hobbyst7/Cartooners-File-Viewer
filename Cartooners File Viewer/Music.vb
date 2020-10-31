@@ -16,7 +16,7 @@ Imports System.Windows.Forms
 Public Class MusicClass
    Inherits DataFileClass
 
-   'This enumeration contains the locations of known values inside a music file.
+   'This enumeration lists the locations of known values inside a music file.
    Private Enum LocationsE As Integer
       AdlibMIDIChannelDedicationTable = &H9%     'The Adlib MIDI channel dedication table.
       CMSMIDIChannelDedicationTable = &H2B%      'The CMS MIDI channel dedication table.

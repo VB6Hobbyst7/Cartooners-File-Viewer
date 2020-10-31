@@ -20,7 +20,7 @@ Imports System.Windows.Forms
 Public Class ActorClass
    Inherits DataFileClass
 
-   'This enumeration contains the animation record field types.
+   'This enumeration lists the animation record field types.
    Private Enum AnimationRecordFieldsE As Integer
       RecordNumber  'The animation record number.
       ImageRecord   'The image record number.
@@ -30,7 +30,7 @@ Public Class ActorClass
       YDirection    'The vertical direction.
    End Enum
 
-   'This enumeration contains the locations of known values inside an actor file.
+   'This enumeration lists the locations of known values inside an actor file.
    Private Enum LocationsE As Integer
       ActionCount = &H3E%                     'The number of actions an actor can perform.
       ActionMenuOffset = &H40%                'The offset of the action menu items.

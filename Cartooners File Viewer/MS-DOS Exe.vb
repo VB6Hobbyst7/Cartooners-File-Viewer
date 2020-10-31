@@ -11,7 +11,7 @@ Imports System.Text
 
 'This module contains this program's core procedures.
 Public Module MSDOSEXEModule
-   'This enumeration contains the location of known data inside an MS-DOS executable's header.
+   'This enumeration lists the locations of known data inside an MS-DOS executable's header.
    Public Enum MSDOSHeaderE As Integer
       Checksum = &H12%                 'The executable's negative pgm checksum.
       CodeSegment = &H16%              'The code segment (CS) register's initial value.
@@ -49,21 +49,20 @@ Public Module MSDOSEXEModule
 
    'This structure defines a segment and offset.
    Public Structure SegmentOffsetStr
-      Public Segment As Integer  'Defines a segment.
-      Public Offset As Integer   'Defines an offset.
+      Public FlatAddress As Integer   'Defines the address resulting from a segment and offset.
+      Public Segment As Integer       'Defines a segment.
+      Public Offset As Integer        'Defines an offset.
    End Structure
 
    Public Const MSDOS_EXECUTABLE_SIGNATURE As Integer = &H5A4D%   'Defines the MS-DOS executable signature "MZ".
    Public Const MSDOS_HEADER_SIZE As Integer = &H1C%              'Defines the MS-DOS exectuable header's size.
 
    'This procedure manages a MS-DOS executable's header size with the size of the relocation table added.
-   Public Function EXEHeaderSize(Optional NewData As List(Of Byte) = Nothing) As Integer
+   Public Function EXEHeaderSize(Optional Data As List(Of Byte) = Nothing) As Integer
       Try
          Static CurrentExeHeaderSize As New Integer
 
-         If NewData IsNot Nothing Then
-            CurrentExeHeaderSize = BitConverter.ToUInt16(NewData.ToArray(), MSDOSHeaderE.HeaderSize) << &H4%
-         End If
+         If Data IsNot Nothing Then CurrentExeHeaderSize = BitConverter.ToUInt16(Data.ToArray(), MSDOSHeaderE.HeaderSize) << &H4%
 
          Return CurrentExeHeaderSize
       Catch ExceptionO As Exception
@@ -110,19 +109,19 @@ Public Module MSDOSEXEModule
    End Function
 
    'This procedure manages the current executable's relocation items.
-   Public Function RelocationItems(Optional NewData As List(Of Byte) = Nothing) As List(Of SegmentOffsetStr)
+   Public Function RelocationItems(Optional Data As List(Of Byte) = Nothing) As List(Of SegmentOffsetStr)
       Try
          Dim RelocationCount As New Integer
          Dim RelocationTableOffset As New Integer
          Static CurrentRelocationItems As New List(Of SegmentOffsetStr)
 
-         If NewData IsNot Nothing Then
+         If Data IsNot Nothing Then
             CurrentRelocationItems.Clear()
-            RelocationCount = BitConverter.ToUInt16(NewData.ToArray(), MSDOSHeaderE.RelocationCount)
-            RelocationTableOffset = BitConverter.ToUInt16(NewData.ToArray(), MSDOSHeaderE.RelocationTableOffset)
+            RelocationCount = BitConverter.ToUInt16(Data.ToArray(), MSDOSHeaderE.RelocationCount)
+            RelocationTableOffset = BitConverter.ToUInt16(Data.ToArray(), MSDOSHeaderE.RelocationTableOffset)
 
             For Position As Integer = RelocationTableOffset To RelocationTableOffset + ((RelocationCount - &H1%) * &H4%) Step &H4%
-               CurrentRelocationItems.Add(New SegmentOffsetStr With {.Offset = BitConverter.ToUInt16(NewData.ToArray, Position), .Segment = BitConverter.ToUInt16(NewData.ToArray, Position + &H2%)})
+               CurrentRelocationItems.Add(New SegmentOffsetStr With {.Offset = BitConverter.ToUInt16(Data.ToArray, Position), .Segment = BitConverter.ToUInt16(Data.ToArray, Position + &H2%), .FlatAddress = (.Segment << &H4%) Or .Offset})
             Next Position
          End If
 

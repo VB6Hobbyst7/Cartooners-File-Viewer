@@ -17,7 +17,7 @@ Imports System.Windows.Forms
 Public Class MovieClass
    Inherits DataFileClass
 
-   'This enumeration contains the locations of known values inside a movie file.
+   'This enumeration lists the locations of known values inside a movie file.
    Private Enum LocationsE As Integer
       ActorsScenesPalette = &H4%          'The movie's first palette.
       DefaultSpeechBalloonColor = &HE1%   'The movie's default speech balloon text color palette index.
@@ -31,13 +31,13 @@ Public Class MovieClass
       SpeechBalloonsPalette = &HBF%       'The movie's second palette.
    End Enum
 
-   'This enumeration contains a list of the palettes inside a movie file.
+   'This enumeration lists the palettes inside a movie file.
    Private Enum PalettesE As Integer
       ActorsScenesPalette            'The movie's actors and scenes palette.
       SpeechBalloonsPalette          'The movie's speech balloons palette.
    End Enum
 
-   'This enumeration contains the locations of known values inside a speech balloon header.
+   'This enumeration lists the locations of known values inside a speech balloon header.
    Private Enum SpeechBalloonLocationsE As Integer
       Alignment = &H24%                  'The text's alignment.
       BackColor = &H6%                   'The balloon background color's palette index.

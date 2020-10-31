@@ -22,7 +22,7 @@ Public Class ArchiveClass
    Private Const HEADER_SIZE As Integer = &H30%                               'Defines the archived file header's size.
    Private ReadOnly ARCHIVED_FILE_PREFIX As New List(Of Byte)({&H1A%, &H45%, &H41%})   'Defines an archived file header's prefix.
 
-   'This enumeration contains the locations of known values in archived file headers.
+   'This enumeration lists the locations of known values in archived file headers.
    Private Enum HeaderLocationsE
       ArchivedSize = &H19%                'The file's archived size.
       CompressedFlag = &H14%              'The file's compressed/uncompressed flag.

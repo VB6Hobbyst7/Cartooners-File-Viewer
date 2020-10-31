@@ -17,7 +17,7 @@ Public Module CompressLZWModule
    Public Const LZW_SYMBOL_TOP As Integer = &HFFF%    'Defines the highest value used for an LZW symbol.
    Private Const LZW_NO_VALUE As Integer = -1         'Defines a null LZW value.
 
-   Public ReadOnly LZW_MAXIMUM_ENTRIES As Integer = (&H1% << LZW_MAXIMUM_BITS)   'Contains the maximum number of LZW symbols possible with the maximum LZW bit count.
+   Public ReadOnly LZW_MAXIMUM_ENTRIES As Integer = (&H1% << LZW_MAXIMUM_BITS)   'Defines the maximum number of LZW symbols possible with the maximum LZW bit count.
 
    'This procedure adds the specified value to the specified compressed data.
    Private Sub AddToCompressed(Compressed As List(Of Byte), BitCount As Integer, Value As Integer, ByRef Bits As Integer, ByRef Buffer As Integer)

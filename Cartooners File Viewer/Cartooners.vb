@@ -20,24 +20,24 @@ Imports System.Windows.Forms
 Public Class CartoonersClass
    Inherits DataFileClass
 
-   'This class defines the description, offset and size of data chunks used by Cartooners.
-   Private Class DataChunkClass
-      Public Description As String   'Defines a data chunk's description.
-      Public Type As String          'Defines a data chunk's type.
-      Public Offset As Integer       'Defines a data chunk's offset.
-      Public Related As Integer      'Defines a related data chunk's offset.
-      Public Length As Integer       'Defines a data chunk's length.
-      Public EndO As Integer         'Defines a data chunk's end.
+   'This class defines the regions of data and code contained by the Cartooners executable.
+   Private Class RegionClass
+      Public Description As String   'Defines a region's description.
+      Public Type As String          'Defines a region's type.
+      Public Offset As Integer       'Defines a region's offset.
+      Public Related As Integer      'Defines a related region's offset.
+      Public Length As Integer       'Defines a region's length.
+      Public EndO As Integer         'Defines a region's end.
    End Class
 
-   'This enumeration contains the data chunk properties.
-   Private Enum DataChunkPropertiesE As Integer
-      Description   'A data chunk's description.
-      Type          'A data chunk's type.
-      Offset        'A data chunk's offset.
-      Related       'A related data chunk's offset.
-      Length        'A data chunk's length.
-      EndO          'A data chunk's end.
+   'This enumeration lists the Cartooner's executable region's properties.
+   Private Enum RegionPropertiesE As Integer
+      Description   'A region's description.
+      Type          'A region's type.
+      Offset        'A region's offset.
+      Related       'A related region's offset.
+      Length        'A region's length.
+      EndO          'A region's end.
    End Enum
 
    Private Const BYTES_PER_ROW As Integer = &HA0%               'Defines the number of bytes per pixel row.
@@ -49,7 +49,7 @@ Public Class CartoonersClass
    Private Const SCREEN_HEIGHT As Integer = &HC8%               'Defines the screen height used by Cartooners in pixels.
    Private Const SCREEN_WIDTH As Integer = &H140%               'Defines the screen width used by Cartooners in pixels.
 
-   Private ReadOnly DATA_CHUNK_PROPERTY_DELIMITER As Char = ControlChars.Tab   'Contains the data chunk property delimiter.
+   Private ReadOnly REGION_PROPERTY_DELIMITER As Char = ControlChars.Tab   'Defines the region property delimiter.
 
    'The menu items used by this class.
    Private WithEvents DisplayDataMenu As New ToolStripMenuItem With {.Text = "Display &Data"}
@@ -60,7 +60,7 @@ Public Class CartoonersClass
    'This procedure initializes this class.
    Public Sub New(PathO As String, Optional DataFileMenu As ToolStripMenuItem = Nothing)
       Try
-         Dim DataTypes As New List(Of String)((From DataChunk In DataChunks() Select DataChunk.Type).Distinct())
+         Dim DataTypes As New List(Of String)((From Region In Regions() Select Region.Type).Distinct())
          Dim Descriptions As List(Of String) = Nothing
          Dim NewMenuItem As ToolStripMenuItem = Nothing
 
@@ -69,11 +69,11 @@ Public Class CartoonersClass
             DataTypes.ForEach(Sub(DataType As String) DisplayDataTypeSubMenu.DropDownItems.Add(New ToolStripMenuItem With {.Text = $"&{DataType.Substring(0, 1).ToUpper()}{DataType.Substring(1)}"}))
 
             For Each SubMenu As ToolStripMenuItem In DisplayDataTypeSubMenu.DropDownItems
-               Descriptions = New List(Of String)(From DataChunk In DataChunks() Where DataChunk.Type.ToLower() = SubMenu.Text.Substring(1).ToLower() Select DataChunk.Description)
+               Descriptions = New List(Of String)(From Region In Regions() Where Region.Type.ToLower() = SubMenu.Text.Substring(1).ToLower() Select Region.Description)
                Descriptions.Sort()
                For Each Description As String In Descriptions
                   NewMenuItem = New ToolStripMenuItem With {.Text = $"&{Description}"}
-                  AddHandler NewMenuItem.Click, AddressOf DataChunkSelected
+                  AddHandler NewMenuItem.Click, AddressOf RegionSelected
                   SubMenu.DropDownItems.Add(NewMenuItem)
                Next Description
             Next SubMenu
@@ -90,16 +90,18 @@ Public Class CartoonersClass
       End Try
    End Sub
 
-   'This procedure checks whether the data chunk ranges overlap and returns the result.
-   Private Function CheckForChunkOverlap() As String
+   'This procedure checks whether the Cartooner's executable regions overlap and returns the result.
+   Private Function CheckForRegionOverlap() As String
       Dim Overlaps As New StringBuilder
 
       Try
-         For Each Chunk As DataChunkClass In DataChunks()
-            For Each OtherChunk As DataChunkClass In DataChunks()
-               If Chunk IsNot OtherChunk AndAlso Chunk.EndO > OtherChunk.Offset AndAlso Chunk.EndO <= OtherChunk.EndO Then Overlaps.Append($"""{Chunk.Description} "" overlaps with ""{OtherChunk.Description}"".{NewLine}")
-            Next OtherChunk
-         Next Chunk
+         For Each Region As RegionClass In Regions()
+            For Each OtherRegion As RegionClass In Regions()
+               If Region IsNot OtherRegion AndAlso Region.EndO > OtherRegion.Offset AndAlso Region.EndO <= OtherRegion.EndO Then
+                  Overlaps.Append($"""{Region.Description} "" overlaps with ""{OtherRegion.Description}"".{NewLine}")
+               End If
+            Next OtherRegion
+         Next Region
 
          Return Overlaps.ToString()
       Catch ExceptionO As Exception
@@ -108,46 +110,6 @@ Public Class CartoonersClass
 
       Return Nothing
    End Function
-
-   'This procedure manages Cartooner's data chunk information.
-   Private Function DataChunks() As List(Of DataChunkClass)
-      Try
-         Dim Chunks As List(Of String) = Nothing
-         Dim Properties() As String = {}
-         Static CurrentDataChunks As List(Of DataChunkClass) = Nothing
-
-         If CurrentDataChunks Is Nothing Then
-            CurrentDataChunks = New List(Of DataChunkClass)
-
-            Chunks = New List(Of String)(My.Resources.Cartooners_Executable.Split({NewLine}, StringSplitOptions.None))
-            Chunks.RemoveAt(0)
-            For Each Chunk As String In Chunks
-               If Not Chunk.Trim() = Nothing Then
-                  Properties = Chunk.Split(DATA_CHUNK_PROPERTY_DELIMITER)
-                  CurrentDataChunks.Add(New DataChunkClass With {.Description = Properties(DataChunkPropertiesE.Description), .Type = Properties(DataChunkPropertiesE.Type).Trim().ToLower(), .Offset = CInt(Properties(DataChunkPropertiesE.Offset)), .Related = CInt(Properties(DataChunkPropertiesE.Related)), .Length = CInt(Properties(DataChunkPropertiesE.Length)), .EndO = .Offset + .Length})
-               End If
-            Next Chunk
-         End If
-
-         Return CurrentDataChunks
-      Catch ExceptionO As Exception
-         HandleError(ExceptionO)
-      End Try
-
-      Return Nothing
-   End Function
-
-   'This procedure handles the data chunk selections.
-   Private Sub DataChunkSelected(sender As Object, e As EventArgs)
-      Try
-         Dim Description As String = DirectCast(sender, ToolStripMenuItem).Text.Substring(1)
-         Dim Type As String = DirectCast(sender, ToolStripMenuItem).OwnerItem.Text.Substring(1)
-
-         DisplayDataChunk(Description, Type)
-      Catch ExceptionO As Exception
-         HandleError(ExceptionO)
-      End Try
-   End Sub
 
    'This procedures manages the Cartooners executable's data file.
    Private Function DataFile(Optional CartoonersPath As String = Nothing) As DataFileStr
@@ -163,10 +125,10 @@ Public Class CartoonersClass
                      If .Data.Count = EXPECTED_UNPACKED_SIZE Then
                         If BitConverter.ToUInt16(.Data.ToArray(), MSDOSHeaderE.Signature) = MSDOS_EXECUTABLE_SIGNATURE Then
                            .Path = CartoonersPath
-                           EXEHeaderSize(NewData:= .Data)
-                           RelocationItems(NewData:= .Data)
+                           EXEHeaderSize(Data:= .Data)
+                           RelocationItems(Data:= .Data)
 
-                           Overlaps = CheckForChunkOverlap()
+                           Overlaps = CheckForRegionOverlap()
                            If Not Overlaps = Nothing Then
                               UpdateDataBox(Overlaps)
                            Else
@@ -197,8 +159,8 @@ Public Class CartoonersClass
       Return Nothing
    End Function
 
-   'This procedure displays the data chunk with the specified description and data type.
-   Private Sub DisplayDataChunk(Description As String, Type As String)
+   'This procedure displays the Cartooner's executable region with the specified description and data type.
+   Private Sub DisplayRegion(Description As String, Type As String)
       Try
          Dim IconHeight As New Integer
          Dim IconType As New Integer
@@ -210,12 +172,12 @@ Public Class CartoonersClass
          Dim Position As New Integer
          Dim Segment As New Integer
 
-         For Each Chunk As DataChunkClass In DataChunks()
-            If Chunk.Description.ToLower() = Description.ToLower() AndAlso Chunk.Type.ToLower() = Type.ToLower() Then
-               Length = Chunk.Length
-               Position = Chunk.Offset + EXEHeaderSize()
+         For Each Region As RegionClass In Regions()
+            If Region.Description.ToLower() = Description.ToLower() AndAlso Region.Type.ToLower() = Type.ToLower() Then
+               Length = Region.Length
+               Position = Region.Offset + EXEHeaderSize()
             End If
-         Next Chunk
+         Next Region
 
          If Position + Length > DataFile().Data.Count Then
             MessageBox.Show($"Attempting to read {(Position + Length) - DataFile().Data.Count} byte(s) beyond of the end of the available data at position {Position}.", My.Application.Info.Title, MessageBoxButtons.OK, MessageBoxIcon.Warning)
@@ -241,6 +203,10 @@ Public Class CartoonersClass
                Palettes = New List(Of List(Of Color))
                Palettes.Add(New List(Of Color)(GBRPalette(DataFile().Data, Position)))
                NewText.Append(GBRToText(, Palettes))
+            Case "point"
+               With New Point(BitConverter.ToUInt16(DataFile().Data.ToArray(), Position + &H2%), BitConverter.ToUInt16(DataFile().Data.ToArray(), Position))
+                  NewText.Append($"x: { .X}, y: { .Y}{NewLine}")
+               End With
             Case "rectangles"
                For Each RectangleO As Rectangle In GetRectangles(Position, Length)
                   With RectangleO
@@ -288,8 +254,8 @@ Public Class CartoonersClass
 
          File.WriteAllBytes(Path.Combine(ExportPath, "Cartoons.Unpacked.exe"), DataFile().Data.ToArray())
 
-         For Each Chunk As DataChunkClass In DataChunks()
-            With Chunk
+         For Each Region As RegionClass In Regions()
+            With Region
                Select Case .Type
                   Case "icon"
                      IconHeight = BitConverter.ToUInt16(DataFile().Data.ToArray(), .Offset + EXEHeaderSize() + &H2%)
@@ -300,7 +266,7 @@ Public Class CartoonersClass
                   Case "image"
                      Draw4BitImage(DecompressRLE(DataFile().Data, .Offset + EXEHeaderSize(), .Length), SCREEN_WIDTH, SCREEN_HEIGHT, GBRPalette(DataFile().Data, .Related + EXEHeaderSize()), BYTES_PER_ROW).Save($"{Path.Combine(ExportPath, .Description)}.png", ImageFormat.Png)
                   Case "mousemask"
-                     MouseCursor(Chunk).Save($"{Path.Combine(ExportPath, .Description)}.png", ImageFormat.Png)
+                     MouseCursor(Region).Save($"{Path.Combine(ExportPath, .Description)}.png", ImageFormat.Png)
                   Case "rectangles"
                      ImageO = New Bitmap(SCREEN_WIDTH + 1, SCREEN_HEIGHT + 1)
                      Graphics.FromImage(ImageO).Clear(Color.White)
@@ -310,7 +276,7 @@ Public Class CartoonersClass
                      ImageO.Save($"{Path.Combine(ExportPath, .Description)} rectangles.png", Imaging.ImageFormat.Png)
                End Select
             End With
-         Next Chunk
+         Next Region
 
          ExportMap(ExportPath)
          ExportUnknownMap(ExportPath)
@@ -324,27 +290,25 @@ Public Class CartoonersClass
    'This procedure exports a map of the Cartooners executable.
    Private Sub ExportMap(ExportPath As String)
       Try
-         Dim CurrentChunk As DataChunkClass = Nothing
+         Dim CurrentRegion As RegionClass = Nothing
          Dim Data As New List(Of Byte)(DataFile().Data)
          Dim Map As New StringBuilder
          Dim Position As Integer = &H0%
-         Dim RelocationItemPositions As New List(Of Integer)
-
-         RelocationItems().ForEach(Sub(Item As SegmentOffsetStr) RelocationItemPositions.Add(Item.Segment << &H4% Or Item.Offset))
+         Dim RelocationItemPositions As New List(Of Integer)(From Item As SegmentOffsetStr In RelocationItems() Select Item.FlatAddress)
 
          Data.RemoveRange(&H0%, EXEHeaderSize())
 
          Do Until Position >= Data.Count - &H1%
-            CurrentChunk = DataChunks.FirstOrDefault(Function(Chunk As DataChunkClass) Chunk.Offset = Position)
+            CurrentRegion = Regions.FirstOrDefault(Function(Region As RegionClass) Region.Offset = Position)
 
-            If CurrentChunk Is Nothing Then
+            If CurrentRegion Is Nothing Then
                If RelocationItemPositions.Contains(Position) Then Map.Append("*"c)
                Map.Append($"{Data(Position):X2} ")
                Position += &H1%
             Else
-               With CurrentChunk
+               With CurrentRegion
                   Map.Append($"{NewLine}{NewLine}[BEGIN { .Description} ({ .Type})]{NewLine}")
-                  If CurrentChunk.Type = "text" Then
+                  If CurrentRegion.Type = "text" Then
                      Map.Append($"""{Escape(GetString(Data, .Offset, .Length).Replace("""", """""")).Replace(NewLine, "/0D/0A")}""")
                      Position += .Length
                   Else
@@ -369,7 +333,7 @@ Public Class CartoonersClass
    Private Sub ExportUnknownMap(ExportPath As String)
       Try
          Dim Buffer As New List(Of Byte)
-         Dim CurrentChunk As DataChunkClass = Nothing
+         Dim CurrentRegion As RegionClass = Nothing
          Dim Data As New List(Of Byte)(DataFile().Data)
          Dim Map As New StringBuilder
          Dim Position As Integer = &H0%
@@ -377,9 +341,9 @@ Public Class CartoonersClass
          Data.RemoveRange(&H0%, EXEHeaderSize())
 
          Do Until Position >= Data.Count - &H1%
-            CurrentChunk = DataChunks.FirstOrDefault(Function(Chunk As DataChunkClass) Chunk.Offset = Position)
+            CurrentRegion = Regions.FirstOrDefault(Function(Region As RegionClass) Region.Offset = Position)
 
-            If CurrentChunk Is Nothing Then
+            If CurrentRegion Is Nothing Then
                Buffer.Add(Data(Position))
                Position += &H1%
             Else
@@ -392,7 +356,7 @@ Public Class CartoonersClass
                   End If
                   Buffer.Clear()
                End If
-               Position += CurrentChunk.Length
+               Position += CurrentRegion.Length
             End If
          Loop
 
@@ -428,13 +392,13 @@ Public Class CartoonersClass
    End Function
 
    'This procedure retrieves the mouse cursor at the specified position from the specified data.
-   Private Function MouseCursor(Chunk As DataChunkClass) As Bitmap
+   Private Function MouseCursor(Region As RegionClass) As Bitmap
       Try
          Dim Bit As New Boolean
          Dim Cursor As New Bitmap(MOUSE_CURSOR_SIZE, MOUSE_CURSOR_SIZE)
-         Dim Mask As New List(Of Byte)(GetBytes(DataFile().Data, Chunk.Offset + EXEHeaderSize(), Chunk.Length))
+         Dim Mask As New List(Of Byte)(GetBytes(DataFile().Data, Region.Offset + EXEHeaderSize(), Region.Length))
          Dim TransparencyBit As New Boolean
-         Dim TransparencyMask As New List(Of Byte)(GetBytes(DataFile().Data, Chunk.Related + EXEHeaderSize(), Chunk.Length))
+         Dim TransparencyMask As New List(Of Byte)(GetBytes(DataFile().Data, Region.Related + EXEHeaderSize(), Region.Length))
          Dim x As Integer = 0
          Dim y As Integer = 0
 
@@ -461,4 +425,44 @@ Public Class CartoonersClass
 
       Return Nothing
    End Function
+
+   'This procedure manages Cartooner's executable region information.
+   Private Function Regions() As List(Of RegionClass)
+      Try
+         Dim Properties() As String = {}
+         Dim RegionLines As List(Of String) = Nothing
+         Static CurrentRegions As List(Of RegionClass) = Nothing
+
+         If CurrentRegions Is Nothing Then
+            CurrentRegions = New List(Of RegionClass)
+
+            RegionLines = New List(Of String)(My.Resources.Cartooners_Executable.Split({NewLine}, StringSplitOptions.None))
+            RegionLines.RemoveAt(0)
+            For Each RegionLine As String In RegionLines
+               If Not RegionLine.Trim() = Nothing Then
+                  Properties = RegionLine.Split(REGION_PROPERTY_DELIMITER)
+                  CurrentRegions.Add(New RegionClass With {.Description = Properties(RegionPropertiesE.Description), .Type = Properties(RegionPropertiesE.Type).Trim().ToLower(), .Offset = CInt(Properties(RegionPropertiesE.Offset)), .Related = CInt(Properties(RegionPropertiesE.Related)), .Length = CInt(Properties(RegionPropertiesE.Length)), .EndO = .Offset + .Length})
+               End If
+            Next RegionLine
+         End If
+
+         Return CurrentRegions
+      Catch ExceptionO As Exception
+         HandleError(ExceptionO)
+      End Try
+
+      Return Nothing
+   End Function
+
+   'This procedure handles the region selections.
+   Private Sub RegionSelected(sender As Object, e As EventArgs)
+      Try
+         Dim Description As String = DirectCast(sender, ToolStripMenuItem).Text.Substring(1)
+         Dim Type As String = DirectCast(sender, ToolStripMenuItem).OwnerItem.Text.Substring(1)
+
+         DisplayRegion(Description, Type)
+      Catch ExceptionO As Exception
+         HandleError(ExceptionO)
+      End Try
+   End Sub
 End Class
