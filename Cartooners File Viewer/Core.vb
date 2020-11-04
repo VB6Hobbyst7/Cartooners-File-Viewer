@@ -33,7 +33,7 @@ Public Module CoreModule
       Script                  'Script files.
    End Enum
 
-   'This enumaration lists the nibbles in a byte.
+   'This enumeration lists the nibbles in a byte.
    Public Enum NibblesE As Integer
       HighNibble   'The high nibble.
       LowNibble    'The low nibble.

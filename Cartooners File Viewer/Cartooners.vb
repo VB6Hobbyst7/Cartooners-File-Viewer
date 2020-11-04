@@ -92,9 +92,9 @@ Public Class CartoonersClass
 
    'This procedure checks whether the Cartooner's executable regions overlap and returns the result.
    Private Function CheckForRegionOverlap() As String
-      Dim Overlaps As New StringBuilder
-
       Try
+         Dim Overlaps As New StringBuilder
+
          For Each Region As RegionClass In Regions()
             For Each OtherRegion As RegionClass In Regions()
                If Region IsNot OtherRegion AndAlso Region.EndO > OtherRegion.Offset AndAlso Region.EndO <= OtherRegion.EndO Then
