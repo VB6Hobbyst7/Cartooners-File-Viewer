@@ -39,6 +39,32 @@ Public Module CoreModule
       Return Nothing
    End Function
 
+   'This procedure returns the specified bytes as hexadecimal text.
+   Public Function GetHexadecimals(Data As List(Of Byte)) As String
+      Try
+         Dim Hexadecimals As String = Nothing
+         Dim Offset As New Integer
+         Dim Length As New Integer
+
+         If Data IsNot Nothing Then
+            Hexadecimals = String.Join(" "c, From ByteO As Byte In Data Select $"{ByteO:X2}")
+            If Regions()?.Count > 0 Then
+               For Each Region As RegionClass In Regions()
+                  Offset = Region.Offset * CHARACTERS_PER_BYTE
+                  Length = Region.Length * CHARACTERS_PER_BYTE
+                  Hexadecimals = $"{Hexadecimals.Substring(0, Offset)}{String.Join(" "c, Enumerable.Repeat("##", Length \ CHARACTERS_PER_BYTE))} {Hexadecimals.Substring(Offset + Length)}"
+               Next Region
+            End If
+         End If
+
+         Return Hexadecimals
+      Catch ExceptionO As Exception
+         HandleError(ExceptionO)
+      End Try
+
+      Return Nothing
+   End Function
+
    'This procedure handles any errors that occur.
    Public Sub HandleError(ExceptionO As Exception) Handles Disassembler.HandleError
       Try
@@ -48,23 +74,12 @@ Public Module CoreModule
       End Try
    End Sub
 
-   'This procedure converts the specified bytes to hexadecimal text.
-   Public Function Hexadecimals(Data As List(Of Byte)) As String
-      Try
-         Return String.Join(" "c, From ByteO As Byte In Data Select $"{ByteO:X2}")
-      Catch ExceptionO As Exception
-         HandleError(ExceptionO)
-      End Try
-
-      Return Nothing
-   End Function
-
    'This procedure returns information about this program.
    Public Function ProgramInformation() As String
       Try
          With My.Application.Info
-            Return $"{ .Title} v{ .Version} - by: { .CompanyName}"
-         End With
+            Return $"{ .Title} v{ .Version} - by { .CompanyName}"
+               End With
       Catch ExceptionO As Exception
          HandleError(ExceptionO)
       End Try

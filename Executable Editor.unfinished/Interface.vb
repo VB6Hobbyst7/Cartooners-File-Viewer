@@ -57,16 +57,17 @@ Public Class InterfaceWindow
          Dim Position As Integer = &H0%
          Dim SelectedExecutableCode As New List(Of Byte)
 
-         DataBox.Select(AlignToBytes(DataBox.SelectionStart), AlignToBytes(DataBox.SelectionLength))
+         DataBox.Select(AlignToBytes(DataBox.SelectionStart - CHARACTERS_PER_BYTE), AlignToBytes(DataBox.SelectionLength))
 
          Length = DataBox.SelectionLength \ CHARACTERS_PER_BYTE
-         SelectedExecutableCode = Executable().Data.GetRange(DataBox.SelectionStart \ CHARACTERS_PER_BYTE, Length)
+         SelectedExecutableCode = Executable().Data?.GetRange(DataBox.SelectionStart \ CHARACTERS_PER_BYTE, Length)
          Do Until Position >= Length OrElse My.Application.OpenForms.Count = 0
             DisassemblyCode.Add(Disassembler.Disassemble(SelectedExecutableCode, Position))
             Application.DoEvents()
          Loop
 
          DisassemblyBox.Text = String.Join(NewLine, DisassemblyCode)
+         UpdateStatusBar()
       Catch ExceptionO As Exception
          HandleError(ExceptionO)
       End Try
@@ -90,6 +91,15 @@ Public Class InterfaceWindow
       End Try
    End Sub
 
+   'This procedure adjusts this window's controls to its new size.
+   Private Sub InterfaceWindow_Resize(sender As Object, e As EventArgs) Handles Me.Resize
+      Try
+         SplitterBox.Height = Me.ClientSize.Height - StatusBar.Height
+      Catch ExceptionO As Exception
+         HandleError(ExceptionO)
+      End Try
+   End Sub
+
    'This program displays a dialog requesting the user to select an executable to be edited.
    Private Sub LoadExecutableMenu_Click(sender As Object, e As EventArgs) Handles LoadExecutableMenu.Click
       Try
@@ -99,6 +109,20 @@ Public Class InterfaceWindow
       Catch ExceptionO As Exception
          HandleError(ExceptionO)
       End Try
+   End Sub
+
+   'This procedure gives the command to load the specified regions.
+   Private Sub LoadRegionsMenu_Click(sender As Object, e As EventArgs) Handles LoadRegionsMenu.Click
+      Dim Overlaps As String = Nothing
+      With New OpenFileDialog
+         If .ShowDialog() = DialogResult.OK Then
+            Regions(RegionPath:= .FileName)
+            Overlaps = CheckForRegionOverlap()
+            If Not Overlaps = Nothing Then MessageBox.Show(Overlaps, My.Application.Info.Title, MessageBoxButtons.OK, MessageBoxIcon.Error)
+            DataBox.Text = GetHexadecimals(Executable.Data)
+            DataBox.Select(0, 0)
+         End If
+      End With
    End Sub
 
    'This procedure gives the command to close this window.
@@ -125,8 +149,30 @@ Public Class InterfaceWindow
    Private Sub LoadExecutable(ExecutablePath As String)
       Try
          Executable(ExecutablePath:=ExecutablePath)
-         DataBox.Text = Hexadecimals(Executable.Data)
+         DataBox.Text = GetHexadecimals(Executable.Data)
          DataBox.Select(0, 0)
+         Regions(, Reset:=True)
+      Catch ExceptionO As Exception
+         HandleError(ExceptionO)
+      End Try
+   End Sub
+
+   'This procedure updates the status bar.
+   Private Sub UpdateStatusBar()
+      Try
+         Dim Position As Integer = DataBox.SelectionStart \ CHARACTERS_PER_BYTE
+         Dim RegionList As List(Of RegionClass) = Nothing
+
+         StatusPositionLabel.Text = $"Position: {Position }/{Executable.Data?.Count - &H1%}"
+         If Regions()?.Count > 0 Then
+            RegionList = New List(Of RegionClass)(From Region In Regions() Where Position >= Region.Offset AndAlso Position <= Region.EndO)
+
+            If RegionList.Count = 0 Then
+               StatusRegionLabel.Text = "Region:"
+            Else
+               StatusRegionLabel.Text = $"Region: {RegionList.First.Description}"
+            End If
+         End If
       Catch ExceptionO As Exception
          HandleError(ExceptionO)
       End Try
