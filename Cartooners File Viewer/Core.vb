@@ -330,25 +330,6 @@ Public Module CoreModule
       Return Nothing
    End Function
 
-   'This procedure updates the interface window's databox. 
-   Public Sub UpdateDataBox(Optional NewText As String = Nothing, Optional NewDataBox As TextBox = Nothing)
-      Try
-         Static CurrentDataBox As TextBox = Nothing
-
-         If NewDataBox IsNot Nothing Then
-            CurrentDataBox = NewDataBox
-         ElseIf Not NewText = Nothing AndAlso CurrentDataBox IsNot Nothing Then
-            With CurrentDataBox
-               .Text = NewText
-               .Select(0, 0)
-               If .TextLength < NewText.Length Then MessageBox.Show("The databox cannot display all new data.", My.Application.Info.Title, MessageBoxButtons.OK, MessageBoxIcon.Information)
-            End With
-         End If
-      Catch ExceptionO As Exception
-         HandleError(ExceptionO)
-      End Try
-   End Sub
-
    'This procedure converts any escape sequences in the specified text to characters.
    Public Function Unescape(Text As String, Optional EscapeCharacter As Char = "/"c, Optional ByRef ErrorAt As Integer = 0) As String
       Try
@@ -393,4 +374,23 @@ Public Module CoreModule
 
       Return Nothing
    End Function
+
+   'This procedure updates the interface window's databox. 
+   Public Sub UpdateDataBox(Optional NewText As String = Nothing, Optional NewDataBox As TextBox = Nothing)
+      Try
+         Static CurrentDataBox As TextBox = Nothing
+
+         If NewDataBox IsNot Nothing Then
+            CurrentDataBox = NewDataBox
+         ElseIf Not NewText = Nothing AndAlso CurrentDataBox IsNot Nothing Then
+            With CurrentDataBox
+               .Text = NewText
+               .Select(0, 0)
+               If .TextLength < NewText.Length Then MessageBox.Show("The databox cannot display all new data.", My.Application.Info.Title, MessageBoxButtons.OK, MessageBoxIcon.Information)
+            End With
+         End If
+      Catch ExceptionO As Exception
+         HandleError(ExceptionO)
+      End Try
+   End Sub
 End Module
