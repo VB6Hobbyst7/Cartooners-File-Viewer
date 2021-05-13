@@ -48,6 +48,12 @@ Public Module CoreModule
    'The core constants used by this program.
    Public Const ACTOR_TEMPLATE As String = "Actor"          'Defines the identifier for actor templates.
    Public Const DELIMITER As Char = ControlChars.NullChar   'Defines the delimiter used in various types of data.
+   Public Const LZW_END As Integer = &H101%                 'Defines the end of a LZW value sequence.
+   Public Const LZW_MAXIMUM_BITS As Integer = &HC%          'Defines the maximum number of bits per value in a LZW sequence.
+   Public Const LZW_NO_VALUE As Integer = -1                'Defines a null LZW value.
+   Public Const LZW_START As Integer = &H100%               'Defines the start of a LZW value sequence.
+   Public Const LZW_SYMBOL_BASE As Integer = &H102%         'Defines the lowest value used for an LZW symbol.
+   Public Const LZW_SYMBOL_TOP As Integer = &HFFF%          'Defines the highest value used for an LZW symbol.
    Public Const NOT_FOUND As Integer = -1                   'Indicates that a value could not be found in a given data set.
    Public Const PADDING As Char = ControlChars.NullChar     'Defines the character used to pad a path.
    Public Const PAGE_SIZE As Integer = &H200%               'Defines the size of a page in memory.
@@ -58,6 +64,7 @@ Public Module CoreModule
    Public ReadOnly BYTES_TO_TEXT As Func(Of List(Of Byte), String) = Function(Bytes As List(Of Byte)) New String((From ByteO In Bytes Select ToChar(ByteO)).ToArray())                                                                               'This procedure converts the specified bytes to text.
    Public ReadOnly COLOR_DIFFERENCE As Func(Of Color, Color, Integer) = Function(Color1 As Color, Color2 As Color) CInt((Abs(CInt(Color2.R) - CInt(Color1.R)) + Abs(CInt(Color2.G) - CInt(Color1.G)) + Abs(CInt(Color2.B) - CInt(Color1.B))) / 3)    'This procedure returns the difference between the two specified colors.
    Public ReadOnly GET_BIT As Func(Of Byte, Integer, Integer) = Function(ByteO As Byte, BitIndex As Integer) Abs(ToInt32((New BitArray({ByteO}))(BitIndex)))                                                                                         'This procedure returns the specified bit inside the specified byte.
+   Public ReadOnly LZW_MAXIMUM_ENTRIES As Integer = (&H1% << LZW_MAXIMUM_BITS)                                                                                                                                                                       'This procedure returns the maximum number of LZW symbols possible with the maximum LZW bit count.
    Public ReadOnly SET_BIT As Func(Of Integer, Integer, Integer, Byte) = Function(ByteO As Integer, BitIndex As Integer, Bit As Integer) CByte(ByteO Or (Bit << BitIndex))                                                                           'This procedure sets the specified bit inside the specified byte.
    Public ReadOnly TERMINATE_AT_NULL As Func(Of String, String) = Function(Text As String) If(Text.Contains(ControlChars.NullChar), Text.Substring(0, Text.IndexOf(ControlChars.NullChar)), Text)                                                    'This procedure terminates the specified text at the left most null character and returns the result.
    Public ReadOnly TEXT_TO_BYTES As Func(Of String, List(Of Byte)) = Function(Text As String) (From Character In Text.ToCharArray() Select ToByte(Character)).ToList()                                                                               'This procedure converts the specified text to bytes.
