@@ -16,8 +16,7 @@ Extension: *.act
 
 [File Layout]
 Begin Structure: Header.
-	0x00	BYTE		Null. ***
-	0x01	0x03 BYTES	Is used to check if the file is valid. ***
+        0x00	DWORD		Signature. ***
 	0x04	0x10 WORDS	Palette. 0x04 nibbles repeated 0x10 times: {green, blue, null, red}. ******
 	0x24	DWORD		The total number of images.
 	0x28	WORD		Null.
@@ -194,7 +193,7 @@ Extension: *.mov
 
 [File Layout]
 Begin Structure: Header.
-	0x00	0x04 BYTES	Signature.
+	0x00	DWORD		Signature.
 	0x04	0x20 BYTES	The palette for actors and scenes. 0x04 nibbles repeated 0x10 times: {green, blue, null, red}.
 	0x24	WORD		Indicates whether the movie contains scenes. (0x00 = FALSE, 0x01 = TRUE)
 	0x26	WORD		The number of frames per second. ***
@@ -433,7 +432,7 @@ Endianess: ?
 Extension: *.lpt
 
 [File Layout]
-0x00	DWORD		Signature: {0x21, 0x43, 0x34, 0x12}.
+0x00	DWORD		Signature.
 0x04	0x27 BYTES	Printer model name padded with 0x00 bytes.
 0x2C	BYTE		Unknown.
 0x2D	WORD		Unknown.
